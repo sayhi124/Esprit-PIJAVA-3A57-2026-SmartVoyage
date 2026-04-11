@@ -1,0 +1,16 @@
+target/
+hs_err_pid*.log
+replay_pid*.log
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.log
+.DS_Store
+
+# IntelliJ: share run configs / misc; keep machine-specific files out
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/

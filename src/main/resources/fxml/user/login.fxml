@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Connexion (réf. integration). Nav : ../components/app_navbar.fxml -->
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.gestionutilisateurs.LoginController"
+           prefHeight="720.0"
+           prefWidth="1200.0"
+           styleClass="cosmic-root welcome-root">
+   <children>
+      <Region maxHeight="Infinity" maxWidth="Infinity" mouseTransparent="true" styleClass="welcome-starfield" />
+      <Region mouseTransparent="true" styleClass="hero-orb-1" StackPane.alignment="TOP_RIGHT" />
+      <Region mouseTransparent="true" styleClass="hero-orb-2" StackPane.alignment="CENTER_LEFT" />
+      <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="Infinity" spacing="0.0">
+         <children>
+            <HBox alignment="CENTER" styleClass="welcome-nav-outer">
+               <padding>
+                  <Insets bottom="8.0" left="40.0" right="40.0" top="20.0" />
+               </padding>
+               <children>
+                  <fx:include fx:id="appNavbar" source="../components/app_navbar.fxml" />
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" spacing="0.0" VBox.vgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="48.0" left="40.0" right="40.0" top="16.0" />
+               </padding>
+               <children>
+                  <VBox alignment="TOP_LEFT" maxWidth="460.0" spacing="16.0" styleClass="auth-card auth-card-glow">
+                     <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="auth-card-title" text="CONNEXION SMARTVOYAGE" />
+                        <Label styleClass="auth-card-subtitle" text="Accédez à vos recommandations, événements et voyages" wrapText="true" />
+                        <VBox spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label-caps" text="EMAIL" />
+                              <TextField fx:id="emailField" promptText="votre@email.com" styleClass="form-input" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label-caps" text="MOT DE PASSE" />
+                              <PasswordField fx:id="passwordField" promptText="········" styleClass="form-input" />
+                           </children>
+                        </VBox>
+                        <Button maxWidth="Infinity"
+                                mnemonicParsing="false"
+                                onAction="#onLogin"
+                                styleClass="form-btn form-btn-tall"
+                                text="Se connecter" />
+                        <Hyperlink onAction="#onGoRegister" styleClass="form-link-btn auth-footer-link" text="Pas encore de compte ? Créer un compte" />
+                        <Button mnemonicParsing="false" onAction="#onBack" styleClass="nav-link-btn auth-back-link" text="← Retour à l'accueil" />
+                        <Label fx:id="messageLabel" styleClass="message-label" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

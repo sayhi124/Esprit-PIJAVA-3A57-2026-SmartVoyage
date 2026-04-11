@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main (JavaFX)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="app.Main" />
+    <module name="Pi-java2" />
+    <option name="VM_PARAMETERS" value="--add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
