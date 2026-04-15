@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.CrewGuestController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Luxury travel, refined." styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="💬  Feedbacks" onAction="#onFeedbacks" styleClass="sidebar-nav-item"/>
+                <Button text="👥  Crew" onAction="#onCrew">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔐  Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item"/>
+                <Button text="📝  Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane styleClass="offers-immersive-stack">
+            <children>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+
+                <BorderPane pickOnBounds="false" styleClass="hero-foreground-pane">
+                    <padding>
+                        <Insets top="20.0" right="34.0" bottom="28.0" left="34.0"/>
+                    </padding>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="top-mini-bar">
+                            <children>
+                                <Label text="✦ SmartVoyage" styleClass="offers-mini-logo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="Connexion" onAction="#onSignIn" styleClass="offers-top-login-button"/>
+                            </children>
+                        </HBox>
+                    </top>
+
+                    <center>
+                        <VBox alignment="TOP_CENTER" spacing="14.0" styleClass="offers-showcase-wrapper">
+                            <children>
+                                <VBox alignment="TOP_CENTER" spacing="8.0" styleClass="offers-page-content">
+                                    <children>
+                                        <Label text="Built by SmartVoyage, for Travelers" styleClass="feedbacks-title"/>
+                                        <Label text="Creating a travel platform that puts you in control. We connect explorers with the best agencies, events, and experiences."
+                                               wrapText="true" styleClass="feedbacks-subtitle"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox alignment="TOP_CENTER" spacing="34.0" styleClass="crew-constellation">
+                                    <children>
+                                        <TilePane prefColumns="3" hgap="34.0" vgap="28.0" alignment="TOP_CENTER" styleClass="crew-grid">
+                                            <children>
+                                                <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="card crew-profile-card crew-profile-card-gold">
+                                                    <children>
+                                                        <StackPane styleClass="crew-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="crewAvatar1" fitWidth="120.0" fitHeight="120.0" preserveRatio="false"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Label fx:id="crewName1" text="Safa Gharbi" styleClass="crew-name"/>
+                                                        <Label fx:id="crewRole1" text="Design &amp; Tech" styleClass="crew-role"/>
+                                                        <Label text="SmartVoyage" styleClass="crew-brand"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="card crew-profile-card crew-profile-card-cyan">
+                                                    <children>
+                                                        <StackPane styleClass="crew-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="crewAvatar2" fitWidth="120.0" fitHeight="120.0" preserveRatio="false"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Label fx:id="crewName2" text="Rayen Swayah" styleClass="crew-name"/>
+                                                        <Label fx:id="crewRole2" text="Growth &amp; Operations" styleClass="crew-role"/>
+                                                        <Label text="SmartVoyage" styleClass="crew-brand"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="card crew-profile-card crew-profile-card-purple">
+                                                    <children>
+                                                        <StackPane styleClass="crew-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="crewAvatar3" fitWidth="120.0" fitHeight="120.0" preserveRatio="false"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Label fx:id="crewName3" text="Mohamed Dhia Rached" styleClass="crew-name"/>
+                                                        <Label fx:id="crewRole3" text="Engineering" styleClass="crew-role"/>
+                                                        <Label text="SmartVoyage" styleClass="crew-brand"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="card crew-profile-card crew-profile-card-rose">
+                                                    <children>
+                                                        <StackPane styleClass="crew-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="crewAvatar4" fitWidth="120.0" fitHeight="120.0" preserveRatio="false"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Label fx:id="crewName4" text="Manel Ouni" styleClass="crew-name"/>
+                                                        <Label fx:id="crewRole4" text="Product &amp; Experience" styleClass="crew-role"/>
+                                                        <Label text="SmartVoyage" styleClass="crew-brand"/>
+                                                    </children>
+                                                </VBox>
+                                                <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="card crew-profile-card crew-profile-card-amber">
+                                                    <children>
+                                                        <StackPane styleClass="crew-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="crewAvatar5" fitWidth="120.0" fitHeight="120.0" preserveRatio="false"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Label fx:id="crewName5" text="Mohamed Aziz Sayhi" styleClass="crew-name"/>
+                                                        <Label fx:id="crewRole5" text="Platform &amp; Support" styleClass="crew-role"/>
+                                                        <Label text="SmartVoyage" styleClass="crew-brand"/>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </TilePane>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </center>
+                </BorderPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

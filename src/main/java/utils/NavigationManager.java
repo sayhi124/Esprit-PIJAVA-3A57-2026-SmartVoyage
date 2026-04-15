@@ -1,35 +1,36 @@
 package utils;
 
-import enums.gestionutilisateurs.UserRole;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import enums.gestionutilisateurs.UserRole;
 import models.gestionutilisateurs.User;
-import services.gestionagences.AgencyAccountService;
-import services.gestionagences.AgencyAdminApplicationService;
 import services.gestionutilisateurs.UserService;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-
-/**
- * Point central de navigation FXML + session + services (équivalent pratique d'un {@code NavigationManager} type PIDEV).
- */
 public class NavigationManager {
 
     private static NavigationManager instance;
 
     private Stage stage;
+    private Scene sharedScene;
+    private boolean lightTheme;
     private UserService userService;
-    private AgencyAccountService agencyAccountService;
-    private AgencyAdminApplicationService agencyAdminApplicationService;
     private User sessionUser;
-    private Long routedAgencyId;
+    private Long selectedAgencyId;
+    private Instant sessionIssuedAt;
+    private static final java.time.Duration SESSION_TTL = java.time.Duration.ofDays(7);
 
     private NavigationManager() {
     }
@@ -41,32 +42,22 @@ public class NavigationManager {
         return instance;
     }
 
-    /**
-     * À appeler une fois depuis {@link app.Main} après création des services.
-     */
-    public void configure(Stage primaryStage,
-                          UserService userSvc,
-                          AgencyAccountService agencySvc,
-                          AgencyAdminApplicationService agencyAppSvc) {
+    public void configure(Stage primaryStage, UserService userSvc) {
         this.stage = primaryStage;
         this.userService = userSvc;
-        this.agencyAccountService = agencySvc;
-        this.agencyAdminApplicationService = agencyAppSvc;
+        this.stage.setMinWidth(1100);
+        this.stage.setMinHeight(700);
     }
 
     public UserService userService() {
         return userService;
     }
 
-    public AgencyAccountService agencyAccountService() {
-        return agencyAccountService;
-    }
-
-    public AgencyAdminApplicationService agencyAdminApplicationService() {
-        return agencyAdminApplicationService;
-    }
-
     public Optional<User> sessionUser() {
+        if (!hasValidSession()) {
+            clearSession();
+            return Optional.empty();
+        }
         return Optional.ofNullable(sessionUser);
     }
 
@@ -82,42 +73,138 @@ public class NavigationManager {
         copy.setRoles(source.getRoles());
         copy.setRole(source.getRole());
         copy.setIsActive(source.getIsActive());
+        copy.setProfileImageId(source.getProfileImageId());
+        copy.setEmailVerified(source.getEmailVerified());
+        copy.setFaceVerified(source.getFaceVerified());
         sessionUser = copy;
+        normalizeSessionRoles();
+        sessionIssuedAt = Instant.now();
     }
 
     public void clearSession() {
         sessionUser = null;
-        routedAgencyId = null;
+        sessionIssuedAt = null;
+        selectedAgencyId = null;
     }
 
-    public boolean isAdmin() {
-        return sessionUser != null
-                && sessionUser.getRoles() != null
-                && sessionUser.getRoles().contains(UserRole.ADMIN.getValue());
+    public boolean isAuthenticated() {
+        return sessionUser().isPresent();
     }
 
-    public boolean isAgencyAdmin() {
-        return sessionUser != null
-                && sessionUser.getRoles() != null
-                && sessionUser.getRoles().contains(UserRole.AGENCY_ADMIN.getValue());
+    public boolean hasRole(String role) {
+        if (role == null || role.isBlank()) {
+            return false;
+        }
+        Optional<User> current = sessionUser();
+        if (current.isEmpty()) {
+            return false;
+        }
+        List<String> expanded = expandRoles(current.get().getRoles());
+        return expanded.contains(role.trim().toUpperCase(Locale.ROOT));
     }
 
-    public Integer currentUserId() {
-        return sessionUser != null ? sessionUser.getId() : null;
+    public boolean canAccessSignedInShell() {
+        Optional<User> current = sessionUser();
+        if (current.isEmpty()) {
+            return false;
+        }
+        Boolean isActive = current.get().getIsActive();
+        if (isActive != null && !isActive) {
+            return false;
+        }
+        return hasRole(UserRole.USER.getValue());
     }
 
-    public void setRoutedAgencyId(Long id) {
-        routedAgencyId = id;
+    public boolean canAccessAgencyAdminFeatures() {
+        return hasRole(UserRole.AGENCY_ADMIN.getValue());
     }
 
-    public Long consumeRoutedAgencyId() {
-        Long v = routedAgencyId;
-        routedAgencyId = null;
-        return v;
+    public boolean canAccessAdminFeatures() {
+        return hasRole(UserRole.ADMIN.getValue());
+    }
+
+    public void logoutToGuest() {
+        clearSession();
+        showWelcome();
+    }
+
+    public Optional<Long> selectedAgencyId() {
+        return Optional.ofNullable(selectedAgencyId);
+    }
+
+    public void setSelectedAgencyId(Long agencyId) {
+        this.selectedAgencyId = agencyId;
+    }
+
+    public void showPostLoginHome() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        showSignedInShell();
+    }
+
+    public void showSignedInShell() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/user/signed_in_shell.fxml", "Smart Voyage - Home");
+    }
+
+    public void showSignedInAgencies() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agences");
+    }
+
+    public void showAgencyProposal() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/agency/agency_proposal.fxml", "Smart Voyage - Mon agence");
+    }
+
+    public void showMyAgency() {
+        if (!canAccessAgencyAdminFeatures()) {
+            showSignedInAgencies();
+            return;
+        }
+        selectedAgencyId = null;
+        loadScene("/fxml/agency/my_agency.fxml", "Smart Voyage - My Agency");
+    }
+
+    public void showAgencyProfile(Long agencyId) {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        selectedAgencyId = agencyId;
+        loadScene("/fxml/agency/my_agency.fxml", "Smart Voyage - Agency");
     }
 
     public void showWelcome() {
         loadScene("/fxml/user/welcome.fxml", "Smart Voyage");
+    }
+
+    public void showGuestOffers() {
+        loadScene("/fxml/user/offers_guest.fxml", "Offres");
+    }
+
+    public void showGuestFeedbacks() {
+        loadScene("/fxml/user/feedbacks_guest.fxml", "Feedbacks");
+    }
+
+    public void showGuestCrew() {
+        loadScene("/fxml/user/crew_guest.fxml", "Crew");
     }
 
     public void showLogin() {
@@ -126,65 +213,6 @@ public class NavigationManager {
 
     public void showRegister() {
         loadScene("/fxml/user/register.fxml", "Inscription");
-    }
-
-    public void showAgencies() {
-        if (sessionUser == null) {
-            showLogin();
-            return;
-        }
-        loadScene("/fxml/agency/agencies_list.fxml", "Agences | Smart Voyage");
-    }
-
-    public void showAgencyDetail(long agencyId) {
-        if (sessionUser == null) {
-            showLogin();
-            return;
-        }
-        routedAgencyId = agencyId;
-        loadScene("/fxml/agency/agency_detail.fxml", "Agence | Smart Voyage");
-    }
-
-    public void showAgencyRequest() {
-        if (sessionUser == null) {
-            showLogin();
-            return;
-        }
-        loadScene("/fxml/agency/agency_request.fxml", "Demande d'agrément agence");
-    }
-
-    public void showAdminAgencies() {
-        if (sessionUser == null) {
-            showLogin();
-            return;
-        }
-        if (!isAdmin()) {
-            showAgencies();
-            return;
-        }
-        loadScene("/fxml/admin/admin_agencies.fxml", "Demandes d'agence | Admin");
-    }
-
-    public void showMyAgency() {
-        if (sessionUser == null) {
-            showLogin();
-            return;
-        }
-        try {
-            var opt = agencyAccountService.findByResponsableId(sessionUser.getId());
-            if (opt.isEmpty()) {
-                Alert a = new Alert(Alert.AlertType.INFORMATION);
-                a.setHeaderText(null);
-                a.setContentText("Aucune agence n'est encore associée à votre compte.");
-                a.showAndWait();
-                return;
-            }
-            showAgencyDetail(opt.get().getId());
-        } catch (SQLException e) {
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setContentText(e.getMessage());
-            a.showAndWait();
-        }
     }
 
     private void loadScene(String resource, String title) {
@@ -198,24 +226,103 @@ public class NavigationManager {
     }
 
     private void applyScene(Parent root, String title) {
-        final boolean wasMaximized = stage.isMaximized();
-        final double w = stage.getWidth();
-        final double h = stage.getHeight();
-
-        Scene scene = new Scene(root);
-        var css = NavigationManager.class.getResource("/css/styles.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
+        applyThemeClass(root);
+        if (sharedScene == null) {
+            sharedScene = new Scene(root);
+            var css = NavigationManager.class.getResource("/css/styles.css");
+            if (css != null) {
+                sharedScene.getStylesheets().add(css.toExternalForm());
+            }
+            stage.setScene(sharedScene);
+        } else {
+            sharedScene.setRoot(root);
         }
-        stage.setScene(scene);
         stage.setTitle(title);
-        if (wasMaximized) {
-            // Replacing the scene often drops maximized on Windows; restore after attach.
-            Platform.runLater(() -> stage.setMaximized(true));
-        } else if (w > 0 && h > 0) {
-            stage.setWidth(w);
-            stage.setHeight(h);
+        if (!stage.isShowing()) {
+            stage.show();
         }
-        stage.show();
+        if (!stage.isMaximized()) {
+            Platform.runLater(() -> {
+                if (!stage.isMaximized()) {
+                    stage.setMaximized(true);
+                }
+            });
+        }
+    }
+
+    public void toggleTheme() {
+        if (sharedScene == null || sharedScene.getRoot() == null) {
+            return;
+        }
+        Parent root = sharedScene.getRoot();
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(130), root);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.86);
+        fadeOut.setOnFinished(evt -> {
+            lightTheme = !lightTheme;
+            applyThemeClass(root);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(130), root);
+            fadeIn.setFromValue(0.86);
+            fadeIn.setToValue(1.0);
+            fadeIn.play();
+        });
+        fadeOut.play();
+    }
+
+    private void applyThemeClass(Parent root) {
+        if (root == null) {
+            return;
+        }
+        if (lightTheme) {
+            if (!root.getStyleClass().contains("theme-light")) {
+                root.getStyleClass().add("theme-light");
+            }
+        } else {
+            root.getStyleClass().remove("theme-light");
+        }
+    }
+
+    private boolean hasValidSession() {
+        if (sessionUser == null || sessionIssuedAt == null) {
+            return false;
+        }
+        return Instant.now().isBefore(sessionIssuedAt.plus(SESSION_TTL));
+    }
+
+    private void normalizeSessionRoles() {
+        if (sessionUser == null) {
+            return;
+        }
+        List<String> baseRoles = new ArrayList<>();
+        if (sessionUser.getRoles() != null) {
+            baseRoles.addAll(sessionUser.getRoles());
+        }
+        if (sessionUser.getRole() != null && !sessionUser.getRole().isBlank()) {
+            baseRoles.add(sessionUser.getRole());
+        }
+        sessionUser.setRoles(expandRoles(baseRoles));
+    }
+
+    private List<String> expandRoles(List<String> rawRoles) {
+        LinkedHashSet<String> expanded = new LinkedHashSet<>();
+        if (rawRoles != null) {
+            for (String role : rawRoles) {
+                if (role == null || role.isBlank()) {
+                    continue;
+                }
+                String normalized = role.trim().toUpperCase(Locale.ROOT);
+                expanded.add(normalized);
+                if (UserRole.ADMIN.getValue().equals(normalized)) {
+                    expanded.add(UserRole.AGENCY_ADMIN.getValue());
+                    expanded.add(UserRole.USER.getValue());
+                } else if (UserRole.AGENCY_ADMIN.getValue().equals(normalized)) {
+                    expanded.add(UserRole.USER.getValue());
+                }
+            }
+        }
+        if (expanded.isEmpty()) {
+            expanded.add(UserRole.USER.getValue());
+        }
+        return new ArrayList<>(expanded);
     }
 }

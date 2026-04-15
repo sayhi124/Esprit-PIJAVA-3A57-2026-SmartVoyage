@@ -1,75 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- Page d’accueil hero (réf. integration). Sous-volet nav : ../components/app_navbar.fxml (Scene Builder). -->
+<?import java.lang.String?>
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="controllers.gestionutilisateurs.WelcomeController"
-           prefHeight="720.0"
-           prefWidth="1200.0"
-           styleClass="cosmic-root welcome-root">
-   <children>
-      <Region maxHeight="Infinity" maxWidth="Infinity" mouseTransparent="true" styleClass="welcome-starfield" />
-      <Region mouseTransparent="true" styleClass="hero-orb-1" StackPane.alignment="TOP_RIGHT" />
-      <Region mouseTransparent="true" styleClass="hero-orb-2" StackPane.alignment="CENTER_LEFT" />
-      <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="Infinity" spacing="0.0">
-         <children>
-            <HBox alignment="CENTER" styleClass="welcome-nav-outer">
-               <padding>
-                  <Insets bottom="8.0" left="40.0" right="40.0" top="20.0" />
-               </padding>
-               <children>
-                  <fx:include fx:id="appNavbar" source="../components/app_navbar.fxml" />
-               </children>
-            </HBox>
-            <StackPane minHeight="520.0" styleClass="welcome-hero-stack" VBox.vgrow="ALWAYS">
-               <children>
-                  <Label mouseTransparent="true"
-                         styleClass="hero-plane-watermark"
-                         text="✈"
-                         StackPane.alignment="CENTER" />
-                  <VBox alignment="CENTER" maxWidth="820.0" spacing="22.0" styleClass="welcome-hero-copy" StackPane.alignment="CENTER">
-                     <children>
-                        <Label styleClass="hero-kicker-pill" text="TRAVEL ON YOUR TERMS" />
-                        <VBox alignment="CENTER" spacing="4.0">
-                           <children>
-                              <Label styleClass="hero-title-line1" text="DISCOVER THE WORLD" />
-                              <Label styleClass="hero-title-line2" text="YOUR WAY." />
-                           </children>
-                        </VBox>
-                        <Label alignment="CENTER"
-                               styleClass="hero-body-cosmic"
-                               text="From hidden gems to iconic destinations, we help you plan unforgettable journeys. Flights, stays, and experiences — all in one place. Your next adventure starts here."
-                               textAlignment="CENTER"
-                               wrapText="true" />
-                        <HBox alignment="CENTER" spacing="16.0">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#onSignIn" styleClass="hero-btn-secondary" text="Connexion" />
-                              <Button mnemonicParsing="false" onAction="#onSignUp" styleClass="hero-btn-primary" text="Inscription" />
-                           </children>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.WelcomeController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Luxury travel, refined." styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" defaultButton="false">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="💬  Feedbacks" onAction="#onFeedbacks" styleClass="sidebar-nav-item"/>
+                <Button text="👥  Crew" onAction="#onCrew" styleClass="sidebar-nav-item"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔐  Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item"/>
+                <Button text="📝  Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                            </children>
                         </HBox>
-                     </children>
-                  </VBox>
-                  <VBox alignment="BOTTOM_LEFT"
-                        mouseTransparent="true"
-                        spacing="6.0"
-                        styleClass="welcome-chat-widget"
-                        StackPane.alignment="BOTTOM_LEFT">
-                     <children>
-                        <Label styleClass="chat-widget-hands" text="👋👋" />
-                        <Label styleClass="chat-widget-title" text="WE ARE HERE!" />
-                        <Label styleClass="chat-widget-fab" text="💬" />
-                     </children>
-                  </VBox>
-               </children>
-            </StackPane>
-         </children>
-      </VBox>
-   </children>
-</StackPane>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="heroMediaStack" styleClass="hero-center-stack">
+            <children>
+                <ImageView fx:id="heroBackgroundImage" pickOnBounds="true" mouseTransparent="true" preserveRatio="false"
+                           styleClass="hero-bg-image"/>
+                <Region mouseTransparent="true" styleClass="hero-overlay"/>
+                <BorderPane pickOnBounds="false" styleClass="hero-foreground-pane">
+                    <padding>
+                        <Insets top="20.0" right="40.0" bottom="32.0" left="40.0"/>
+                    </padding>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" maxWidth="1.7976931348623157E308"
+                              styleClass="top-mini-bar">
+                            <children>
+                                <TextField promptText="Search destinations, hotels, experiences…"
+                                           maxWidth="360.0" prefWidth="320.0" styleClass="top-mini-search-field"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="🔔" styleClass="mini-bar-icon"/>
+                            </children>
+                        </HBox>
+                    </top>
+                    <center>
+                        <HBox alignment="CENTER_LEFT" spacing="48.0" styleClass="hero-body-row">
+                            <children>
+                                <VBox alignment="CENTER_LEFT" spacing="22.0" styleClass="hero-copy-block"
+                                      HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="Plan Your Dream Vacation" wrapText="true"
+                                               styleClass="hero-title" maxWidth="640.0"/>
+                                        <Label text="Curated journeys, ocean views, and world-class stays — discover your next escape with SmartVoyage."
+                                               wrapText="true" styleClass="hero-subtitle" maxWidth="560.0"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="hero-cta-row">
+                                            <children>
+                                                <JFXButton fx:id="getStartedButton" text="Get Started" onAction="#onGetStarted"
+                                                        styleClass="hero-search-button"/>
+                                                <JFXButton fx:id="seeOffersButton" text="See Offers" onAction="#onSeeOffers"
+                                                        styleClass="hero-cta-secondary"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="category-row">
+                                            <children>
+                                                <VBox alignment="CENTER" spacing="6.0" styleClass="category-chip-wrap">
+                                                    <children>
+                                                        <Button text="★" onAction="#onCategoryPopular"
+                                                                styleClass="category-chip"/>
+                                                        <Label text="Popular" styleClass="category-chip-label"/>
+                                                    </children>
+                                                </VBox>
+                                                <VBox alignment="CENTER" spacing="6.0" styleClass="category-chip-wrap">
+                                                    <children>
+                                                        <Button text="✦" onAction="#onCategoryRecommended"
+                                                                styleClass="category-chip"/>
+                                                        <Label text="Recommended" styleClass="category-chip-label"/>
+                                                    </children>
+                                                </VBox>
+                                                <VBox alignment="CENTER" spacing="6.0" styleClass="category-chip-wrap">
+                                                    <children>
+                                                        <Button text="♦" onAction="#onCategoryLuxury"
+                                                                styleClass="category-chip"/>
+                                                        <Label text="Luxury" styleClass="category-chip-label"/>
+                                                    </children>
+                                                </VBox>
+                                                <VBox alignment="CENTER" spacing="6.0" styleClass="category-chip-wrap">
+                                                    <children>
+                                                        <Button text="◎" onAction="#onCategoryMoments"
+                                                                styleClass="category-chip"/>
+                                                        <Label text="Moments" styleClass="category-chip-label"/>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <StackPane alignment="TOP_RIGHT" prefWidth="340.0" minWidth="280.0"
+                                           maxHeight="520.0" styleClass="floating-cards-anchor">
+                                    <children>
+                                        <StackPane maxWidth="260.0" maxHeight="340.0" translateX="-32.0"
+                                                   translateY="48.0" pickOnBounds="false"
+                                                   mouseTransparent="true"
+                                                   styleClass="floating-destination-card floating-card-back"
+                                                   StackPane.alignment="TOP_RIGHT">
+                                            <children>
+                                                <ImageView fx:id="featuredCardBackImage" pickOnBounds="true" mouseTransparent="true"
+                                                           preserveRatio="false" styleClass="floating-card-image"/>
+                                                <Region mouseTransparent="true" styleClass="floating-card-image-overlay"/>
+                                            </children>
+                                        </StackPane>
+                                        <StackPane maxWidth="300.0" maxHeight="400.0" pickOnBounds="false"
+                                                   styleClass="floating-destination-card floating-card-front"
+                                                   StackPane.alignment="TOP_RIGHT">
+                                            <children>
+                                                <ImageView fx:id="featuredCardImage" pickOnBounds="true" mouseTransparent="true"
+                                                           preserveRatio="false" styleClass="floating-card-image"/>
+                                                <Region mouseTransparent="true" styleClass="floating-card-image-overlay-strong"/>
+                                                <VBox alignment="BOTTOM_LEFT" spacing="8.0" pickOnBounds="false"
+                                                      StackPane.alignment="BOTTOM_LEFT" styleClass="floating-card-text-block">
+                                                    <children>
+                                                        <Label text="Maldives" styleClass="floating-card-title"/>
+                                                        <Label text="Crystal lagoons &amp; private villas"
+                                                               wrapText="true" styleClass="floating-card-subtitle"/>
+                                                        <JFXButton fx:id="viewDetailsButton" text="View Details" onAction="#onFeaturedDetails"
+                                                                styleClass="floating-card-button"/>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="22.0" right="20.0" left="20.0" top="120.0"/>
+                                                    </padding>
+                                                </VBox>
+                                            </children>
+                                        </StackPane>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </HBox>
+                    </center>
+                </BorderPane>
+                <HBox alignment="CENTER" spacing="14.0" pickOnBounds="false" styleClass="fab-row"
+                      StackPane.alignment="BOTTOM_RIGHT">
+                    <padding>
+                        <Insets bottom="28.0" right="36.0"/>
+                    </padding>
+                    <children>
+                        <Button text="♡" onAction="#onFabFavorite" styleClass="floating-action-button"/>
+                        <Button text="🔖" onAction="#onFabBookmark" styleClass="floating-action-button"/>
+                    </children>
+                </HBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

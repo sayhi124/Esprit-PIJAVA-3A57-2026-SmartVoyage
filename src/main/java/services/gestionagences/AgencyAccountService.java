@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,14 +54,15 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
     private static final String INSERT = """
             INSERT INTO agency_account (
                 agency_name, description, website_url, phone, address, country, latitude, longitude,
-                verified, responsable_id, cover_image_id, agency_profile_image_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                verified, responsable_id, cover_image_id, agency_profile_image_id, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     private static final String UPDATE = """
             UPDATE agency_account SET
                 agency_name = ?, description = ?, website_url = ?, phone = ?, address = ?, country = ?,
-                latitude = ?, longitude = ?, verified = ?, responsable_id = ?, cover_image_id = ?, agency_profile_image_id = ?
+                latitude = ?, longitude = ?, verified = ?, responsable_id = ?, cover_image_id = ?, agency_profile_image_id = ?,
+                updated_at = ?
             WHERE id = ?
             """;
 
@@ -78,7 +80,7 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
         validateForInsert(entity);
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            fillStatementWithoutId(entity, ps);
+            bindForInsert(entity, ps);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -97,8 +99,8 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
         validateForWrite(entity);
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(UPDATE)) {
-            fillStatementWithoutId(entity, ps);
-            ps.setLong(13, entity.getId());
+            bindForUpdate(entity, ps);
+            ps.setLong(14, entity.getId());
             ps.executeUpdate();
         }
         refreshTimestampsAfterWrite(entity);
@@ -265,8 +267,11 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
         }
     }
 
-    private void fillStatementWithoutId(AgencyAccount e, PreparedStatement ps) throws SQLException {
+    private void bindForInsert(AgencyAccount e, PreparedStatement ps) throws SQLException {
         int i = 1;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime createdAt = e.getCreatedAt() != null ? e.getCreatedAt() : now;
+        LocalDateTime updatedAt = now;
         ps.setString(i++, e.getAgencyName());
         ps.setString(i++, e.getDescription());
         nullableString(ps, i++, e.getWebsiteUrl());
@@ -280,6 +285,27 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
         ps.setInt(i++, e.getResponsableId());
         nullableLong(ps, i++, e.getCoverImageId());
         nullableLong(ps, i++, e.getAgencyProfileImageId());
+        ps.setTimestamp(i++, Timestamp.valueOf(createdAt));
+        ps.setTimestamp(i++, Timestamp.valueOf(updatedAt));
+    }
+
+    private void bindForUpdate(AgencyAccount e, PreparedStatement ps) throws SQLException {
+        int i = 1;
+        LocalDateTime updatedAt = LocalDateTime.now();
+        ps.setString(i++, e.getAgencyName());
+        ps.setString(i++, e.getDescription());
+        nullableString(ps, i++, e.getWebsiteUrl());
+        nullableString(ps, i++, e.getPhone());
+        nullableString(ps, i++, e.getAddress());
+        nullableString(ps, i++, e.getCountry());
+        nullableDouble(ps, i++, e.getLatitude());
+        nullableDouble(ps, i++, e.getLongitude());
+        boolean verified = e.getVerified() != null && e.getVerified();
+        ps.setBoolean(i++, verified);
+        ps.setInt(i++, e.getResponsableId());
+        nullableLong(ps, i++, e.getCoverImageId());
+        nullableLong(ps, i++, e.getAgencyProfileImageId());
+        ps.setTimestamp(i++, Timestamp.valueOf(updatedAt));
     }
 
     private AgencyAccount mapRow(ResultSet rs) throws SQLException {

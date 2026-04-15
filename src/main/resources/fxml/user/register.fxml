@@ -1,79 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- Inscription (réf. integration). Nav : ../components/app_navbar.fxml -->
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="controllers.gestionutilisateurs.RegisterController"
-           prefHeight="720.0"
-           prefWidth="1200.0"
-           styleClass="cosmic-root welcome-root">
-   <children>
-      <Region maxHeight="Infinity" maxWidth="Infinity" mouseTransparent="true" styleClass="welcome-starfield" />
-      <Region mouseTransparent="true" styleClass="hero-orb-1" StackPane.alignment="TOP_RIGHT" />
-      <Region mouseTransparent="true" styleClass="hero-orb-2" StackPane.alignment="CENTER_LEFT" />
-      <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="Infinity" spacing="0.0">
-         <children>
-            <HBox alignment="CENTER" styleClass="welcome-nav-outer">
-               <padding>
-                  <Insets bottom="8.0" left="40.0" right="40.0" top="20.0" />
-               </padding>
-               <children>
-                  <fx:include fx:id="appNavbar" source="../components/app_navbar.fxml" />
-               </children>
-            </HBox>
-            <VBox alignment="CENTER" spacing="0.0" VBox.vgrow="ALWAYS">
-               <padding>
-                  <Insets bottom="48.0" left="40.0" right="40.0" top="16.0" />
-               </padding>
-               <children>
-                  <VBox alignment="TOP_LEFT" maxWidth="460.0" spacing="16.0" styleClass="auth-card auth-card-glow">
-                     <padding>
-                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-                     </padding>
-                     <children>
-                        <Label styleClass="auth-card-title" text="INSCRIPTION SMARTVOYAGE" />
-                        <Label styleClass="auth-card-subtitle" text="Créez votre compte pour explorer les agences et expériences" wrapText="true" />
-                        <VBox spacing="8.0">
-                           <children>
-                              <Label styleClass="form-label-caps" text="EMAIL" />
-                              <TextField fx:id="emailField" promptText="votre@email.com" styleClass="form-input" />
-                           </children>
-                        </VBox>
-                        <VBox spacing="8.0">
-                           <children>
-                              <Label styleClass="form-label-caps" text="NOM D'UTILISATEUR" />
-                              <TextField fx:id="usernameField" promptText="Votre nom" styleClass="form-input" />
-                           </children>
-                        </VBox>
-                        <VBox spacing="8.0">
-                           <children>
-                              <Label styleClass="form-label-caps" text="MOT DE PASSE" />
-                              <PasswordField fx:id="passwordField" promptText="········" styleClass="form-input" />
-                           </children>
-                        </VBox>
-                        <Button maxWidth="Infinity"
-                                mnemonicParsing="false"
-                                onAction="#onRegister"
-                                styleClass="form-btn form-btn-tall"
-                                text="Créer le compte" />
-                        <Hyperlink onAction="#onGoLogin" styleClass="form-link-btn auth-footer-link" text="Déjà inscrit ? Se connecter" />
-                        <Button mnemonicParsing="false" onAction="#onBack" styleClass="nav-link-btn auth-back-link" text="← Retour à l'accueil" />
-                        <Label fx:id="messageLabel" styleClass="message-label" wrapText="true" />
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-         </children>
-      </VBox>
-   </children>
-</StackPane>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.RegisterController"
+            fx:id="authRoot"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Luxury travel, refined." styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="💬  Feedbacks" onAction="#onFeedbacks" styleClass="sidebar-nav-item"/>
+                <Button text="👥  Crew" onAction="#onCrew" styleClass="sidebar-nav-item"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔐  Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item"/>
+                <Button text="📝  Inscription" onAction="#onSignUp">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="authMediaStack" styleClass="offers-immersive-stack">
+            <children>
+                <ImageView fx:id="authBackgroundImage" pickOnBounds="true" preserveRatio="false" styleClass="hero-bg-image"/>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+                <Region styleClass="auth-page-overlay"/>
+                <BorderPane pickOnBounds="false" styleClass="hero-foreground-pane">
+                    <padding>
+                        <Insets top="28.0" right="34.0" bottom="28.0" left="34.0"/>
+                    </padding>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="top-mini-bar">
+                            <children>
+                                <Label text="✦ SmartVoyage" styleClass="offers-mini-logo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                            </children>
+                        </HBox>
+                    </top>
+                    <center>
+                        <HBox alignment="CENTER" spacing="0.0" styleClass="auth-content-split-wrap">
+                            <BorderPane.margin>
+                                <Insets top="28.0"/>
+                            </BorderPane.margin>
+                            <children>
+                                <StackPane styleClass="auth-promo-panel" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Region fx:id="parallaxOrbBack" styleClass="auth-promo-orb auth-promo-orb-back"/>
+                                        <Region fx:id="parallaxOrbFront" styleClass="auth-promo-orb auth-promo-orb-front"/>
+                                        <VBox fx:id="parallaxHeroContent" maxWidth="430.0" spacing="16.0" alignment="CENTER_LEFT" styleClass="auth-promo-copy">
+                                            <children>
+                                                <Label text="Start your SmartVoyage journey" wrapText="true" styleClass="auth-promo-title"/>
+                                                <Label text="Create your account to unlock offers, agencies, events, and premium experiences."
+                                                       wrapText="true" styleClass="auth-promo-subtitle"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </StackPane>
+                                <VBox minWidth="460.0" maxWidth="460.0" spacing="16.0" styleClass="auth-form-panel">
+                                    <padding>
+                                        <Insets top="38.0" right="36.0" bottom="34.0" left="36.0"/>
+                                    </padding>
+                                    <children>
+                                        <Label text="Sign up" styleClass="auth-form-title"/>
+                                        <Label text="Create your profile to unlock offers, agencies, events, and premium experiences." wrapText="true" styleClass="auth-form-subtitle"/>
+                                        <VBox spacing="8.0" styleClass="auth-field-group">
+                                            <children>
+                                                <Label text="Name" styleClass="auth-field-label"/>
+                                                <TextField fx:id="usernameField" promptText="Enter your name" styleClass="auth-input"/>
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="8.0" styleClass="auth-field-group">
+                                            <children>
+                                                <Label text="Email" styleClass="auth-field-label"/>
+                                                <TextField fx:id="emailField" promptText="Enter your email" styleClass="auth-input"/>
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="8.0" styleClass="auth-field-group">
+                                            <children>
+                                                <Label text="Register as" styleClass="auth-field-label"/>
+                                                <ComboBox fx:id="accountTypeCombo" promptText="Choose account type" styleClass="auth-combo"/>
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="8.0" styleClass="auth-field-group">
+                                            <children>
+                                                <Label text="Password" styleClass="auth-field-label"/>
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="auth-password-row">
+                                                    <children>
+                                                        <StackPane HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="auth-input"/>
+                                                                <TextField fx:id="passwordVisibleField" promptText="Enter your password" visible="false" managed="false" styleClass="auth-input"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Button fx:id="togglePasswordButton" text="👁" onAction="#onTogglePassword" styleClass="auth-password-toggle"/>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                        <Button text="Sign up" onAction="#onRegister" maxWidth="1.7976931348623157E308" styleClass="auth-submit-button"/>
+                                        <Label fx:id="messageLabel" styleClass="auth-message"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Already have an account?" styleClass="auth-link-text"/>
+                                                <Button text="Sign in" onAction="#onGoLogin" styleClass="auth-link-button"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </center>
+                </BorderPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

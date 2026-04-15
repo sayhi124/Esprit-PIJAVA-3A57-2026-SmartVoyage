@@ -61,6 +61,15 @@ public class AgencyAdminApplicationService {
             FROM agency_admin_application WHERE id = ?
             """;
 
+    private static final String SELECT_LATEST_BY_APPLICANT = """
+            SELECT id, status, agency_name_requested, country, message_to_admin, requested_at,
+                   reviewed_at, review_note, applicant_id, reviewed_by_id, created_agency_account_id
+            FROM agency_admin_application
+            WHERE applicant_id = ?
+            ORDER BY requested_at DESC, id DESC
+            LIMIT 1
+            """;
+
     /**
      * Soumet une nouvelle demande (statut {@link AgencyApplicationStatus#PENDING}).
      */
@@ -104,6 +113,22 @@ public class AgencyAdminApplicationService {
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(SELECT_BY_ID)) {
             ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRow(rs));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<AgencyAdminApplication> findLatestByApplicant(Integer applicantId) throws SQLException {
+        if (applicantId == null) {
+            return Optional.empty();
+        }
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(SELECT_LATEST_BY_APPLICANT)) {
+            ps.setInt(1, applicantId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRow(rs));

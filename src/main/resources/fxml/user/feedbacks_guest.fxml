@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.FeedbacksGuestController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Luxury travel, refined." styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="💬  Feedbacks" onAction="#onFeedbacks">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Button text="👥  Crew" onAction="#onCrew" styleClass="sidebar-nav-item"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔐  Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item"/>
+                <Button text="📝  Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane styleClass="offers-immersive-stack">
+            <children>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+
+                <BorderPane pickOnBounds="false" styleClass="hero-foreground-pane">
+                    <padding>
+                        <Insets top="20.0" right="34.0" bottom="28.0" left="34.0"/>
+                    </padding>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="top-mini-bar">
+                            <children>
+                                <Label text="✦ SmartVoyage" styleClass="offers-mini-logo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <HBox alignment="CENTER_LEFT" spacing="8.0" prefWidth="340.0" styleClass="offers-search-shell">
+                                    <children>
+                                        <Label text="⌕" styleClass="offers-search-icon"/>
+                                        <TextField fx:id="searchField" promptText="Search opinions..." onAction="#onSearchInput"
+                                                   HBox.hgrow="ALWAYS" styleClass="offers-search-input"/>
+                                    </children>
+                                </HBox>
+                                <Button text="Connexion" onAction="#onSignIn" styleClass="offers-top-login-button"/>
+                            </children>
+                        </HBox>
+                    </top>
+
+                    <center>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="offers-grid-scroll">
+                            <content>
+                                <StackPane alignment="TOP_CENTER" styleClass="offers-scroll-center">
+                                    <children>
+                                        <VBox alignment="TOP_LEFT" maxWidth="1300.0" prefWidth="1300.0" spacing="14.0" styleClass="offers-showcase-wrapper">
+                                            <children>
+                                                <VBox spacing="10.0" alignment="TOP_CENTER" maxWidth="1300.0" prefWidth="1300.0" styleClass="offers-page-content">
+                                                    <children>
+                                                        <Label text="What People Are Saying" styleClass="feedbacks-title"/>
+                                                        <Label text="Real experiences from travelers and partners who trust SmartVoyage."
+                                                               styleClass="feedbacks-subtitle"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox spacing="22.0" alignment="TOP_CENTER" styleClass="feedbacks-testimonials-grid">
+                                                    <children>
+                                                        <HBox spacing="24.0" alignment="TOP_CENTER" styleClass="feedbacks-testimonials-row">
+                                                            <children>
+                                                                <VBox spacing="10.0" alignment="TOP_CENTER" styleClass="feedback-testimonial-card">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatar1" fitWidth="112.0" fitHeight="112.0" preserveRatio="false"/>
+                                                                        <Label fx:id="stars1" text="★★★★★" styleClass="feedback-stars"/>
+                                                                        <Label fx:id="opinion1" text="Opinion" wrapText="true" styleClass="feedback-quote"/>
+                                                                        <Label fx:id="name1" text="Name" styleClass="feedback-name"/>
+                                                                        <Label fx:id="role1" text="Role" styleClass="feedback-role"/>
+                                                                    </children>
+                                                                </VBox>
+
+                                                                <VBox spacing="10.0" alignment="TOP_CENTER" styleClass="feedback-testimonial-card feedback-testimonial-card-featured">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatar2" fitWidth="112.0" fitHeight="112.0" preserveRatio="false"/>
+                                                                        <Label fx:id="stars2" text="★★★★★" styleClass="feedback-stars"/>
+                                                                        <Label fx:id="opinion2" text="Opinion" wrapText="true" styleClass="feedback-quote"/>
+                                                                        <Label fx:id="name2" text="Name" styleClass="feedback-name"/>
+                                                                        <Label fx:id="role2" text="Role" styleClass="feedback-role"/>
+                                                                    </children>
+                                                                </VBox>
+
+                                                                <VBox spacing="10.0" alignment="TOP_CENTER" styleClass="feedback-testimonial-card">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatar3" fitWidth="112.0" fitHeight="112.0" preserveRatio="false"/>
+                                                                        <Label fx:id="stars3" text="★★★★★" styleClass="feedback-stars"/>
+                                                                        <Label fx:id="opinion3" text="Opinion" wrapText="true" styleClass="feedback-quote"/>
+                                                                        <Label fx:id="name3" text="Name" styleClass="feedback-name"/>
+                                                                        <Label fx:id="role3" text="Role" styleClass="feedback-role"/>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </HBox>
+
+                                                        <HBox spacing="24.0" alignment="TOP_CENTER" styleClass="feedbacks-testimonials-row">
+                                                            <children>
+                                                                <VBox spacing="10.0" alignment="TOP_CENTER" styleClass="feedback-testimonial-card">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatar4" fitWidth="112.0" fitHeight="112.0" preserveRatio="false"/>
+                                                                        <Label fx:id="stars4" text="★★★★★" styleClass="feedback-stars"/>
+                                                                        <Label fx:id="opinion4" text="Opinion" wrapText="true" styleClass="feedback-quote"/>
+                                                                        <Label fx:id="name4" text="Name" styleClass="feedback-name"/>
+                                                                        <Label fx:id="role4" text="Role" styleClass="feedback-role"/>
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox spacing="10.0" alignment="TOP_CENTER" styleClass="feedback-testimonial-card">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatar5" fitWidth="112.0" fitHeight="112.0" preserveRatio="false"/>
+                                                                        <Label fx:id="stars5" text="★★★★★" styleClass="feedback-stars"/>
+                                                                        <Label fx:id="opinion5" text="Opinion" wrapText="true" styleClass="feedback-quote"/>
+                                                                        <Label fx:id="name5" text="Name" styleClass="feedback-name"/>
+                                                                        <Label fx:id="role5" text="Role" styleClass="feedback-role"/>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </StackPane>
+                            </content>
+                        </ScrollPane>
+                    </center>
+                </BorderPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

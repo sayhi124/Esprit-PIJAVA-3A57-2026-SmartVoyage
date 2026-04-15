@@ -66,6 +66,10 @@ public class UserService implements CRUD<User, Integer> {
             """;
 
     public User signUp(String username, String email, String rawPassword) throws SQLException {
+        return signUp(username, email, rawPassword, UserRole.USER);
+    }
+
+    public User signUp(String username, String email, String rawPassword, UserRole registerAs) throws SQLException {
         validateSignUp(username, email, rawPassword);
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
         if (findByEmail(normalizedEmail).isPresent()) {
@@ -76,8 +80,14 @@ public class UserService implements CRUD<User, Integer> {
         user.setUsername(username.trim());
         user.setEmail(normalizedEmail);
         user.setPassword(PasswordHasher.hash(rawPassword));
-        user.setRoles(List.of(UserRole.USER.getValue()));
-        user.setRole(UserRole.USER.getValue());
+        UserRole safeRole = registerAs != null ? registerAs : UserRole.USER;
+        if (safeRole == UserRole.AGENCY_ADMIN) {
+            user.setRoles(List.of(UserRole.USER.getValue(), UserRole.AGENCY_ADMIN.getValue()));
+            user.setRole(UserRole.AGENCY_ADMIN.getValue());
+        } else {
+            user.setRoles(List.of(UserRole.USER.getValue()));
+            user.setRole(UserRole.USER.getValue());
+        }
         user.setIsActive(true);
         insert(user);
         user.setPassword(null);
