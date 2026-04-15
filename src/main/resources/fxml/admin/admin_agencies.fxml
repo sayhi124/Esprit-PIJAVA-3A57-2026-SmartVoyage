@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Admin demandes d'agence + liste agences (integration admin/agency_apps). -->
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionagences.AdminAgenciesController"
+            prefHeight="720.0"
+            prefWidth="1200.0"
+            styleClass="admin-root">
+   <top>
+      <VBox spacing="0.0">
+         <children>
+            <fx:include fx:id="loggedHeader" source="../components/app_logged_header.fxml" />
+         </children>
+      </VBox>
+   </top>
+   <left>
+      <VBox alignment="TOP_LEFT"
+            maxHeight="Infinity"
+            minWidth="220.0"
+            prefWidth="220.0"
+            spacing="12.0"
+            styleClass="admin-sidebar"
+            BorderPane.alignment="TOP_LEFT">
+         <padding>
+            <Insets bottom="20.0" left="16.0" right="16.0" top="20.0" />
+         </padding>
+         <children>
+            <Label styleClass="admin-sidebar-brand" text="SmartVoyage" />
+            <Label styleClass="admin-sidebar-sub" text="Backoffice" />
+            <Region prefHeight="16.0" />
+            <Button mnemonicParsing="false" onAction="#onNavAgencies" styleClass="admin-nav-item" text="Agences (site)" />
+            <Button disable="true" mnemonicParsing="false" styleClass="admin-nav-item admin-nav-item-active" text="Demandes d'agence" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#onLogout" styleClass="admin-logout-btn" text="Déconnexion" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <ScrollPane fitToWidth="true" styleClass="admin-scroll">
+         <content>
+            <VBox spacing="20.0" styleClass="admin-main">
+               <padding>
+                  <Insets bottom="40.0" left="28.0" right="28.0" top="24.0" />
+               </padding>
+               <children>
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label styleClass="admin-page-title" text="Demandes d'agence" />
+                        <Label styleClass="admin-page-sub" text="Approuver ou rejeter les demandes des utilisateurs qui souhaitent devenir agences." wrapText="true" />
+                     </children>
+                  </VBox>
+                  <Label styleClass="admin-section-title" text="Liste des demandes en attente" />
+                  <TableView fx:id="pendingTable" prefHeight="260.0" styleClass="admin-table" />
+                  <Label styleClass="admin-section-title" text="Toutes les agences" />
+                  <TableView fx:id="agenciesTable" prefHeight="280.0" styleClass="admin-table" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
