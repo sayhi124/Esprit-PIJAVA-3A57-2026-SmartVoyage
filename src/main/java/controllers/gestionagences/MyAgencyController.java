@@ -333,7 +333,7 @@ public class MyAgencyController {
     @FXML private void onAgences() { NavigationManager.getInstance().showSignedInAgencies(); }
     @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onEvenement() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onEvenement() { NavigationManager.getInstance().showSignedInEvents(); }
     @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onProfile() { NavigationManager.getInstance().showSignedInShell(); }

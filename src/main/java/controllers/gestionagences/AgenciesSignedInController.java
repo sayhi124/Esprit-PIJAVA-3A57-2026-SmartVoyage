@@ -307,7 +307,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onEvenement() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showSignedInEvents();
     }
 
     @FXML

@@ -165,6 +165,15 @@ public class NavigationManager {
         loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agences");
     }
 
+    public void showSignedInEvents() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/user/events_signed_in.fxml", "Smart Voyage - Evenements");
+    }
+
     public void showAgencyProposal() {
         if (!canAccessSignedInShell()) {
             clearSession();

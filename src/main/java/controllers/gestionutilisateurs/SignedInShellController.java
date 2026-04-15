@@ -67,7 +67,7 @@ public class SignedInShellController {
 
     @FXML
     private void onEvenement() {
-        showPlaceholder("Evenement", "Route Evenement signed-in will open here.");
+        NavigationManager.getInstance().showSignedInEvents();
     }
 
     @FXML
