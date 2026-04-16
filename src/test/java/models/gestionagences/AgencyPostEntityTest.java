@@ -1,63 +1,105 @@
 package models.gestionagences;
 
+import enums.gestionutilisateurs.UserRole;
+import models.gestionutilisateurs.User;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import services.gestionagences.AgencyAccountService;
+import services.gestionagences.AgencyPostService;
+import services.gestionutilisateurs.UserService;
+import utils.DbConnexion;
 
-import java.time.LocalDateTime;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AgencyPostEntityTest {
 
+    private static final UserService userService = new UserService();
+    private static final AgencyAccountService agencyService = new AgencyAccountService();
+    private static final AgencyPostService postService = new AgencyPostService();
+    private static final String seed = String.valueOf(System.currentTimeMillis());
+    private static Integer authorId;
+    private static Long agencyId;
+    private static Long postId;
+
     @Test
-    void agencyPostGettersAndSettersShouldWork() {
-        AgencyPost post = new AgencyPost();
-        LocalDateTime now = LocalDateTime.now();
-
-        post.setId(90L);
-        post.setAgencyId(12L);
-        post.setAuthorId(3);
-        post.setAuthorUsername("agency_admin");
-        post.setTitle("New Summer Offer");
-        post.setContent("Discover premium beach destinations.");
-        post.setCreatedAt(now);
-        post.setLikesCount(25);
-        post.setCommentsCount(7);
-        post.setLikedByViewer(true);
-
-        post.getImageAssetIds().add(1001L);
-        post.getImageAssetIds().add(1002L);
-
-        AgencyPostComment comment = new AgencyPostComment();
-        comment.setId(1L);
-        comment.setAgencyPostId(90L);
-        post.getComments().add(comment);
-
-        assertEquals(90L, post.getId());
-        assertEquals(12L, post.getAgencyId());
-        assertEquals(3, post.getAuthorId());
-        assertEquals("agency_admin", post.getAuthorUsername());
-        assertEquals("New Summer Offer", post.getTitle());
-        assertEquals("Discover premium beach destinations.", post.getContent());
-        assertEquals(now, post.getCreatedAt());
-        assertEquals(25, post.getLikesCount());
-        assertEquals(7, post.getCommentsCount());
-        assertTrue(post.isLikedByViewer());
-        assertEquals(2, post.getImageAssetIds().size());
-        assertEquals(1, post.getComments().size());
-        assertEquals(1001L, post.getImageAssetIds().get(0));
-        assertEquals(1L, post.getComments().get(0).getId());
+    @Order(1)
+    void ajouter() {
+        try {
+            User author = userService.signUp("post_user_" + seed, "post.user." + seed + "@smartvoyage.com", "Secret12345!", UserRole.AGENCY_ADMIN);
+            authorId = author.getId();
+            AgencyAccount agency = new AgencyAccount();
+            agency.setAgencyName("Post Agency " + seed);
+            agency.setDescription("Agency for posts test.");
+            agency.setWebsiteUrl("https://example.com");
+            agency.setCountry("TN");
+            agency.setResponsableId(authorId);
+            agencyService.insert(agency);
+            agencyId = agency.getId();
+            postId = postService.createPost(agencyId, authorId, "Post title " + seed, "Post content for integration test.");
+            assertTrue(postId != null && postId > 0);
+        } catch (SQLException | IllegalArgumentException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
     }
 
     @Test
-    void listFieldsShouldBeInitializedByDefault() {
-        AgencyPost post = new AgencyPost();
-        assertNotNull(post.getImageAssetIds());
-        assertNotNull(post.getComments());
-        assertTrue(post.getImageAssetIds().isEmpty());
-        assertTrue(post.getComments().isEmpty());
-        assertFalse(post.isLikedByViewer());
+    @Order(2)
+    void afficher() {
+        try {
+            List<AgencyPost> posts = postService.listByAgency(agencyId, authorId);
+            boolean found = posts.stream().anyMatch(p -> p.getId().equals(postId));
+            assertTrue(found);
+        } catch (SQLException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    @Order(3)
+    void modifier() {
+        try {
+            Connection c = DbConnexion.getInstance().getConnection();
+            try (PreparedStatement ps = c.prepareStatement("UPDATE agency_post SET title = ? WHERE id = ?")) {
+                ps.setString(1, "Post title updated " + seed);
+                ps.setLong(2, postId);
+                ps.executeUpdate();
+            }
+            List<AgencyPost> posts = postService.listByAgency(agencyId, authorId);
+            boolean foundUpdated = posts.stream().anyMatch(p -> p.getId().equals(postId) && p.getTitle().contains("updated"));
+            assertTrue(foundUpdated);
+        } catch (SQLException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    @Order(4)
+    void supprimer() {
+        try {
+            Connection c = DbConnexion.getInstance().getConnection();
+            try (PreparedStatement ps = c.prepareStatement("UPDATE agency_post SET is_deleted = 1 WHERE id = ?")) {
+                ps.setLong(1, postId);
+                ps.executeUpdate();
+            }
+            agencyService.delete(agencyId);
+            userService.delete(authorId);
+            List<AgencyPost> posts = postService.listByAgency(agencyId, authorId);
+            boolean found = posts.stream().anyMatch(p -> p.getId().equals(postId));
+            assertTrue(!found);
+        } catch (SQLException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
     }
 }

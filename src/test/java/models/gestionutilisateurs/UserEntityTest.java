@@ -1,72 +1,81 @@
 package models.gestionutilisateurs;
 
+import enums.gestionutilisateurs.UserRole;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import services.gestionutilisateurs.UserService;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserEntityTest {
 
+    private static final UserService service = new UserService();
+    private static Integer id;
+    private static final String seed = String.valueOf(System.currentTimeMillis());
+    private static String email = "user.entity." + seed + "@smartvoyage.com";
+    private static String username = "user_entity_" + seed;
+
     @Test
-    void userGettersAndSettersShouldWork() {
-        User user = new User();
-        LocalDateTime now = LocalDateTime.now();
-
-        user.setId(7);
-        user.setUsername("ahmed");
-        user.setEmail("ahmed@smartvoyage.com");
-        user.setPassword("hashed-password");
-        user.setProfilePicture("avatar.png");
-        user.setProfileImageId(42L);
-        user.setRoles(List.of("ROLE_USER", "ROLE_ADMIN"));
-        user.setRole("ROLE_ADMIN");
-        user.setIsActive(true);
-        user.setFaceVerified(true);
-        user.setFaceVerifiedAt(now);
-        user.setEmailVerified(true);
-        user.setPhone("+21612345678");
-        user.setResetToken("token-123");
-        user.setResetTokenExpiresAt(now.plusHours(1));
-        user.setPoints(150);
-
-        assertEquals(7, user.getId());
-        assertEquals("ahmed", user.getUsername());
-        assertEquals("ahmed@smartvoyage.com", user.getEmail());
-        assertEquals("hashed-password", user.getPassword());
-        assertEquals("avatar.png", user.getProfilePicture());
-        assertEquals(42L, user.getProfileImageId());
-        assertEquals(List.of("ROLE_USER", "ROLE_ADMIN"), user.getRoles());
-        assertEquals("ROLE_ADMIN", user.getRole());
-        assertTrue(user.getIsActive());
-        assertTrue(user.getFaceVerified());
-        assertEquals(now, user.getFaceVerifiedAt());
-        assertTrue(user.getEmailVerified());
-        assertEquals("+21612345678", user.getPhone());
-        assertEquals("token-123", user.getResetToken());
-        assertEquals(now.plusHours(1), user.getResetTokenExpiresAt());
-        assertEquals(150, user.getPoints());
+    @Order(1)
+    void ajouter() {
+        try {
+            User created = service.signUp(username, email, "Secret12345!", UserRole.USER);
+            id = created.getId();
+            assertTrue(id != null && id > 0);
+        } catch (SQLException | IllegalArgumentException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
     }
 
     @Test
-    void setRolesNullShouldFallbackToEmptyList() {
-        User user = new User();
-        user.setRoles(null);
-
-        assertTrue(user.getRoles().isEmpty());
-        assertFalse(user.getRoles() == null);
+    @Order(2)
+    void afficher() {
+        try {
+            Optional<User> loaded = service.get(id);
+            assertTrue(loaded.isPresent() && loaded.get().getEmail().equals(email));
+        } catch (SQLException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
     }
 
     @Test
-    void defaultOptionalFieldsShouldBeNull() {
-        User user = new User();
-        assertNull(user.getId());
-        assertNull(user.getUsername());
-        assertNull(user.getEmail());
-        assertNull(user.getProfileImageId());
+    @Order(3)
+    void modifier() {
+        try {
+            Optional<User> loaded = service.get(id);
+            User u = loaded.orElseThrow();
+            email = "user.entity.updated." + seed + "@smartvoyage.com";
+            username = "user_entity_upd_" + seed;
+            u.setEmail(email);
+            u.setUsername(username);
+            service.update(u);
+            Optional<User> refreshed = service.get(id);
+            assertTrue(refreshed.isPresent()
+                    && refreshed.get().getEmail().equals(email)
+                    && refreshed.get().getUsername().equals(username));
+        } catch (Exception error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    @Order(4)
+    void supprimer() {
+        try {
+            service.delete(id);
+            assertTrue(service.get(id).isEmpty());
+        } catch (SQLException error) {
+            System.err.println(error);
+            assertTrue(false);
+        }
     }
 }
