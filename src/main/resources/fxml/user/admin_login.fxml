@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.AdminLoginController"
+            fx:id="authRoot"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-home"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button onAction="#onBack" styleClass="theme-immersive-button" accessibleText="Back">
+                                    <graphic>
+                                        <Region>
+                                            <styleClass>
+                                                <String fx:value="sidebar-nav-icon"/>
+                                                <String fx:value="icon-back"/>
+                                            </styleClass>
+                                        </Region>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="authMediaStack" styleClass="offers-immersive-stack">
+            <children>
+                <ImageView fx:id="authBackgroundImage" pickOnBounds="true" preserveRatio="false" styleClass="hero-bg-image"/>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+                <Region styleClass="auth-page-overlay"/>
+                <BorderPane pickOnBounds="false" styleClass="hero-foreground-pane">
+                    <padding>
+                        <Insets top="28.0" right="34.0" bottom="28.0" left="34.0"/>
+                    </padding>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="top-mini-bar">
+                            <children>
+                                <Label text="✦ SmartVoyage" styleClass="offers-mini-logo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                            </children>
+                        </HBox>
+                    </top>
+                    <center>
+                        <StackPane alignment="CENTER" styleClass="auth-center-container">
+                            <BorderPane.margin>
+                                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                            </BorderPane.margin>
+                            <children>
+                                <HBox alignment="CENTER" spacing="0.0" styleClass="auth-content-card">
+                                    <!-- Left Panel - Admin Image -->
+                                    <StackPane styleClass="admin-image-panel" HBox.hgrow="NEVER" maxWidth="500.0" minWidth="400.0">
+                                        <children>
+                                            <ImageView fx:id="adminImageView" pickOnBounds="true" preserveRatio="true" styleClass="admin-side-image"/>
+                                        </children>
+                                    </StackPane>
+                                    <!-- Right Panel - Login Form -->
+                                    <StackPane styleClass="admin-form-container" HBox.hgrow="NEVER" minWidth="420.0" maxWidth="420.0">
+                                        <children>
+                                            <VBox spacing="18.0" styleClass="auth-form-panel" StackPane.alignment="CENTER" maxWidth="380.0">
+                                                <padding>
+                                                    <Insets top="40.0" right="35.0" bottom="40.0" left="35.0"/>
+                                                </padding>
+                                                <children>
+                                                    <!-- Header -->
+                                                    <VBox spacing="8.0" alignment="CENTER">
+                                                        <children>
+                                                            <Label text="🔐" styleClass="admin-login-icon"/>
+                                                            <Label text="ADMIN LOGIN" styleClass="auth-form-title"/>
+                                                            <Label text="Enter your admin credentials to continue." wrapText="true" styleClass="auth-form-subtitle" alignment="CENTER"/>
+                                                        </children>
+                                                    </VBox>
+                                                    <Separator styleClass="auth-separator"/>
+                                                    <!-- Form Fields -->
+                                                    <VBox spacing="10.0">
+                                                        <children>
+                                                            <Label text="Username" styleClass="auth-field-label"/>
+                                                            <TextField fx:id="usernameField" promptText="Enter admin username" styleClass="auth-input"/>
+                                                        </children>
+                                                    </VBox>
+                                                    <VBox spacing="10.0">
+                                                        <children>
+                                                            <Label text="Password" styleClass="auth-field-label"/>
+                                                            <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="auth-password-row">
+                                                                <children>
+                                                                    <StackPane HBox.hgrow="ALWAYS">
+                                                                        <children>
+                                                                            <PasswordField fx:id="passwordField" promptText="Enter admin password" styleClass="auth-input"/>
+                                                                            <TextField fx:id="passwordVisibleField" promptText="Enter admin password" visible="false" managed="false" styleClass="auth-input"/>
+                                                                        </children>
+                                                                    </StackPane>
+                                                                    <Button fx:id="togglePasswordButton" text="👁" onAction="#onTogglePassword" styleClass="auth-password-toggle"/>
+                                                                </children>
+                                                            </HBox>
+                                                        </children>
+                                                    </VBox>
+                                                    <Button text="Sign in" onAction="#onLogin" maxWidth="1.7976931348623157E308" styleClass="auth-submit-button"/>
+                                                    <Label fx:id="messageLabel" styleClass="auth-message" alignment="CENTER"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </StackPane>
+                                </HBox>
+                            </children>
+                        </StackPane>
+                    </center>
+                </BorderPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

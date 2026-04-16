@@ -627,7 +627,7 @@ public class EventsSignedInController {
     @FXML private void onOffres() { NavigationManager.getInstance().showPostLoginHome(); }
     @FXML private void onAgences() { NavigationManager.getInstance().showSignedInAgencies(); }
     @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInPosts(); }
     @FXML private void onEvenement() { /* already on page */ }
     @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInShell(); }

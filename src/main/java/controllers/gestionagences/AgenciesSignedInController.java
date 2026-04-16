@@ -302,7 +302,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onRecommandation() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showSignedInPosts();
     }
 
     @FXML
