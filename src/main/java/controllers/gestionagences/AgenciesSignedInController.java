@@ -1,5 +1,6 @@
 package controllers.gestionagences;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,35 +10,46 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.application.Platform;
+import javafx.util.Duration;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import models.gestionagences.AgencyAccount;
 import models.gestionagences.ImageAsset;
+import services.geo.CountryCatalog;
 import services.gestionagences.AgencyAccountService;
 import utils.NavigationManager;
 
+import java.awt.Desktop;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AgenciesSignedInController {
+
+    private static final double AGENCY_CARD_WIDTH = 416;
+    private static final double AGENCY_IMG_HEIGHT = 256;
+
+    /** First entry in the country ChoiceBox; must match REST-backed labels in {@link #applyCountryCatalog}. */
+    private static final String LABEL_ALL_COUNTRIES = "Tous les pays";
+
+    private PauseTransition searchDebounce;
 
     @FXML
     private TextField searchField;
     @FXML
     private ChoiceBox<String> countryFilter;
-    @FXML
-    private ChoiceBox<String> verifiedFilter;
     @FXML
     private TilePane agenciesGrid;
     @FXML
@@ -49,6 +61,7 @@ public class AgenciesSignedInController {
 
     private final AgencyAccountService agencyService = new AgencyAccountService();
     private final List<AgencyAccount> allAgencies = new ArrayList<>();
+    private final List<CountryCatalog.CountryRow> countryRows = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -64,20 +77,57 @@ public class AgenciesSignedInController {
         roleInfoLabel.setText(agencyAdmin ? "Agence Admin mode" : "User mode");
 
         setupFilters();
+        bindSearchDebounce();
         loadAgencies();
+        bindResponsiveAgencyGrid();
         applyFilters();
     }
 
+    /**
+     * Debounces text search so the grid updates shortly after typing stops (Symfony-like dynamic filters).
+     */
+    private void bindSearchDebounce() {
+        searchDebounce = new PauseTransition(Duration.millis(280));
+        searchDebounce.setOnFinished(e -> applyFilters());
+        searchField.textProperty().addListener((obs, prev, cur) -> {
+            searchDebounce.stop();
+            searchDebounce.playFromStart();
+        });
+    }
+
+    private void bindResponsiveAgencyGrid() {
+        if (agenciesGrid == null) {
+            return;
+        }
+        Runnable updateColumns = () -> {
+            double w = agenciesGrid.getWidth();
+            if (w <= 1 && agenciesGrid.getScene() != null) {
+                w = agenciesGrid.getScene().getWidth() - 320;
+            }
+            double gap = 28;
+            double card = AGENCY_CARD_WIDTH;
+            if (w < card + gap) {
+                agenciesGrid.setPrefColumns(1);
+                return;
+            }
+            int cols = (int) Math.floor((w + gap) / (card + gap));
+            cols = Math.max(1, Math.min(4, cols));
+            agenciesGrid.setPrefColumns(cols);
+        };
+        agenciesGrid.sceneProperty().addListener((obs, oldSc, newSc) -> {
+            if (newSc != null) {
+                newSc.widthProperty().addListener((o, a, b) -> updateColumns.run());
+                updateColumns.run();
+            }
+        });
+        agenciesGrid.widthProperty().addListener((o, a, b) -> updateColumns.run());
+        Platform.runLater(updateColumns);
+    }
+
     private void setupFilters() {
-        countryFilter.getItems().setAll("All countries");
-        countryFilter.setValue("All countries");
-
-        verifiedFilter.getItems().setAll("All", "Verified", "Not verified");
-        verifiedFilter.setValue("All");
-
-        searchField.textProperty().addListener((obs, oldV, newV) -> applyFilters());
+        countryFilter.getItems().setAll(LABEL_ALL_COUNTRIES);
+        countryFilter.setValue(LABEL_ALL_COUNTRIES);
         countryFilter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> applyFilters());
-        verifiedFilter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> applyFilters());
     }
 
     private void loadAgencies() {
@@ -92,39 +142,75 @@ public class AgenciesSignedInController {
         } catch (SQLException e) {
             allAgencies.addAll(buildMockAgencies());
         }
-        refreshCountryFilter();
+        startCountryCatalogLoad();
     }
 
-    private void refreshCountryFilter() {
-        String current = countryFilter.getValue();
-        Set<String> countries = allAgencies.stream()
-                .map(AgencyAccount::getCountry)
-                .filter(v -> v != null && !v.isBlank())
-                .map(v -> v.trim().toUpperCase(Locale.ROOT))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    private void startCountryCatalogLoad() {
+        Thread t = new Thread(() -> {
+            List<CountryCatalog.CountryRow> rows = CountryCatalog.fetchAllOrEmpty();
+            if (rows.isEmpty()) {
+                rows = new ArrayList<>(CountryCatalog.fallbackSample());
+            }
+            List<CountryCatalog.CountryRow> loaded = rows;
+            Platform.runLater(() -> applyCountryCatalog(loaded));
+        }, "agency-directory-countries");
+        t.setDaemon(true);
+        t.start();
+    }
 
-        List<String> sorted = countries.stream().sorted().collect(Collectors.toList());
+    private void applyCountryCatalog(List<CountryCatalog.CountryRow> rows) {
+        countryRows.clear();
+        countryRows.addAll(rows);
+        String current = countryFilter.getValue();
         List<String> items = new ArrayList<>();
-        items.add("All countries");
-        items.addAll(sorted);
+        items.add(LABEL_ALL_COUNTRIES);
+        for (CountryCatalog.CountryRow r : countryRows) {
+            items.add(r.choiceLabel());
+        }
         countryFilter.getItems().setAll(items);
-        countryFilter.setValue(items.contains(current) ? current : "All countries");
+        countryFilter.setValue(items.contains(current) ? current : LABEL_ALL_COUNTRIES);
+        applyFilters();
+    }
+
+    private String selectedCountryIso2() {
+        String v = countryFilter.getValue();
+        if (v == null || LABEL_ALL_COUNTRIES.equals(v)) {
+            return null;
+        }
+        for (CountryCatalog.CountryRow r : countryRows) {
+            if (r.choiceLabel().equals(v)) {
+                return r.cca2();
+            }
+        }
+        if (v.length() == 2 && v.chars().allMatch(Character::isLetter)) {
+            return v.toUpperCase(Locale.ROOT);
+        }
+        return null;
     }
 
     private void applyFilters() {
         String query = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
-        String country = countryFilter.getValue();
-        String verified = verifiedFilter.getValue();
+        Comparator<AgencyAccount> byName = Comparator.comparing(
+                a -> safe(a.getAgencyName()), String.CASE_INSENSITIVE_ORDER);
 
         List<AgencyAccount> filtered = allAgencies.stream()
                 .filter(a -> matchesQuery(a, query))
-                .filter(a -> matchesCountry(a, country))
-                .filter(a -> matchesVerified(a, verified))
-                .sorted(Comparator.comparing(a -> safe(a.getAgencyName())))
+                .filter(this::matchesCountry)
+                .sorted(byName)
                 .collect(Collectors.toList());
 
         renderGrid(filtered);
-        resultCountLabel.setText(filtered.size() + " agencies found");
+        resultCountLabel.setText(formatAgencyResultCount(filtered.size()));
+    }
+
+    private static String formatAgencyResultCount(int n) {
+        if (n == 0) {
+            return "Aucune agence trouvée";
+        }
+        if (n == 1) {
+            return "1 agence trouvée";
+        }
+        return n + " agences trouvées";
     }
 
     private boolean matchesQuery(AgencyAccount agency, String query) {
@@ -137,20 +223,12 @@ public class AgenciesSignedInController {
                 || safe(agency.getCountry()).toLowerCase(Locale.ROOT).contains(query);
     }
 
-    private boolean matchesCountry(AgencyAccount agency, String selectedCountry) {
-        if (selectedCountry == null || "All countries".equals(selectedCountry)) {
+    private boolean matchesCountry(AgencyAccount agency) {
+        String iso = selectedCountryIso2();
+        if (iso == null) {
             return true;
         }
-        return selectedCountry.equalsIgnoreCase(safe(agency.getCountry()));
-    }
-
-    private boolean matchesVerified(AgencyAccount agency, String selectedStatus) {
-        if (selectedStatus == null || "All".equals(selectedStatus)) {
-            return true;
-        }
-        boolean verified = Boolean.TRUE.equals(agency.getVerified());
-        return ("Verified".equals(selectedStatus) && verified)
-                || ("Not verified".equals(selectedStatus) && !verified);
+        return iso.equalsIgnoreCase(safe(agency.getCountry()));
     }
 
     private void renderGrid(List<AgencyAccount> agencies) {
@@ -161,53 +239,101 @@ public class AgenciesSignedInController {
     }
 
     private VBox buildAgencyCard(AgencyAccount agency) {
-        VBox card = new VBox(10);
-        card.getStyleClass().add("offer-featured-card");
-        card.setPrefWidth(320);
-        card.setMinWidth(320);
-        card.setMaxWidth(320);
-        card.setPrefHeight(430);
-        card.setPadding(new Insets(0, 0, 14, 0));
+        VBox card = new VBox();
+        card.getStyleClass().add("agency-directory-card");
+        card.setPrefWidth(AGENCY_CARD_WIDTH);
+        card.setMinWidth(AGENCY_CARD_WIDTH);
+        card.setMaxWidth(AGENCY_CARD_WIDTH);
+        card.setFillWidth(true);
+
+        StackPane hero = new StackPane();
+        hero.getStyleClass().add("agency-directory-hero");
+        hero.setMinHeight(AGENCY_IMG_HEIGHT);
+        hero.setPrefHeight(AGENCY_IMG_HEIGHT);
+        hero.setMaxHeight(AGENCY_IMG_HEIGHT);
 
         ImageView cover = new ImageView(resolveAgencyImage(agency));
-        cover.getStyleClass().add("offer-featured-image");
+        cover.getStyleClass().add("agency-directory-hero-image");
         cover.setPreserveRatio(false);
-        cover.setFitWidth(320);
-        cover.setFitHeight(180);
+        cover.setFitWidth(AGENCY_CARD_WIDTH);
+        cover.setFitHeight(AGENCY_IMG_HEIGHT);
+        cover.setSmooth(true);
 
-        Label country = new Label(flagCountry(agency.getCountry()) + "  " + safe(agency.getCountry(), "N/A"));
-        country.getStyleClass().add("offer-featured-destination");
+        Region shade = new Region();
+        shade.setMouseTransparent(true);
+        shade.getStyleClass().add("agency-directory-hero-shade");
+
+        hero.getChildren().addAll(cover, shade);
+
+        Rectangle heroClip = new Rectangle();
+        heroClip.setArcWidth(26);
+        heroClip.setArcHeight(26);
+        heroClip.setWidth(AGENCY_CARD_WIDTH);
+        heroClip.setHeight(AGENCY_IMG_HEIGHT);
+        hero.setClip(heroClip);
+
+        VBox body = new VBox(10);
+        body.getStyleClass().add("agency-directory-body");
+        body.setPadding(new Insets(14, 18, 6, 18));
 
         Label title = new Label(safe(agency.getAgencyName(), "Agency"));
-        title.getStyleClass().add("offer-featured-title");
+        title.getStyleClass().add("agency-directory-title");
         title.setWrapText(true);
+        title.setMaxWidth(AGENCY_CARD_WIDTH - 36);
 
         Label desc = new Label(safe(agency.getDescription(), "No description yet."));
-        desc.getStyleClass().add("offer-featured-description");
+        desc.getStyleClass().add("agency-directory-desc");
         desc.setWrapText(true);
-        desc.setMaxHeight(78);
+        desc.setMaxHeight(120);
+        desc.setMinHeight(52);
 
-        Label verified = new Label(Boolean.TRUE.equals(agency.getVerified()) ? "Verified agency" : "Pending verification");
-        verified.getStyleClass().add(Boolean.TRUE.equals(agency.getVerified()) ? "offer-agency-name" : "offer-starts-label");
+        body.getChildren().addAll(title, desc);
 
-        Label contact = new Label("☎ " + safe(agency.getPhone(), "N/A") + "   •   🌐 " + safe(agency.getWebsiteUrl(), "N/A"));
-        contact.getStyleClass().add("offer-starts-label");
-        contact.setWrapText(true);
+        String addr = safe(agency.getAddress());
+        if (!addr.isBlank()) {
+            Label addressRow = new Label("\uD83D\uDCCD " + addr);
+            addressRow.getStyleClass().add("agency-directory-meta");
+            addressRow.setWrapText(true);
+            addressRow.setMaxWidth(AGENCY_CARD_WIDTH - 36);
+            body.getChildren().add(addressRow);
+        }
 
-        HBox footer = new HBox(8);
-        footer.setAlignment(Pos.CENTER_LEFT);
-        footer.getStyleClass().add("offer-footer-lock-panel");
-        Button details = new Button("Voir agence");
-        details.getStyleClass().add("offer-guest-button");
+        Label phoneRow = new Label("\u260E  " + safe(agency.getPhone(), "\u2014"));
+        phoneRow.getStyleClass().add("agency-directory-contact");
+        phoneRow.setWrapText(true);
+        phoneRow.setMaxWidth(AGENCY_CARD_WIDTH - 36);
+
+        String web = safe(agency.getWebsiteUrl());
+        Label webRow = new Label("\uD83C\uDF10  " + (web.isBlank() ? "\u2014" : abbreviateUrl(web)));
+        webRow.getStyleClass().add("agency-directory-contact");
+        webRow.setWrapText(true);
+        webRow.setMaxWidth(AGENCY_CARD_WIDTH - 36);
+
+        body.getChildren().addAll(phoneRow, webRow);
+
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_RIGHT);
+        footer.getStyleClass().add("agency-directory-footer");
+        footer.setPadding(new Insets(4, 18, 16, 18));
+        Button details = new Button("Voir l'agence \u2192");
+        details.getStyleClass().add("agency-directory-cta");
         details.setOnAction(e -> onAgencyDetails(agency));
         footer.getChildren().add(details);
 
-        VBox content = new VBox(7, country, title, desc, verified, contact);
-        content.getStyleClass().add("offer-featured-content");
-        VBox.setVgrow(content, Priority.ALWAYS);
-
-        card.getChildren().addAll(cover, content, footer);
+        card.getChildren().addAll(hero, body, footer);
+        VBox.setVgrow(body, Priority.ALWAYS);
         return card;
+    }
+
+    private static String abbreviateUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return "\u2014";
+        }
+        String u = url.replaceFirst("(?i)^https?://", "");
+        if (u.length() > 46) {
+            return u.substring(0, 43) + "\u2026";
+        }
+        return u;
     }
 
     private Image resolveAgencyImage(AgencyAccount agency) {
@@ -268,16 +394,15 @@ public class AgenciesSignedInController {
         return value == null || value.isBlank() ? fallback : value;
     }
 
-    private String flagCountry(String country) {
-        if (country == null || country.length() < 2) {
-            return "🌍";
+    @FXML
+    private void onViewOnMap() {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URI("https://www.openstreetmap.org/"));
+            }
+        } catch (Exception ignored) {
+            // No browser available; button remains a no-op.
         }
-        String c = country.substring(0, 2).toUpperCase(Locale.ROOT);
-        if ("FR".equals(c)) return "🇫🇷";
-        if ("AE".equals(c)) return "🇦🇪";
-        if ("MV".equals(c)) return "🇲🇻";
-        if ("NO".equals(c)) return "🇳🇴";
-        return "🌍";
     }
 
     @FXML

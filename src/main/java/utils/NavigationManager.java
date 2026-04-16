@@ -2,10 +2,12 @@ package utils;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import enums.gestionutilisateurs.UserRole;
 import models.gestionutilisateurs.User;
@@ -14,11 +16,14 @@ import services.gestionutilisateurs.UserService;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
 public class NavigationManager {
 
     private static NavigationManager instance;
@@ -31,6 +36,11 @@ public class NavigationManager {
     private Long selectedAgencyId;
     private Instant sessionIssuedAt;
     private static final java.time.Duration SESSION_TTL = java.time.Duration.ofDays(7);
+
+    private static volatile boolean controlsFxCssBridgeInstalled;
+
+    private static final Set<Window> controlsFxBridgedWindows =
+            Collections.newSetFromMap(new WeakHashMap<>());
 
     private NavigationManager() {
     }
@@ -47,6 +57,11 @@ public class NavigationManager {
         this.userService = userSvc;
         this.stage.setMinWidth(1100);
         this.stage.setMinHeight(700);
+        installControlsFxModenaBridge();
+        var bridgeResEarly = NavigationManager.class.getResource("/css/controlsfx-modena-bridge.css");
+        if (bridgeResEarly != null) {
+            hookWindowSceneForControlsFxBridge(primaryStage, bridgeResEarly.toExternalForm());
+        }
     }
 
     public UserService userService() {
@@ -202,6 +217,15 @@ public class NavigationManager {
         loadScene("/fxml/agency/my_agency.fxml", "Smart Voyage - Agency");
     }
 
+    public void showAgencyPostCreate() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/agency/agency_post_create.fxml", "Smart Voyage - Add Agency Post");
+    }
+
     public void showWelcome() {
         loadScene("/fxml/user/welcome.fxml", "Smart Voyage");
     }
@@ -240,10 +264,7 @@ public class NavigationManager {
         applyThemeClass(root);
         if (sharedScene == null) {
             sharedScene = new Scene(root);
-            var css = NavigationManager.class.getResource("/css/styles.css");
-            if (css != null) {
-                sharedScene.getStylesheets().add(css.toExternalForm());
-            }
+            attachAppStylesheets(sharedScene);
             stage.setScene(sharedScene);
         } else {
             sharedScene.setRoot(root);
@@ -259,6 +280,84 @@ public class NavigationManager {
                 }
             });
         }
+    }
+
+    private static void attachAppStylesheets(Scene scene) {
+        if (scene == null) {
+            return;
+        }
+        var css = NavigationManager.class.getResource("/css/styles.css");
+        if (css != null) {
+            String form = css.toExternalForm();
+            if (!scene.getStylesheets().contains(form)) {
+                scene.getStylesheets().add(form);
+            }
+        }
+        var bridge = NavigationManager.class.getResource("/css/controlsfx-modena-bridge.css");
+        if (bridge != null) {
+            String b = bridge.toExternalForm();
+            if (!scene.getStylesheets().contains(b)) {
+                scene.getStylesheets().add(0, b);
+            }
+        }
+    }
+
+    /**
+     * ControlsFX notifications use a separate popup {@link Scene}; it does not inherit {@code styles.css}.
+     * Define Modena paint names expected by {@code notificationpopup.css} so JavaFX 21 does not log Paint cast warnings.
+     */
+    private static void installControlsFxModenaBridge() {
+        if (controlsFxCssBridgeInstalled) {
+            return;
+        }
+        synchronized (NavigationManager.class) {
+            if (controlsFxCssBridgeInstalled) {
+                return;
+            }
+            var bridgeRes = NavigationManager.class.getResource("/css/controlsfx-modena-bridge.css");
+            if (bridgeRes == null) {
+                controlsFxCssBridgeInstalled = true;
+                return;
+            }
+            final String bridgeUrl = bridgeRes.toExternalForm();
+            for (Window w : Window.getWindows()) {
+                hookWindowSceneForControlsFxBridge(w, bridgeUrl);
+            }
+            Window.getWindows().addListener((ListChangeListener<Window>) c -> {
+                while (c.next()) {
+                    for (Window w : c.getAddedSubList()) {
+                        hookWindowSceneForControlsFxBridge(w, bridgeUrl);
+                    }
+                }
+            });
+            controlsFxCssBridgeInstalled = true;
+        }
+    }
+
+    private static void hookWindowSceneForControlsFxBridge(Window window, String bridgeUrl) {
+        if (window == null || bridgeUrl == null || bridgeUrl.isBlank()) {
+            return;
+        }
+        synchronized (NavigationManager.class) {
+            if (!controlsFxBridgedWindows.add(window)) {
+                return;
+            }
+        }
+        window.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                addControlsFxBridgeFirst(newScene, bridgeUrl);
+            }
+        });
+        if (window.getScene() != null) {
+            addControlsFxBridgeFirst(window.getScene(), bridgeUrl);
+        }
+    }
+
+    private static void addControlsFxBridgeFirst(Scene scene, String bridgeUrl) {
+        if (scene.getStylesheets().contains(bridgeUrl)) {
+            return;
+        }
+        scene.getStylesheets().add(0, bridgeUrl);
     }
 
     public void toggleTheme() {

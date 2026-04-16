@@ -13,9 +13,12 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -89,6 +92,14 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
             }
         }
         refreshTimestampsAfterWrite(entity);
+    }
+
+       /**
+     * Validates editable profile fields (name, description, website, phone, address, country).
+     * Does not require {@code id} or {@code responsableId}; use for form feedback before persisting.
+     */
+    public AgencyAccountValidationResult validateAgencyProfileFields(AgencyAccount e) {
+        return computeProfileValidation(e);
     }
 
     @Override
@@ -259,12 +270,100 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
     }
 
     private static void validateForWrite(AgencyAccount e) {
-        if (e.getAgencyName() == null || e.getAgencyName().isBlank()) {
-            throw new IllegalArgumentException("Le nom de l'agence est obligatoire.");
+        AgencyAccountValidationResult r = computeProfileValidation(e);
+        if (!r.isValid()) {
+            throw new IllegalArgumentException(String.join(" ", r.getFieldErrors().values()));
         }
-        if (e.getDescription() == null) {
-            throw new IllegalArgumentException("La description est obligatoire.");
+    }
+
+    private static final int MAX_AGENCY_NAME = 255;
+    private static final int MAX_DESCRIPTION = 65_000;
+    private static final int MAX_WEBSITE_URL = 500;
+    private static final int MAX_PHONE = 50;
+    private static final int MAX_ADDRESS = 500;
+
+    private static AgencyAccountValidationResult computeProfileValidation(AgencyAccount e) {
+        Map<String, String> err = new LinkedHashMap<>();
+        String name = e.getAgencyName() != null ? e.getAgencyName().trim() : "";
+        if (name.isEmpty()) {
+            err.put(AgencyAccountValidationResult.FIELD_AGENCY_NAME, "Agency name is required.");
+        } else if (name.length() > MAX_AGENCY_NAME) {
+            err.put(AgencyAccountValidationResult.FIELD_AGENCY_NAME,
+                    "Agency name must be at most " + MAX_AGENCY_NAME + " characters.");
         }
+
+        String description = e.getDescription() != null ? e.getDescription().trim() : "";
+        if (description.isEmpty()) {
+            err.put(AgencyAccountValidationResult.FIELD_DESCRIPTION, "Description is required.");
+        } else if (description.length() > MAX_DESCRIPTION) {
+            err.put(AgencyAccountValidationResult.FIELD_DESCRIPTION,
+                    "Description must be at most " + MAX_DESCRIPTION + " characters.");
+        }
+
+        String website = e.getWebsiteUrl() != null ? e.getWebsiteUrl().trim() : "";
+        if (!website.isEmpty()) {
+            if (website.length() > MAX_WEBSITE_URL) {
+                err.put(AgencyAccountValidationResult.FIELD_WEBSITE_URL,
+                        "Website URL must be at most " + MAX_WEBSITE_URL + " characters.");
+            } else if (!isValidHttpUrl(website)) {
+                err.put(AgencyAccountValidationResult.FIELD_WEBSITE_URL,
+                        "Website must be a valid http(s) URL (e.g. https://example.com or www.example.com).");
+            }
+        }
+
+        String phone = e.getPhone() != null ? e.getPhone().trim() : "";
+        if (!phone.isEmpty()) {
+            if (phone.length() > MAX_PHONE) {
+                err.put(AgencyAccountValidationResult.FIELD_PHONE,
+                        "Phone must be at most " + MAX_PHONE + " characters.");
+            } else if (!isValidPhone(phone)) {
+                err.put(AgencyAccountValidationResult.FIELD_PHONE,
+                        "Phone must contain 8–15 digits and only use digits, spaces, and + ( ) - .");
+            }
+        }
+
+        String address = e.getAddress() != null ? e.getAddress().trim() : "";
+        if (!address.isEmpty() && address.length() > MAX_ADDRESS) {
+            err.put(AgencyAccountValidationResult.FIELD_ADDRESS,
+                    "Address must be at most " + MAX_ADDRESS + " characters.");
+        }
+
+        String country = e.getCountry() != null ? e.getCountry().trim() : "";
+        if (!country.isEmpty()) {
+            if (!country.matches("(?i)[a-z]{2}")) {
+                err.put(AgencyAccountValidationResult.FIELD_COUNTRY,
+                        "Country must be a 2-letter ISO code (e.g. TN, FR).");
+            }
+        }
+
+        return AgencyAccountValidationResult.of(err);
+    }
+
+    /**
+     * Accepts absolute URLs or host-like input; normalizes by adding https:// when no scheme is present.
+     */
+    private static boolean isValidHttpUrl(String raw) {
+        String s = raw.trim();
+        String withScheme = s.matches("(?i)^https?://.*") ? s : "https://" + s;
+        try {
+            URI uri = URI.create(withScheme);
+            String scheme = uri.getScheme();
+            if (scheme == null || (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))) {
+                return false;
+            }
+            String host = uri.getHost();
+            return host != null && !host.isBlank();
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    private static boolean isValidPhone(String raw) {
+        if (!raw.matches("[0-9+()\\-\\s.]+")) {
+            return false;
+        }
+        long digits = raw.chars().filter(Character::isDigit).count();
+        return digits >= 8 && digits <= 15;
     }
 
     private void bindForInsert(AgencyAccount e, PreparedStatement ps) throws SQLException {
