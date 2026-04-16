@@ -29,6 +29,7 @@ public class NavigationManager {
     private UserService userService;
     private User sessionUser;
     private Long selectedAgencyId;
+    private models.gestionposts.Post selectedPost;
     private Instant sessionIssuedAt;
     private static final java.time.Duration SESSION_TTL = java.time.Duration.ofDays(7);
 
@@ -174,6 +175,33 @@ public class NavigationManager {
         loadScene("/fxml/user/events_signed_in.fxml", "Smart Voyage - Evenements");
     }
 
+    public void showSignedInPosts() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/posts/posts_view.fxml", "Smart Voyage - Recommandations");
+    }
+
+    public void showPostDetail(models.gestionposts.Post post) {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        this.selectedPost = post;
+        loadScene("/fxml/posts/post_detail.fxml", "Smart Voyage - Détail du Post");
+    }
+
+    public models.gestionposts.Post getSelectedPost() {
+        return selectedPost;
+    }
+
+    public void clearSelectedPost() {
+        this.selectedPost = null;
+    }
+
     public void showAgencyProposal() {
         if (!canAccessSignedInShell()) {
             clearSession();
@@ -226,6 +254,21 @@ public class NavigationManager {
         loadScene("/fxml/user/register.fxml", "Inscription");
     }
 
+    public void showAdminLogin() {
+        System.out.println("DEBUG: showAdminLogin called");
+        try {
+            loadScene("/fxml/user/admin_login.fxml", "Admin Login");
+            System.out.println("DEBUG: Admin login scene loaded successfully");
+        } catch (Exception e) {
+            System.err.println("ERROR loading admin login: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void showAdminDashboard() {
+        loadScene("/fxml/user/admin_dashboard.fxml", "Admin Dashboard");
+    }
+
     private void loadScene(String resource, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(NavigationManager.class.getResource(resource)));
@@ -243,6 +286,10 @@ public class NavigationManager {
             var css = NavigationManager.class.getResource("/css/styles.css");
             if (css != null) {
                 sharedScene.getStylesheets().add(css.toExternalForm());
+            }
+            var postsCss = NavigationManager.class.getResource("/css/posts_styles.css");
+            if (postsCss != null) {
+                sharedScene.getStylesheets().add(postsCss.toExternalForm());
             }
             stage.setScene(sharedScene);
         } else {
