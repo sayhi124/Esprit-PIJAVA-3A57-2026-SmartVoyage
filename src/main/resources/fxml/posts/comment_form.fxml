@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.gestionposts.CommentFormController"
+      styleClass="comment-form-root"
+      spacing="15"
+      prefWidth="500" prefHeight="350">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label fx:id="titleLabel" text="Modifier le commentaire" styleClass="comment-form-title"/>
+
+    <!-- Error Label -->
+    <Label fx:id="errorLabel" managed="false" visible="false" wrapText="true" styleClass="comment-form-error"/>
+
+    <!-- Content Area -->
+    <VBox spacing="5" VBox.vgrow="ALWAYS">
+        <Label text="Votre commentaire *" styleClass="comment-form-label"/>
+        <TextArea fx:id="contentArea" promptText="Écrivez votre commentaire ici... (min 5 caractères, max 1000)" wrapText="true" VBox.vgrow="ALWAYS" styleClass="comment-form-textarea"/>
+        <HBox alignment="CENTER_RIGHT">
+            <Label fx:id="counterLabel" text="0/1000" styleClass="comment-form-counter"/>
+        </HBox>
+    </VBox>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <children>
+            <Button text="Annuler" onAction="#onCancel" styleClass="comment-form-cancel-btn"/>
+            <Button text="Enregistrer" onAction="#onSave" styleClass="comment-form-save-btn"/>
+        </children>
+    </HBox>
+</VBox>

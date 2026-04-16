@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import enums.gestionutilisateurs.UserRole;
+import models.gestionposts.Post;
 import models.gestionutilisateurs.User;
 import services.gestionutilisateurs.UserService;
 
@@ -33,6 +34,7 @@ public class NavigationManager {
     private boolean lightTheme;
     private UserService userService;
     private User sessionUser;
+    private Post selectedPost;
     private Long selectedAgencyId;
     private Instant sessionIssuedAt;
     private static final java.time.Duration SESSION_TTL = java.time.Duration.ofDays(7);
@@ -154,6 +156,18 @@ public class NavigationManager {
         this.selectedAgencyId = agencyId;
     }
 
+    public Optional<Post> selectedPost() {
+        return Optional.ofNullable(selectedPost);
+    }
+
+    public Post getSelectedPost() {
+        return selectedPost;
+    }
+
+    public void setSelectedPost(Post post) {
+        this.selectedPost = post;
+    }
+
     public void showPostLoginHome() {
         if (!canAccessSignedInShell()) {
             clearSession();
@@ -273,12 +287,35 @@ public class NavigationManager {
         loadScene("/fxml/user/register.fxml", "Sign up");
     }
 
+    public void showAdminLogin() {
+        loadScene("/fxml/user/admin_login.fxml", "Admin Sign in");
+    }
+
     public void showAdminDashboard() {
         if (!canAccessAdminFeatures()) {
             showPostLoginHome();
             return;
         }
         loadScene("/fxml/user/admin_dashboard.fxml", "Smart Voyage - Admin Dashboard");
+    }
+
+    public void showSignedInPosts() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/posts/posts_view.fxml", "Smart Voyage - Posts");
+    }
+
+    public void showPostDetail(Post post) {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        this.selectedPost = post;
+        loadScene("/fxml/posts/post_detail.fxml", "Smart Voyage - Post Detail");
     }
 
     private void loadScene(String resource, String title) {

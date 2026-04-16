@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+import enums.gestionutilisateurs.UserRole;
 import models.gestionutilisateurs.User;
 import utils.NavigationManager;
 import utils.PasswordHasher;
@@ -166,6 +167,11 @@ public class LoginController {
                 messageLabel.setText("No account found with this email.");
                 return;
             }
+            if (isPlatformAdminAccount(existing.get())) {
+                messageLabel.getStyleClass().add("message-error");
+                messageLabel.setText("Admin accounts must sign in from the Admin button.");
+                return;
+            }
             if (!PasswordHasher.matches(password, existing.get().getPassword())) {
                 messageLabel.getStyleClass().add("message-error");
                 messageLabel.setText("Incorrect password.");
@@ -257,5 +263,32 @@ public class LoginController {
             return passwordVisibleField.getText();
         }
         return passwordField != null ? passwordField.getText() : "";
+    }
+
+    private boolean isPlatformAdminAccount(User user) {
+        if (user == null) {
+            return false;
+        }
+        String primary = normalizeRoleToken(user.getRole());
+        if (UserRole.ADMIN.getValue().equals(primary)) {
+            return true;
+        }
+        if (user.getRoles() == null) {
+            return false;
+        }
+        for (String role : user.getRoles()) {
+            if (UserRole.ADMIN.getValue().equals(normalizeRoleToken(role))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String normalizeRoleToken(String rawRole) {
+        if (rawRole == null || rawRole.isBlank()) {
+            return "";
+        }
+        String normalized = rawRole.trim().toUpperCase(Locale.ROOT);
+        return normalized.startsWith("ROLE_") ? normalized : "ROLE_" + normalized;
     }
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.gestionposts.PostFormController"
+      styleClass="post-form-root"
+      prefWidth="550.0"
+      spacing="16.0">
+
+    <padding>
+        <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
+    </padding>
+
+    <children>
+        <!-- Title -->
+        <Label fx:id="formTitleLabel" text="Nouveau Post" styleClass="post-form-title"/>
+
+        <!-- Error Messages -->
+        <Label fx:id="errorLabel" managed="false" visible="false" wrapText="true" styleClass="post-form-error"/>
+
+        <!-- Form Fields in ScrollPane -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="post-form-scroll">
+            <content>
+                <VBox spacing="16.0">
+                    <padding>
+                        <Insets top="8.0" right="8.0" bottom="8.0" left="8.0"/>
+                    </padding>
+
+                    <children>
+                        <!-- Titre Field -->
+                        <VBox spacing="4.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Titre *" styleClass="post-form-label"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="titreCounter" text="0/100" styleClass="post-form-counter"/>
+                                    </children>
+                                </HBox>
+                                <TextField fx:id="titreField" promptText="Entrez le titre (10-100 caractères)" styleClass="post-form-input"/>
+                                <Label text="Le titre doit contenir entre 10 et 100 caractères" styleClass="post-form-hint"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Location Field -->
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label text="Pays / Localisation *" styleClass="post-form-label"/>
+                                <ComboBox fx:id="locationComboBox" promptText="Sélectionnez un pays" editable="true" styleClass="post-form-combo"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Image Field -->
+                        <VBox spacing="8" styleClass="post-form-section">
+                            <children>
+                                <Label text="Media" styleClass="post-form-label"/>
+                                <HBox spacing="8" alignment="CENTER_LEFT" styleClass="post-media-row">
+                                    <children>
+                                        <StackPane styleClass="post-form-preview-shell">
+                                            <children>
+                                                <ImageView fx:id="imagePreview" fitWidth="60" fitHeight="60" preserveRatio="false" smooth="true"/>
+                                            </children>
+                                        </StackPane>
+                                        <TextField fx:id="imageUrlField" promptText="Local path or URL" HBox.hgrow="ALWAYS" styleClass="post-form-input"/>
+                                        <Button text="Browse" onAction="#onBrowseImage" styleClass="post-form-browse-btn"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Contenu Field -->
+                        <VBox spacing="4.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Contenu *" styleClass="post-form-label"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="contenuCounter" text="0/5000" styleClass="post-form-counter"/>
+                                    </children>
+                                </HBox>
+                                <TextArea fx:id="contenuArea"
+                                          promptText="Décrivez votre expérience de voyage (min 50 caractères)"
+                                          wrapText="true"
+                                          prefRowCount="8"
+                                          styleClass="post-form-textarea"/>
+                                <Label text="Le contenu doit contenir entre 50 et 5000 caractères" styleClass="post-form-hint"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- Buttons -->
+        <HBox spacing="12.0" alignment="CENTER_RIGHT">
+            <children>
+                <Button fx:id="cancelButton" text="Annuler" onAction="#onCancel" styleClass="post-form-cancel-btn"/>
+                <Button fx:id="saveButton" text="Enregistrer" onAction="#onSave" styleClass="post-form-save-btn"/>
+            </children>
+        </HBox>
+    </children>
+</VBox>

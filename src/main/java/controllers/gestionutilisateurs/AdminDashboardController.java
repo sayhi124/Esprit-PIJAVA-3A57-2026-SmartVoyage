@@ -118,6 +118,10 @@ public class AdminDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if (!NavigationManager.getInstance().canAccessAdminFeatures()) {
+            NavigationManager.getInstance().showAdminLogin();
+            return;
+        }
         initializeStats();
         initializeChart();
         initializeTable();

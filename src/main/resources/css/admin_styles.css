@@ -6,3 +6,101 @@
 .sidebar-nav-icon.icon-back {
     -fx-shape: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z";
 }
+
+.admin-auth-root .sidebar-logo,
+.admin-dashboard-root .sidebar-logo {
+    -fx-text-fill: linear-gradient(to right, #fbbf24 0%, #f59e0b 35%, #f8fafc 100%);
+    -fx-effect: dropshadow(gaussian, rgba(251, 191, 36, 0.35), 14, 0.24, 0, 1);
+}
+
+.admin-auth-root .offers-mini-logo {
+    -fx-text-fill: linear-gradient(to right, #fbbf24 0%, #f59e0b 35%, #f8fafc 100%);
+}
+
+.admin-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #020617, #000000 28%, #020617 100%);
+}
+
+.admin-sidebar .sidebar-nav-item.sidebar-nav-item-active {
+    -fx-background-color: rgba(34, 211, 238, 0.12);
+    -fx-text-fill: #67e8f9;
+    -fx-border-color: transparent transparent transparent rgba(34, 211, 238, 0.85);
+}
+
+.admin-sidebar .sidebar-nav-item.sidebar-nav-item-active .sidebar-nav-icon {
+    -fx-background-color: #67e8f9;
+}
+
+.admin-auth-root .auth-form-panel {
+    -fx-background-color: linear-gradient(to bottom, #0f172a 0%, #111827 100%);
+    -fx-background-radius: 0 30 30 0;
+}
+
+.admin-auth-root .auth-form-title,
+.admin-auth-root .auth-field-label {
+    -fx-text-fill: #f8fafc;
+}
+
+.admin-auth-root .auth-form-subtitle {
+    -fx-text-fill: rgba(203, 213, 225, 0.9);
+}
+
+.admin-auth-root .auth-input {
+    -fx-background-color: rgba(15, 23, 42, 0.92);
+    -fx-control-inner-background: rgba(15, 23, 42, 0.92);
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: rgba(148, 163, 184, 0.85);
+    -fx-border-color: rgba(71, 85, 105, 0.95);
+}
+
+.admin-auth-root .auth-input:focused {
+    -fx-border-color: rgba(34, 211, 238, 0.85);
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.24), 12, 0.2, 0, 0);
+}
+
+.admin-auth-root .auth-submit-button {
+    -fx-background-color: linear-gradient(to right, #0ea5e9, #22d3ee);
+    -fx-text-fill: #082f49;
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.44), 18, 0.28, 0, 4);
+}
+
+.admin-auth-root .auth-submit-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.6), 22, 0.3, 0, 5);
+}
+
+.admin-auth-root .auth-password-toggle {
+    -fx-background-color: rgba(15, 23, 42, 0.95);
+    -fx-text-fill: #cbd5e1;
+    -fx-border-color: rgba(71, 85, 105, 0.9);
+}
+
+.admin-auth-root .auth-password-toggle:hover {
+    -fx-background-color: rgba(30, 41, 59, 0.95);
+    -fx-border-color: rgba(34, 211, 238, 0.7);
+    -fx-text-fill: #67e8f9;
+}
+
+.admin-auth-root .admin-image-panel {
+    -fx-background-image: url("../images/admin/admin.jpg");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(16, 8, 32, 0.12), rgba(16, 8, 32, 0.42), rgba(11, 6, 24, 0.62)),
+        linear-gradient(to bottom right, rgba(38, 19, 69, 0.38), rgba(26, 14, 49, 0.24));
+    -fx-background-radius: 30 0 0 30;
+}
+
+.admin-auth-root .auth-content-split-wrap {
+    -fx-max-width: 980;
+    -fx-background-color: rgba(5, 10, 20, 0.42);
+    -fx-border-color: rgba(56, 189, 248, 0.26);
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+}
+
+.admin-auth-root .admin-form-container {
+    -fx-min-width: 408;
+    -fx-pref-width: 408;
+    -fx-max-width: 408;
+}

@@ -19,11 +19,11 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.gestionutilisateurs.AdminDashboardController"
-            styleClass="immersive-root"
+            styleClass="immersive-root admin-dashboard-root"
             stylesheets="@../../css/styles.css, @../../css/admin_styles.css, @../../css/admin_dashboard.css">
 
     <left>
-        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive admin-sidebar">
             <padding>
                 <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
             </padding>
@@ -46,17 +46,6 @@
                             <styleClass>
                                 <String fx:value="sidebar-nav-icon"/>
                                 <String fx:value="icon-admin"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-
-                <Button text="Home" onAction="#onBackToHome" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-home"/>
                             </styleClass>
                         </Region>
                     </graphic>

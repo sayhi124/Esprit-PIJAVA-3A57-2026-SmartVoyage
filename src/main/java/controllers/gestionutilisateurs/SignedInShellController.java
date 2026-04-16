@@ -64,7 +64,7 @@ public class SignedInShellController {
 
     @FXML
     private void onRecommandation() {
-        showPlaceholder("Recommandation", "Route Recommandation signed-in will open here.");
+        NavigationManager.getInstance().showSignedInPosts();
     }
 
     @FXML

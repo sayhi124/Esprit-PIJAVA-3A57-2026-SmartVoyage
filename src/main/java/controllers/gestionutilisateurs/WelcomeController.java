@@ -177,6 +177,18 @@ public class WelcomeController {
     }
 
     @FXML
+    private void onAdmin() {
+        try {
+            System.out.println("DEBUG: Admin button clicked");
+            NavigationManager.getInstance().showAdminLogin();
+            System.out.println("DEBUG: showAdminLogin called successfully");
+        } catch (Exception e) {
+            System.err.println("ERROR in onAdmin: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void onGetStarted() {
         NavigationManager.getInstance().showRegister();
     }
