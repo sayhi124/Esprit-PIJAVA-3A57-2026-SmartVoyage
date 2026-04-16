@@ -31,19 +31,19 @@
                 <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-home"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+                <Button text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-offers"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Agences" onAction="#onAgences" styleClass="sidebar-nav-item">
+                <Button text="Agencies" onAction="#onAgences" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-agencies"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
+                <Button text="Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-messages"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item">
+                <Button text="Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-recommend"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Evenement" onAction="#onEvenement">
+                <Button text="Events" onAction="#onEvenement">
                     <styleClass><String fx:value="sidebar-nav-item"/><String fx:value="sidebar-nav-item-active"/></styleClass>
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-events"/></styleClass></Region></graphic>
                 </Button>
@@ -57,7 +57,7 @@
                 <Button text="Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-notifications"/></styleClass></Region></graphic>
                 </Button>
-                <Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
+                <Button fx:id="profileSidebarButton" text="My Profile" onAction="#onProfile" styleClass="sidebar-nav-item">
                     <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-profile"/></styleClass></Region></graphic>
                 </Button>
                 <Button text="Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item">
@@ -94,7 +94,7 @@
                                 <VBox spacing="4.0">
                                     <children>
                                         <Label fx:id="userGreetingLabel" text="Bienvenue" styleClass="events-title"/>
-                                        <Label fx:id="roleLabel" text="Utilisateur" styleClass="events-subtitle"/>
+                                        <Label fx:id="roleLabel" text="User" styleClass="events-subtitle"/>
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS"/>
@@ -145,7 +145,7 @@
 
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0" maxWidth="820.0" styleClass="events-form-actions-row">
                                             <children>
-                                                <Button text="Annuler" onAction="#onInlineCancel" styleClass="event-form-cancel-btn"/>
+                                                <Button text="Cancel" onAction="#onInlineCancel" styleClass="event-form-cancel-btn"/>
                                                 <Button fx:id="formSubmitButton" text="Save" onAction="#onInlineSubmit" styleClass="event-form-ok-btn"/>
                                             </children>
                                         </HBox>

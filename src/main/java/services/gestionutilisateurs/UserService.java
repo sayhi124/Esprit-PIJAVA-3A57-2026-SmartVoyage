@@ -18,15 +18,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class UserService implements CRUD<User, Integer> {
 
     private static final Pattern EMAIL_SIMPLE = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+    private static final Pattern USERNAME_ALLOWED = Pattern.compile("^[a-zA-Z0-9_.-]{3,30}$");
+    private static final Pattern PHONE_ALLOWED = Pattern.compile("^[0-9+()\\-\\s.]{8,25}$");
+    private static final long MAX_PROFILE_IMAGE_BYTES = 5L * 1024L * 1024L;
     private static final ObjectMapper JSON = new ObjectMapper();
 
     private final ImageAssetService imageAssetService;
@@ -40,24 +45,29 @@ public class UserService implements CRUD<User, Integer> {
     }
 
     private static final String SELECT_BY_EMAIL = """
-            SELECT id, username, email, password, roles, role, is_active, profile_image_id
+            SELECT id, username, email, password, roles, role, is_active, profile_image_id, phone
             FROM `user` WHERE LOWER(email) = LOWER(?)
             """;
 
+    private static final String SELECT_BY_USERNAME = """
+            SELECT id, username, email, password, roles, role, is_active, profile_image_id, phone
+            FROM `user` WHERE LOWER(username) = LOWER(?)
+            """;
+
     private static final String SELECT_BY_ID = """
-            SELECT id, username, email, password, roles, role, is_active, profile_image_id
+            SELECT id, username, email, password, roles, role, is_active, profile_image_id, phone
             FROM `user` WHERE id = ?
             """;
 
     private static final String INSERT_USER = """
             INSERT INTO `user` (
-                username, email, password, roles, role, is_active, profile_image_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                username, email, password, roles, role, is_active, profile_image_id, phone
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     private static final String UPDATE_USER = """
             UPDATE `user` SET
-                username = ?, email = ?, password = ?, roles = ?, role = ?, is_active = ?, profile_image_id = ?
+                username = ?, email = ?, password = ?, roles = ?, role = ?, is_active = ?, profile_image_id = ?, phone = ?
             WHERE id = ?
             """;
 
@@ -73,7 +83,10 @@ public class UserService implements CRUD<User, Integer> {
         validateSignUp(username, email, rawPassword);
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
         if (findByEmail(normalizedEmail).isPresent()) {
-            throw new IllegalArgumentException("Cet email est deja utilise.");
+            throw new IllegalArgumentException("This email is already in use.");
+        }
+        if (findByUsername(username.trim()).isPresent()) {
+            throw new IllegalArgumentException("This username is already in use.");
         }
 
         User user = new User();
@@ -112,16 +125,19 @@ public class UserService implements CRUD<User, Integer> {
 
     private static void validateSignUp(String username, String email, String rawPassword) {
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Le nom d'utilisateur est obligatoire.");
+            throw new IllegalArgumentException("Username is required.");
+        }
+        if (!USERNAME_ALLOWED.matcher(username.trim()).matches()) {
+            throw new IllegalArgumentException("Username must be 3-30 characters (letters, numbers, _ . -).");
         }
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("L'email est obligatoire.");
+            throw new IllegalArgumentException("Email is required.");
         }
         if (!EMAIL_SIMPLE.matcher(email.trim()).matches()) {
-            throw new IllegalArgumentException("L'email n'est pas valide.");
+            throw new IllegalArgumentException("Email is not valid.");
         }
         if (rawPassword == null || rawPassword.length() < 8) {
-            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 8 caracteres.");
+            throw new IllegalArgumentException("Password must contain at least 8 characters.");
         }
     }
 
@@ -147,12 +163,12 @@ public class UserService implements CRUD<User, Integer> {
     @Override
     public void update(User entity) throws SQLException {
         if (entity.getId() == null) {
-            throw new IllegalArgumentException("id obligatoire pour update");
+            throw new IllegalArgumentException("id is required for update");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(UPDATE_USER)) {
             fillStatementWithoutId(entity, ps);
-            ps.setInt(8, entity.getId());
+            ps.setInt(9, entity.getId());
             ps.executeUpdate();
         }
     }
@@ -160,7 +176,7 @@ public class UserService implements CRUD<User, Integer> {
     @Override
     public void delete(Integer id) throws SQLException {
         if (id == null) {
-            throw new IllegalArgumentException("id obligatoire pour delete");
+            throw new IllegalArgumentException("id is required for delete");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(DELETE_USER)) {
@@ -171,7 +187,7 @@ public class UserService implements CRUD<User, Integer> {
 
     public Optional<User> get(Integer id) throws SQLException {
         if (id == null) {
-            throw new IllegalArgumentException("id obligatoire pour get");
+            throw new IllegalArgumentException("id is required for get");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(SELECT_BY_ID)) {
@@ -198,14 +214,91 @@ public class UserService implements CRUD<User, Integer> {
         return Optional.empty();
     }
 
+    public Optional<User> findByUsername(String username) throws SQLException {
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(SELECT_BY_USERNAME)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRow(rs));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public UserProfileValidationResult validateProfileUpdate(Integer userId, String username, String email, String phone) throws SQLException {
+        Map<String, String> errors = new LinkedHashMap<>();
+        String userTrim = username == null ? "" : username.trim();
+        String emailTrim = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        String phoneTrim = phone == null ? "" : phone.trim();
+
+        if (userId == null) {
+            errors.put(UserProfileValidationResult.FIELD_USERNAME, "Session user not found.");
+            return UserProfileValidationResult.of(errors);
+        }
+        if (userTrim.isEmpty()) {
+            errors.put(UserProfileValidationResult.FIELD_USERNAME, "Username is required.");
+        } else if (!USERNAME_ALLOWED.matcher(userTrim).matches()) {
+            errors.put(UserProfileValidationResult.FIELD_USERNAME, "Username must be 3-30 characters (letters, numbers, _ . -).");
+        } else {
+            Optional<User> existing = findByUsername(userTrim);
+            if (existing.isPresent() && !userId.equals(existing.get().getId())) {
+                errors.put(UserProfileValidationResult.FIELD_USERNAME, "This username is already in use.");
+            }
+        }
+
+        if (emailTrim.isEmpty()) {
+            errors.put(UserProfileValidationResult.FIELD_EMAIL, "Email is required.");
+        } else if (!EMAIL_SIMPLE.matcher(emailTrim).matches()) {
+            errors.put(UserProfileValidationResult.FIELD_EMAIL, "Email is not valid.");
+        } else {
+            Optional<User> existing = findByEmail(emailTrim);
+            if (existing.isPresent() && !userId.equals(existing.get().getId())) {
+                errors.put(UserProfileValidationResult.FIELD_EMAIL, "This email is already in use.");
+            }
+        }
+
+        if (!phoneTrim.isEmpty()) {
+            if (!PHONE_ALLOWED.matcher(phoneTrim).matches()) {
+                errors.put(UserProfileValidationResult.FIELD_PHONE, "Invalid phone number (8-25 characters: digits, spaces, + ( ) - .).");
+            } else {
+                long digits = phoneTrim.chars().filter(Character::isDigit).count();
+                if (digits < 8 || digits > 15) {
+                    errors.put(UserProfileValidationResult.FIELD_PHONE, "Phone must contain between 8 and 15 digits.");
+                }
+            }
+        }
+        return UserProfileValidationResult.of(errors);
+    }
+
+    public User updateProfile(Integer userId, String username, String email, String phone) throws SQLException {
+        if (userId == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+        UserProfileValidationResult validation = validateProfileUpdate(userId, username, email, phone);
+        if (!validation.isValid()) {
+            throw new IllegalArgumentException(String.join(" ", validation.getFieldErrors().values()));
+        }
+        User current = get(userId).orElseThrow(() -> new IllegalArgumentException("User not found."));
+        current.setUsername(username.trim());
+        current.setEmail(email.trim().toLowerCase(Locale.ROOT));
+        String phoneTrim = phone == null ? "" : phone.trim();
+        current.setPhone(phoneTrim.isEmpty() ? null : phoneTrim);
+        update(current);
+        User refreshed = get(userId).orElse(current);
+        refreshed.setPassword(null);
+        return refreshed;
+    }
+
     /**
      * Ajoute {@link UserRole#AGENCY_ADMIN} aux roles JSON du compte (apres approbation demande agence).
      */
     public void addAgencyAdminRole(Integer userId) throws SQLException {
         if (userId == null) {
-            throw new IllegalArgumentException("userId obligatoire.");
+            throw new IllegalArgumentException("userId is required.");
         }
-        User u = get(userId).orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable."));
+        User u = get(userId).orElseThrow(() -> new IllegalArgumentException("User not found."));
         LinkedHashSet<String> merged = new LinkedHashSet<>(u.getRoles() != null ? u.getRoles() : List.of());
         merged.add(UserRole.AGENCY_ADMIN.getValue());
         u.setRoles(new ArrayList<>(merged));
@@ -217,9 +310,10 @@ public class UserService implements CRUD<User, Integer> {
      */
     public void replaceProfileImage(Integer userId, byte[] imageBytes, String mimeType) throws SQLException {
         if (userId == null) {
-            throw new IllegalArgumentException("userId obligatoire.");
+            throw new IllegalArgumentException("userId is required.");
         }
-        User u = get(userId).orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable."));
+        validateProfileImageUpload(imageBytes, mimeType);
+        User u = get(userId).orElseThrow(() -> new IllegalArgumentException("User not found."));
         ImageAsset asset = new ImageAsset();
         asset.setMimeType(mimeType);
         asset.setData(imageBytes);
@@ -229,6 +323,19 @@ public class UserService implements CRUD<User, Integer> {
         update(u);
         if (previous != null && !previous.equals(asset.getId())) {
             imageAssetService.delete(previous);
+        }
+    }
+
+    private static void validateProfileImageUpload(byte[] imageBytes, String mimeType) {
+        if (imageBytes == null || imageBytes.length == 0) {
+            throw new IllegalArgumentException("Empty image.");
+        }
+        if (imageBytes.length > MAX_PROFILE_IMAGE_BYTES) {
+            throw new IllegalArgumentException("Image is too large (max 5 MB).");
+        }
+        String mime = mimeType == null ? "" : mimeType.trim().toLowerCase(Locale.ROOT);
+        if (!(mime.equals("image/png") || mime.equals("image/jpeg") || mime.equals("image/webp"))) {
+            throw new IllegalArgumentException("Unsupported image format (PNG, JPEG, WEBP).");
         }
     }
 
@@ -250,6 +357,7 @@ public class UserService implements CRUD<User, Integer> {
         nullableString(ps, i++, entity.getRole());
         nullableBoolean(ps, i++, entity.getIsActive());
         nullableLong(ps, i++, entity.getProfileImageId());
+        nullableString(ps, i++, entity.getPhone());
     }
 
     private User mapRow(ResultSet rs) throws SQLException {
@@ -263,6 +371,10 @@ public class UserService implements CRUD<User, Integer> {
         user.setIsActive(readNullableBoolean(rs, "is_active"));
         long profileImg = rs.getLong("profile_image_id");
         user.setProfileImageId(rs.wasNull() ? null : profileImg);
+        user.setPhone(rs.getString("phone"));
+        if (rs.wasNull()) {
+            user.setPhone(null);
+        }
         return user;
     }
 
@@ -270,7 +382,7 @@ public class UserService implements CRUD<User, Integer> {
         try {
             return JSON.writeValueAsString(roles != null ? roles : List.of());
         } catch (JsonProcessingException e) {
-            throw new SQLException("Serialisation roles JSON impossible", e);
+            throw new SQLException("Unable to serialize roles JSON", e);
         }
     }
 

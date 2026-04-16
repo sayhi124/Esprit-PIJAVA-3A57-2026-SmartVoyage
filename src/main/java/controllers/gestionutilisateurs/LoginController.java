@@ -17,12 +17,16 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import models.gestionutilisateurs.User;
 import utils.NavigationManager;
+import utils.PasswordHasher;
 
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class LoginController {
     private static final String HERO_IMAGE = "/images/welcome/hero-aerial-lagoon.jpg";
+    private static final Pattern EMAIL_SIMPLE = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     @FXML
     private BorderPane authRoot;
@@ -130,23 +134,57 @@ public class LoginController {
     private void onLogin() {
         messageLabel.getStyleClass().removeAll("message-error", "message-success");
         messageLabel.setText("");
+        String email = emailField == null ? "" : emailField.getText().trim();
+        String password = getPasswordInput() == null ? "" : getPasswordInput().trim();
+
+        if (email.isEmpty() && password.isEmpty()) {
+            messageLabel.getStyleClass().add("message-error");
+            messageLabel.setText("Email and password are required.");
+            return;
+        }
+        if (email.isEmpty()) {
+            messageLabel.getStyleClass().add("message-error");
+            messageLabel.setText("Email is required.");
+            return;
+        }
+        if (!EMAIL_SIMPLE.matcher(email).matches()) {
+            messageLabel.getStyleClass().add("message-error");
+            messageLabel.setText("Invalid email format.");
+            return;
+        }
+        if (password.isEmpty()) {
+            messageLabel.getStyleClass().add("message-error");
+            messageLabel.setText("Password is required.");
+            return;
+        }
+
         try {
-            Optional<User> user = NavigationManager.getInstance().userService().login(
-                    emailField.getText(),
-                    getPasswordInput()
-            );
+            var userService = NavigationManager.getInstance().userService();
+            Optional<User> existing = userService.findByEmail(email.toLowerCase(Locale.ROOT));
+            if (existing.isEmpty()) {
+                messageLabel.getStyleClass().add("message-error");
+                messageLabel.setText("No account found with this email.");
+                return;
+            }
+            if (!PasswordHasher.matches(password, existing.get().getPassword())) {
+                messageLabel.getStyleClass().add("message-error");
+                messageLabel.setText("Incorrect password.");
+                return;
+            }
+
+            Optional<User> user = userService.login(email, password);
             if (user.isPresent()) {
                 NavigationManager.getInstance().setSessionUser(user.get());
                 messageLabel.getStyleClass().add("message-success");
-                messageLabel.setText("Connexion reussie.");
+                messageLabel.setText("Sign-in successful.");
                 NavigationManager.getInstance().showPostLoginHome();
             } else {
                 messageLabel.getStyleClass().add("message-error");
-                messageLabel.setText("Email ou mot de passe incorrect.");
+                messageLabel.setText("Sign-in failed. Please verify your credentials.");
             }
         } catch (SQLException e) {
             messageLabel.getStyleClass().add("message-error");
-            messageLabel.setText("Erreur base de donnees : " + e.getMessage());
+            messageLabel.setText("Database error: " + e.getMessage());
         }
     }
 

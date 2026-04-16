@@ -25,27 +25,27 @@
                 <VBox spacing="4.0">
                     <children>
                         <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
-                        <Label text="Mon agence" styleClass="sidebar-subtitle"/>
+                        <Label text="My agency" styleClass="sidebar-subtitle"/>
                     </children>
                 </VBox>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
-                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
-                <Button text="📍  Agences" onAction="#onAgences">
+                <Button text="🧳  Offers" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agencies" onAction="#onAgences">
                     <styleClass>
                         <String fx:value="sidebar-nav-item"/>
                         <String fx:value="sidebar-nav-item-active"/>
                     </styleClass>
                 </Button>
-                <Button text="✉  Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
-                <Button text="⭐  Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
-                <Button text="📅  Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button text="✉  Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Events" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
                 <Button text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
                 <Region VBox.vgrow="ALWAYS"/>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
                 <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
-                <Button text="👤  Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item"/>
+                <Button text="👤  My Profile" onAction="#onProfile" styleClass="sidebar-nav-item"/>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">

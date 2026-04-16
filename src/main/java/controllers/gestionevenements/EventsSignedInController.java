@@ -78,6 +78,8 @@ public class EventsSignedInController {
     private Label formStatusLabel;
     @FXML
     private Button formSubmitButton;
+    @FXML
+    private Button profileSidebarButton;
 
     private final TravelEventService eventService = new TravelEventService();
     private final EventParticipationService participationService = new EventParticipationService();
@@ -104,7 +106,7 @@ public class EventsSignedInController {
                     ? currentUser.getUsername()
                     : currentUser.getEmail();
             userGreetingLabel.setText("Welcome, " + displayName);
-            roleLabel.setText(nav.canAccessAgencyAdminFeatures() ? "Agency admin" : "Utilisateur");
+            roleLabel.setText(nav.canAccessAgencyAdminFeatures() ? "Agency admin" : "User");
         }
 
         reloadEvents();
@@ -361,7 +363,7 @@ public class EventsSignedInController {
         }
         try {
             boolean isParticipating = participationService.isParticipating(eventId, userId);
-            button.setText(isParticipating ? "Annuler" : "Participer");
+            button.setText(isParticipating ? "Cancel" : "Join");
         } catch (SQLException ignored) {
             button.setText("Participer");
         }
@@ -623,16 +625,16 @@ public class EventsSignedInController {
         showStatus(target, title + ": " + message, true);
     }
 
-    @FXML private void onHome() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onHome() { NavigationManager.getInstance().showPostLoginHome(); }
     @FXML private void onOffres() { NavigationManager.getInstance().showPostLoginHome(); }
     @FXML private void onAgences() { NavigationManager.getInstance().showSignedInAgencies(); }
-    @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onMessagerie() { NavigationManager.getInstance().showPostLoginHome(); }
+    @FXML private void onRecommandation() { NavigationManager.getInstance().showPostLoginHome(); }
     @FXML private void onEvenement() { /* already on page */ }
-    @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onProfile() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onDashboardIa() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onPremium() { NavigationManager.getInstance().showPostLoginHome(); }
+    @FXML private void onNotifications() { NavigationManager.getInstance().showPostLoginHome(); }
+    @FXML private void onProfile() { NavigationManager.getInstance().showUserProfile(); }
+    @FXML private void onDashboardIa() { NavigationManager.getInstance().showPostLoginHome(); }
     @FXML private void onThemeToggle() { NavigationManager.getInstance().toggleTheme(); }
     @FXML private void onLogout() { NavigationManager.getInstance().logoutToGuest(); }
 }

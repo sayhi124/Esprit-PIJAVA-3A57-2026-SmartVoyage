@@ -195,7 +195,7 @@ public class AgencyPostCreateController {
     @FXML private void onEvenement() { NavigationManager.getInstance().showSignedInEvents(); }
     @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onProfile() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onProfile() { NavigationManager.getInstance().showUserProfile(); }
     @FXML private void onDashboardIa() { NavigationManager.getInstance().showSignedInShell(); }
 
     private void configureDragAndDrop() {

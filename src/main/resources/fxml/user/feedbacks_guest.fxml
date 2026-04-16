@@ -40,7 +40,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+                <Button text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -85,7 +85,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item">
+                <Button text="Sign in" onAction="#onSignIn" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -95,7 +95,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item">
+                <Button text="Sign up" onAction="#onSignUp" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -150,7 +150,7 @@
                                                    HBox.hgrow="ALWAYS" styleClass="offers-search-input"/>
                                     </children>
                                 </HBox>
-                                <Button text="Connexion" onAction="#onSignIn" styleClass="offers-top-login-button"/>
+                                <Button text="Sign in" onAction="#onSignIn" styleClass="offers-top-login-button"/>
                             </children>
                         </HBox>
                     </top>
@@ -162,7 +162,7 @@
                                     <children>
                                         <VBox alignment="TOP_LEFT" maxWidth="1300.0" prefWidth="1300.0" spacing="14.0" styleClass="offers-showcase-wrapper">
                                             <children>
-                                                <VBox spacing="10.0" alignment="TOP_CENTER" maxWidth="1300.0" prefWidth="1300.0" styleClass="offers-page-content">
+                                                <VBox spacing="10.0" alignment="TOP_CENTER" maxWidth="1300.0" prefWidth="1300.0" styleClass="offers-page-content feedbacks-page-content">
                                                     <children>
                                                         <Label text="What People Are Saying" styleClass="feedbacks-title"/>
                                                         <Label text="Real experiences from travelers and partners who trust SmartVoyage."

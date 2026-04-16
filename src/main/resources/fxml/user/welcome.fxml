@@ -43,7 +43,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+                <Button text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -84,7 +84,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item">
+                <Button text="Sign in" onAction="#onSignIn" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -94,7 +94,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item">
+                <Button text="Sign up" onAction="#onSignUp" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>

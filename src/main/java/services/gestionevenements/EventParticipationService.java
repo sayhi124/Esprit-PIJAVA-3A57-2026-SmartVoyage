@@ -203,13 +203,13 @@ public class EventParticipationService implements CRUD<EventParticipation, Long>
 
     private void validate(EventParticipation e, boolean insert) {
         if (e == null) {
-            throw new IllegalArgumentException("participation obligatoire");
+            throw new IllegalArgumentException("participation is required");
         }
         if (!insert && e.getId() == null) {
-            throw new IllegalArgumentException("id obligatoire pour update");
+            throw new IllegalArgumentException("id is required for update");
         }
         if (insert && (e.getEventId() == null || e.getUserId() == null)) {
-            throw new IllegalArgumentException("event_id et user_id obligatoires");
+            throw new IllegalArgumentException("event_id and user_id are required");
         }
     }
 

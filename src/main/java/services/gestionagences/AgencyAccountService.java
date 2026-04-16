@@ -3,6 +3,7 @@ package services.gestionagences;
 import models.gestionagences.AgencyAccount;
 import models.gestionagences.ImageAsset;
 import services.CRUD;
+import services.geo.CountryCatalog;
 import utils.DbConnexion;
 
 import java.sql.Connection;
@@ -102,10 +103,28 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
         return computeProfileValidation(e);
     }
 
+    /**
+     * If {@code country} is unset, sets ISO-3166-1 alpha-2 from {@code address} so the DB column is filled
+     * (same resolution as directory flags: e.g. {@code "Tunis, Tunisia"} → {@code TN}).
+     */
+    public void applyResolvedCountryIfMissing(AgencyAccount e) {
+        if (e == null) {
+            return;
+        }
+        String c = e.getCountry();
+        if (c != null && !c.trim().isEmpty()) {
+            return;
+        }
+        String iso = CountryCatalog.resolveIso2(null, e.getAddress());
+        if (iso != null) {
+            e.setCountry(iso);
+        }
+    }
+
     @Override
     public void update(AgencyAccount entity) throws SQLException {
         if (entity.getId() == null) {
-            throw new IllegalArgumentException("id obligatoire pour update");
+            throw new IllegalArgumentException("id is required for update");
         }
         validateForWrite(entity);
         Connection c = DbConnexion.getInstance().getConnection();
@@ -120,7 +139,7 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
     @Override
     public void delete(Long id) throws SQLException {
         if (id == null) {
-            throw new IllegalArgumentException("id obligatoire pour delete");
+            throw new IllegalArgumentException("id is required for delete");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(DELETE)) {
@@ -131,7 +150,7 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
 
     public Optional<AgencyAccount> get(Long id) throws SQLException {
         if (id == null) {
-            throw new IllegalArgumentException("id obligatoire pour get");
+            throw new IllegalArgumentException("id is required for get");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(SELECT_BY_ID)) {
@@ -227,9 +246,9 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
 
     private void replaceAgencyImageField(Long agencyAccountId, byte[] imageBytes, String mimeType, boolean cover) throws SQLException {
         if (agencyAccountId == null) {
-            throw new IllegalArgumentException("agencyAccountId obligatoire.");
+            throw new IllegalArgumentException("agencyAccountId is required.");
         }
-        AgencyAccount a = get(agencyAccountId).orElseThrow(() -> new IllegalArgumentException("Agence introuvable."));
+        AgencyAccount a = get(agencyAccountId).orElseThrow(() -> new IllegalArgumentException("Agency not found."));
         ImageAsset asset = new ImageAsset();
         asset.setMimeType(mimeType);
         asset.setData(imageBytes);
@@ -265,7 +284,7 @@ public class AgencyAccountService implements CRUD<AgencyAccount, Long> {
     private static void validateForInsert(AgencyAccount e) {
         validateForWrite(e);
         if (e.getResponsableId() == null) {
-            throw new IllegalArgumentException("responsable_id (utilisateur) est obligatoire.");
+            throw new IllegalArgumentException("responsable_id (user) is required.");
         }
     }
 

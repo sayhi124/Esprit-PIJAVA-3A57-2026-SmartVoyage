@@ -86,7 +86,7 @@ public class ServiceTravelOffer implements CRUD<TravelOffer, Integer> {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
-        System.out.println("TravelOffer supprime avec succes.");
+        System.out.println("TravelOffer deleted successfully.");
     }
 
     public Optional<TravelOffer> getById(int id) throws SQLException {
@@ -118,13 +118,11 @@ public class ServiceTravelOffer implements CRUD<TravelOffer, Integer> {
     }
 
     @Override
-    // alias of add()
     public void create(TravelOffer entity) throws SQLException {
         add(entity);
     }
 
     @Override
-    // alias of add()
     public void insert(TravelOffer entity) throws SQLException {
         add(entity);
     }

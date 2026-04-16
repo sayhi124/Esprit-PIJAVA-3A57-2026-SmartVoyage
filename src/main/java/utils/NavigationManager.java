@@ -89,6 +89,7 @@ public class NavigationManager {
         copy.setRole(source.getRole());
         copy.setIsActive(source.getIsActive());
         copy.setProfileImageId(source.getProfileImageId());
+        copy.setPhone(source.getPhone());
         copy.setEmailVerified(source.getEmailVerified());
         copy.setFaceVerified(source.getFaceVerified());
         sessionUser = copy;
@@ -159,6 +160,10 @@ public class NavigationManager {
             showLogin();
             return;
         }
+        if (canAccessAdminFeatures()) {
+            showAdminDashboard();
+            return;
+        }
         showSignedInShell();
     }
 
@@ -177,7 +182,7 @@ public class NavigationManager {
             showLogin();
             return;
         }
-        loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agences");
+        loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agencies");
     }
 
     public void showSignedInEvents() {
@@ -187,6 +192,15 @@ public class NavigationManager {
             return;
         }
         loadScene("/fxml/user/events_signed_in.fxml", "Smart Voyage - Evenements");
+    }
+
+    public void showSignedInOffers() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/user/offers_guest.fxml", "Smart Voyage - Offres");
     }
 
     public void showAgencyProposal() {
@@ -226,12 +240,21 @@ public class NavigationManager {
         loadScene("/fxml/agency/agency_post_create.fxml", "Smart Voyage - Add Agency Post");
     }
 
+    public void showUserProfile() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/user/user_profile.fxml", "Smart Voyage - Mon Profil");
+    }
+
     public void showWelcome() {
         loadScene("/fxml/user/welcome.fxml", "Smart Voyage");
     }
 
     public void showGuestOffers() {
-        loadScene("/fxml/user/offers_guest.fxml", "Offres");
+        loadScene("/fxml/user/offers_guest.fxml", "Offers");
     }
 
     public void showGuestFeedbacks() {
@@ -243,11 +266,19 @@ public class NavigationManager {
     }
 
     public void showLogin() {
-        loadScene("/fxml/user/login.fxml", "Connexion");
+        loadScene("/fxml/user/login.fxml", "Sign in");
     }
 
     public void showRegister() {
-        loadScene("/fxml/user/register.fxml", "Inscription");
+        loadScene("/fxml/user/register.fxml", "Sign up");
+    }
+
+    public void showAdminDashboard() {
+        if (!canAccessAdminFeatures()) {
+            showPostLoginHome();
+            return;
+        }
+        loadScene("/fxml/user/admin_dashboard.fxml", "Smart Voyage - Admin Dashboard");
     }
 
     private void loadScene(String resource, String title) {

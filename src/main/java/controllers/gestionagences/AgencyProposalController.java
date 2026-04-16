@@ -53,8 +53,6 @@ public class AgencyProposalController {
     private TextArea messageToAdminField;
     @FXML
     private Label feedbackLabel;
-    @FXML
-    private Button simulateApprovalButton;
 
     private final AgencyAccountService agencyService = new AgencyAccountService();
     private final AgencyAdminApplicationService applicationService = new AgencyAdminApplicationService();
@@ -184,8 +182,6 @@ public class AgencyProposalController {
         statusMessageLabel.setText("Your agency proposal \"" + safe(app.getAgencyNameRequested()) + "\" is under review. Please wait for admin approval.");
         statusActionButton.setVisible(false);
         statusActionButton.setManaged(false);
-        simulateApprovalButton.setVisible(true);
-        simulateApprovalButton.setManaged(true);
     }
 
     private void showRejectedState(AgencyAdminApplication app) {
@@ -203,8 +199,6 @@ public class AgencyProposalController {
         statusActionButton.setManaged(true);
         statusActionButton.setText("Submit a new proposal");
         statusActionButton.setOnAction(e -> showFormState());
-        simulateApprovalButton.setVisible(false);
-        simulateApprovalButton.setManaged(false);
     }
 
     private void showApprovedState() {
@@ -218,8 +212,6 @@ public class AgencyProposalController {
         statusActionButton.setManaged(true);
         statusActionButton.setText("Open agency page");
         statusActionButton.setOnAction(e -> NavigationManager.getInstance().showMyAgency());
-        simulateApprovalButton.setVisible(false);
-        simulateApprovalButton.setManaged(false);
     }
 
     private void showAlreadyAgencyState(AgencyAccount agency) {
@@ -234,8 +226,6 @@ public class AgencyProposalController {
         statusActionButton.setManaged(true);
         statusActionButton.setText("Open agency page");
         statusActionButton.setOnAction(e -> NavigationManager.getInstance().showMyAgency());
-        simulateApprovalButton.setVisible(false);
-        simulateApprovalButton.setManaged(false);
     }
 
     @FXML
@@ -274,36 +264,6 @@ public class AgencyProposalController {
         }
     }
 
-    @FXML
-    private void onSimulateApproval() {
-        feedbackLabel.setText("");
-        Optional<Integer> currentUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId());
-        if (currentUserId.isEmpty()) {
-            NavigationManager.getInstance().showLogin();
-            return;
-        }
-        try {
-            Optional<AgencyAdminApplication> latest = applicationService.findLatestByApplicant(currentUserId.get());
-            AgencyAdminApplication app;
-            if (latest.isPresent() && latest.get().getStatus() == AgencyApplicationStatus.PENDING) {
-                app = latest.get();
-            } else {
-                app = new AgencyAdminApplication();
-                app.setApplicantId(currentUserId.get());
-                app.setAgencyNameRequested(defaultAgencyName());
-                app.setCountry(Optional.ofNullable(readSelectedCountryCode()).orElse("TN"));
-                app.setMessageToAdmin("Temporary proposal for approval flow testing.");
-                applicationService.submit(app);
-            }
-
-            applicationService.approve(app.getId(), currentUserId.get());
-            NavigationManager.getInstance().showMyAgency();
-        } catch (SQLException | IllegalArgumentException e) {
-            statusMessageLabel.setText("Test approval failed: " + e.getMessage());
-            feedbackLabel.setText("Test approval failed.");
-        }
-    }
-
     private void loadCountriesAsync() {
         Thread loader = new Thread(() -> {
             List<CountryCatalog.CountryRow> rows = CountryCatalog.fetchAllOrEmpty();
@@ -332,15 +292,6 @@ public class AgencyProposalController {
 
     private String safe(String value) {
         return value == null ? "" : value;
-    }
-
-    private String defaultAgencyName() {
-        String typed = agencyNameField.getText() == null ? "" : agencyNameField.getText().trim();
-        if (!typed.isBlank()) {
-            return typed;
-        }
-        String username = NavigationManager.getInstance().sessionUser().map(u -> u.getUsername()).orElse("Smart");
-        return username + " Agency";
     }
 
     @FXML
@@ -400,7 +351,7 @@ public class AgencyProposalController {
 
     @FXML
     private void onProfile() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showUserProfile();
     }
 
     @FXML

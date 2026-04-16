@@ -98,7 +98,7 @@ public class ServiceReservation implements CRUD<Reservation, Integer> {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
-        System.out.println("Reservation supprimee avec succes.");
+        System.out.println("Reservation deleted successfully.");
     }
 
     public Optional<Reservation> getById(int reservationId) throws SQLException {
@@ -152,13 +152,11 @@ public class ServiceReservation implements CRUD<Reservation, Integer> {
     }
 
     @Override
-    // alias of add()
     public void create(Reservation entity) throws SQLException {
         add(entity);
     }
 
     @Override
-    // alias of add()
     public void insert(Reservation entity) throws SQLException {
         add(entity);
     }

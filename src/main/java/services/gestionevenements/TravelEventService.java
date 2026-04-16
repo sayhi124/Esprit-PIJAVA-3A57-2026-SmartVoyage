@@ -96,7 +96,7 @@ public class TravelEventService implements CRUD<TravelEvent, Long> {
     @Override
     public void delete(Long id) throws SQLException {
         if (id == null) {
-            throw new IllegalArgumentException("id obligatoire pour delete");
+            throw new IllegalArgumentException("id is required for delete");
         }
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(DELETE)) {
@@ -170,22 +170,22 @@ public class TravelEventService implements CRUD<TravelEvent, Long> {
 
     private void validate(TravelEvent e, boolean insert) {
         if (e == null) {
-            throw new IllegalArgumentException("event obligatoire");
+            throw new IllegalArgumentException("event is required");
         }
         if (!insert && e.getId() == null) {
-            throw new IllegalArgumentException("id obligatoire pour update");
+            throw new IllegalArgumentException("id is required for update");
         }
         if (e.getTitle() == null || e.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Titre obligatoire.");
+            throw new IllegalArgumentException("Title is required.");
         }
         if (e.getLocation() == null || e.getLocation().isBlank()) {
-            throw new IllegalArgumentException("Lieu obligatoire.");
+            throw new IllegalArgumentException("Location is required.");
         }
         if (e.getEventDate() == null) {
-            throw new IllegalArgumentException("Date evenement obligatoire.");
+            throw new IllegalArgumentException("Event date is required.");
         }
         if (insert && e.getCreatedByUserId() == null) {
-            throw new IllegalArgumentException("Createur obligatoire.");
+            throw new IllegalArgumentException("Creator is required.");
         }
     }
 

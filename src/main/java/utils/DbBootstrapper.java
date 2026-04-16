@@ -64,6 +64,37 @@ public final class DbBootstrapper {
                         CONSTRAINT fk_event_sponsorship_user FOREIGN KEY (user_id) REFERENCES `user`(id) ON DELETE SET NULL
                     )
                     """);
+
+            st.execute("""
+                    CREATE TABLE IF NOT EXISTS user_app_feedback (
+                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                        user_id INT NOT NULL,
+                        stars TINYINT NOT NULL,
+                        note TEXT NOT NULL,
+                        created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+                        CONSTRAINT fk_user_app_feedback_user FOREIGN KEY (user_id) REFERENCES `user`(id) ON DELETE CASCADE,
+                        CONSTRAINT chk_user_app_feedback_stars CHECK (stars >= 1 AND stars <= 5)
+                    )
+                    """);
+
+            st.execute("""
+                    CREATE TABLE IF NOT EXISTS agency_admin_application (
+                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                        status VARCHAR(32) NOT NULL DEFAULT 'PENDING',
+                        agency_name_requested VARCHAR(255) NOT NULL,
+                        country VARCHAR(2) NULL,
+                        message_to_admin TEXT NULL,
+                        requested_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+                        applicant_id INT NOT NULL,
+                        reviewed_by_id INT NULL,
+                        reviewed_at DATETIME(6) NULL,
+                        review_note TEXT NULL,
+                        created_agency_account_id BIGINT NULL,
+                        CONSTRAINT fk_agency_app_applicant FOREIGN KEY (applicant_id) REFERENCES `user`(id) ON DELETE CASCADE,
+                        CONSTRAINT fk_agency_app_reviewer FOREIGN KEY (reviewed_by_id) REFERENCES `user`(id) ON DELETE SET NULL,
+                        CONSTRAINT fk_agency_app_agency FOREIGN KEY (created_agency_account_id) REFERENCES agency_account(id) ON DELETE SET NULL
+                    )
+                    """);
         } catch (SQLException ignored) {
             // Keep startup resilient in dev environments with limited DB privileges.
         }

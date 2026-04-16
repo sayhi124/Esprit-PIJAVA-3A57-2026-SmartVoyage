@@ -16,6 +16,7 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -75,11 +76,20 @@ public class AgencyAdminApplicationService {
      */
     public void submit(AgencyAdminApplication application) throws SQLException {
         if (application.getApplicantId() == null) {
-            throw new IllegalArgumentException("applicant_id obligatoire.");
+            throw new IllegalArgumentException("applicant_id is required.");
         }
         if (application.getAgencyNameRequested() == null || application.getAgencyNameRequested().isBlank()) {
-            throw new IllegalArgumentException("Le nom d'agence demande est obligatoire.");
+            throw new IllegalArgumentException("Requested agency name is required.");
         }
+        String countryRaw = application.getCountry() != null ? application.getCountry().trim() : "";
+        if (countryRaw.isEmpty()) {
+            throw new IllegalArgumentException("Country is required (2-letter ISO code, e.g. TN).");
+        }
+        if (!countryRaw.matches("(?i)[a-z]{2}")) {
+            throw new IllegalArgumentException("Le pays doit être un code ISO à 2 lettres.");
+        }
+        application.setCountry(countryRaw.toUpperCase(Locale.ROOT));
+
         application.setStatus(AgencyApplicationStatus.PENDING);
         application.setRequestedAt(LocalDateTime.now());
         Connection c = DbConnexion.getInstance().getConnection();
@@ -143,11 +153,11 @@ public class AgencyAdminApplicationService {
      */
     public void approve(Long applicationId, Integer reviewerUserId) throws SQLException {
         if (applicationId == null || reviewerUserId == null) {
-            throw new IllegalArgumentException("applicationId et reviewerUserId obligatoires.");
+            throw new IllegalArgumentException("applicationId and reviewerUserId are required.");
         }
         Optional<AgencyAdminApplication> opt = get(applicationId);
         if (opt.isEmpty() || opt.get().getStatus() != AgencyApplicationStatus.PENDING) {
-            throw new IllegalArgumentException("Demande introuvable ou deja traitee.");
+            throw new IllegalArgumentException("Request not found or already processed.");
         }
         AgencyAdminApplication app = opt.get();
         Connection conn = DbConnexion.getInstance().getConnection();
@@ -161,7 +171,11 @@ public class AgencyAdminApplicationService {
                 agency.setDescription("Describe your agency here.");
                 agency.setResponsableId(app.getApplicantId());
                 agency.setVerified(Boolean.FALSE);
+                mergeIsoCountryFromApplication(agency, app);
                 agencyAccountService.insert(agency);
+            } else {
+                mergeIsoCountryFromApplication(agency, app);
+                agencyAccountService.update(agency);
             }
             app.setStatus(AgencyApplicationStatus.APPROVED);
             app.setReviewedById(reviewerUserId);
@@ -184,11 +198,11 @@ public class AgencyAdminApplicationService {
      */
     public void reject(Long applicationId, Integer reviewerUserId, String reviewNote) throws SQLException {
         if (applicationId == null || reviewerUserId == null) {
-            throw new IllegalArgumentException("applicationId et reviewerUserId obligatoires.");
+            throw new IllegalArgumentException("applicationId and reviewerUserId are required.");
         }
         Optional<AgencyAdminApplication> opt = get(applicationId);
         if (opt.isEmpty() || opt.get().getStatus() != AgencyApplicationStatus.PENDING) {
-            throw new IllegalArgumentException("Demande introuvable ou deja traitee.");
+            throw new IllegalArgumentException("Request not found or already processed.");
         }
         AgencyAdminApplication app = opt.get();
         app.setStatus(AgencyApplicationStatus.REJECTED);
@@ -197,6 +211,20 @@ public class AgencyAdminApplicationService {
         app.setReviewNote(reviewNote);
         Connection c = DbConnexion.getInstance().getConnection();
         updateRow(c, app);
+    }
+
+    /**
+     * Copies ISO-3166-1 alpha-2 from the approved application (proposal country choice) onto the agency row.
+     */
+    private static void mergeIsoCountryFromApplication(AgencyAccount agency, AgencyAdminApplication application) {
+        if (application == null || agency == null) {
+            return;
+        }
+        String c = application.getCountry();
+        if (c == null || c.trim().isEmpty()) {
+            return;
+        }
+        agency.setCountry(c.trim().toUpperCase(Locale.ROOT));
     }
 
     private void updateRow(Connection c, AgencyAdminApplication app) throws SQLException {
