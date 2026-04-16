@@ -1,0 +1,12 @@
+/*
+ * ControlsFX notificationpopup.css uses Modena paint lookups (-fx-outer-border, -fx-inner-border, -fx-body-color).
+ * AtlantaFX PrimerDark (user agent) does not define them, which triggers JavaFX 21 warnings:
+ * String cannot be cast to Paint for -fx-background-color on .notification-bar > .pane.
+ *
+ * Values match PrimerDark tokens: -color-border-default, -color-border-muted, -color-bg-overlay.
+ */
+* {
+    -fx-outer-border: #30363d;
+    -fx-inner-border: #21262d;
+    -fx-body-color: #161b22;
+}

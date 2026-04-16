@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionagences.AgencyPostCreateController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding><Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Mon agence" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agences" onAction="#onAgences">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Button text="✉  Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
+                <Button text="👤  Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane styleClass="offers-immersive-stack">
+            <children>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+                <VBox spacing="16.0" styleClass="agency-page-root">
+                    <padding><Insets top="20.0" right="24.0" bottom="20.0" left="24.0"/></padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="agency-header-row">
+                            <children>
+                                <Label text="Create Agency Post" styleClass="offers-mini-logo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="Back to agency" onAction="#onCancel" styleClass="offers-top-login-button"/>
+                            </children>
+                        </HBox>
+
+                        <VBox spacing="14.0" styleClass="agency-main-content-panel agency-post-create-panel" VBox.vgrow="ALWAYS">
+                            <padding><Insets top="20.0" right="22.0" bottom="20.0" left="22.0"/></padding>
+                            <children>
+                                <VBox spacing="4.0" styleClass="agency-post-create-field">
+                                    <children>
+                                        <Label text="Post title" styleClass="agency-post-create-label"/>
+                                        <TextField fx:id="titleField" promptText="Write a clear title" styleClass="agency-post-create-input"/>
+                                        <Label fx:id="titleErrorLabel" styleClass="agency-post-create-field-error" wrapText="true" maxWidth="1.7976931348623157E308" managed="false" visible="false"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="4.0" styleClass="agency-post-create-field">
+                                    <children>
+                                        <Label text="Post content" styleClass="agency-post-create-label"/>
+                                        <TextArea fx:id="contentArea" promptText="Share your agency update..." prefRowCount="8" wrapText="true" styleClass="agency-post-create-textarea"/>
+                                        <Label fx:id="contentErrorLabel" styleClass="agency-post-create-field-error" wrapText="true" maxWidth="1.7976931348623157E308" managed="false" visible="false"/>
+                                    </children>
+                                </VBox>
+
+                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Button text="Choose images (one or multiple)" onAction="#onChooseImages" styleClass="agency-overlay-action agency-post-create-upload-btn"/>
+                                    </children>
+                                </HBox>
+                                <VBox fx:id="dropArea" spacing="8.0" styleClass="agency-upload-drop-area">
+                                    <padding><Insets top="12.0" right="12.0" bottom="12.0" left="12.0"/></padding>
+                                    <children>
+                                        <Label fx:id="dropHintLabel" text="Drag and drop images here, or use the button above." styleClass="agency-post-create-drop-hint"/>
+                                    </children>
+                                </VBox>
+                                <ScrollPane fitToWidth="true" minHeight="220.0" prefHeight="320.0" maxHeight="420.0" styleClass="agency-card-scroll agency-upload-thumbs-scroll">
+                                    <content>
+                                        <FlowPane fx:id="thumbnailsFlow" hgap="14.0" vgap="14.0" prefWrapLength="880.0"/>
+                                    </content>
+                                </ScrollPane>
+                                <ListView fx:id="uploadErrorsList" prefHeight="92.0" visible="false" managed="false" styleClass="agency-upload-errors-list"/>
+
+                                <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Button text="Create post" onAction="#onCreatePost" styleClass="agency-overlay-action agency-post-create-submit-btn"/>
+                                        <Button text="Cancel" onAction="#onCancel" styleClass="agency-overlay-action agency-post-create-cancel-btn"/>
+                                    </children>
+                                </HBox>
+
+                                <Label fx:id="feedbackLabel" text="" styleClass="agency-post-create-feedback" wrapText="true" maxWidth="1.7976931348623157E308"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

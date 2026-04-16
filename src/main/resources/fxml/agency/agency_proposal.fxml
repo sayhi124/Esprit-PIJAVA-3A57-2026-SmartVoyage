@@ -2,7 +2,7 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
@@ -28,135 +28,28 @@
                     </children>
                 </VBox>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-home"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-offers"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Agences" onAction="#onAgences">
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agences" onAction="#onAgences">
                     <styleClass>
                         <String fx:value="sidebar-nav-item"/>
                         <String fx:value="sidebar-nav-item-active"/>
                     </styleClass>
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-agencies"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
                 </Button>
-                <Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-messages"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-recommend"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-events"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-dashboard"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="✉  Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
                 <Region VBox.vgrow="ALWAYS"/>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Premium" onAction="#onPremium" styleClass="premium-nav-button">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-premium"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-notifications"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-profile"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
+                <Button text="👤  Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item"/>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-logout"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">
                     <children>
-                        <Button onAction="#onThemeToggle" styleClass="theme-immersive-button" accessibleText="Toggle theme">
-                            <graphic>
-                                        <Region>
-                                            <styleClass>
-                                                <String fx:value="sidebar-nav-icon"/>
-                                                <String fx:value="icon-theme"/>
-                                            </styleClass>
-                                        </Region>
-                            </graphic>
-                        </Button>
+                        <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
                     </children>
                 </HBox>
             </children>
@@ -175,44 +68,62 @@
                             <children>
                                 <Label text="Agency Proposal" styleClass="offers-mini-logo"/>
                                 <Region HBox.hgrow="ALWAYS"/>
-                                <Button text="Back to agencies" onAction="#onBackToAgencies" styleClass="offers-top-login-button"/>
+                                <Button text="Back to agencies" onAction="#onBackToAgencies" styleClass="agency-proposal-back-button" mnemonicParsing="false"/>
                             </children>
                         </HBox>
                     </top>
                     <center>
-                        <VBox spacing="16.0" maxWidth="800.0" styleClass="offers-page-content">
+                        <StackPane alignment="TOP_CENTER" pickOnBounds="false" styleClass="agency-proposal-center-stack">
                             <children>
-                                <VBox fx:id="statusContainer" spacing="10.0" visible="false" managed="false">
+                                <VBox spacing="18.0" alignment="TOP_CENTER" maxWidth="720.0" fillWidth="true" styleClass="agency-proposal-panel">
+                                    <padding><Insets top="22.0" right="28.0" bottom="30.0" left="28.0"/></padding>
                                     <children>
-                                        <Label fx:id="statusTitleLabel" text="Status" styleClass="offers-title"/>
-                                        <Label fx:id="statusMessageLabel" text="Status message" wrapText="true" styleClass="offers-subtitle"/>
-                                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                        <VBox fx:id="statusContainer" spacing="16.0" visible="false" managed="false" alignment="TOP_CENTER" maxWidth="Infinity" minWidth="560.0" prefWidth="664.0" fillWidth="true" styleClass="agency-proposal-status-panel">
                                             <children>
-                                                <Button fx:id="statusActionButton" text="Action" visible="false" managed="false" styleClass="offers-top-login-button"/>
-                                                <Button fx:id="simulateApprovalButton" text="Simulate Admin Approval" onAction="#onSimulateApproval"
-                                                        visible="false" managed="false" styleClass="offers-top-login-button"/>
+                                                <Label fx:id="statusGlyphLabel" text="" managed="false" visible="false" alignment="CENTER" maxWidth="Infinity" textAlignment="CENTER" styleClass="agency-proposal-status-glyph"/>
+                                                <Label fx:id="statusTitleLabel" text="Status" wrapText="true" maxWidth="664.0" alignment="CENTER" textAlignment="CENTER" styleClass="offers-title agency-proposal-status-title"/>
+                                                <Label fx:id="statusMessageLabel" text="Status message" wrapText="true" maxWidth="664.0" alignment="CENTER" textAlignment="CENTER" styleClass="offers-subtitle agency-proposal-status-message"/>
+                                                <HBox spacing="12.0" alignment="CENTER">
+                                                    <children>
+                                                        <Button fx:id="statusActionButton" text="Action" visible="false" managed="false" styleClass="agency-proposal-primary-button" mnemonicParsing="false"/>
+                                                        <Button fx:id="simulateApprovalButton" text="Simulate Admin Approval" onAction="#onSimulateApproval"
+                                                                visible="false" managed="false" styleClass="agency-proposal-secondary-button" mnemonicParsing="false"/>
+                                                    </children>
+                                                </HBox>
                                             </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                                <VBox fx:id="formContainer" spacing="12.0">
-                                    <children>
-                                        <Label text="Submit agency admin proposal" styleClass="offers-title"/>
-                                        <Label text="Fill your agency name and required fields. Country list is loaded from API with flags."
-                                               wrapText="true" styleClass="offers-subtitle"/>
-                                        <TextField fx:id="agencyNameField" promptText="Agency name" styleClass="offers-search-input"/>
-                                        <ChoiceBox fx:id="countryChoice" prefWidth="360.0"/>
-                                        <TextArea fx:id="messageToAdminField" promptText="Message to admin (optional)" prefRowCount="5"/>
-                                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                        </VBox>
+                                        <VBox fx:id="formContainer" spacing="12.0" alignment="TOP_CENTER" maxWidth="664.0" fillWidth="true">
                                             <children>
-                                                <Button text="Submit proposal" onAction="#onSubmitProposal" styleClass="offers-top-login-button"/>
-                                                <Label fx:id="feedbackLabel" text="" styleClass="offers-subtitle"/>
+                                                <Label text="Submit agency admin proposal" styleClass="offers-title" textAlignment="CENTER" wrapText="true"/>
+                                                <Label text="Pays chargés depuis l'API (drapeau à gauche, choix à droite). Remplissez le nom de l'agence."
+                                                       wrapText="true" styleClass="offers-subtitle" textAlignment="CENTER"/>
+                                                <Label text="Agency name" styleClass="agency-proposal-field-label"/>
+                                                <TextField fx:id="agencyNameField" promptText="Agency name" maxWidth="664.0" styleClass="agency-proposal-text-field"/>
+                                                <Label text="Country" styleClass="agency-proposal-field-label"/>
+                                                <HBox alignment="CENTER_LEFT" spacing="14.0" maxWidth="664.0" styleClass="agency-proposal-country-row">
+                                                    <children>
+                                                        <StackPane fx:id="countryFlagFrame" minWidth="72.0" prefWidth="72.0" maxWidth="72.0" minHeight="48.0" prefHeight="48.0" maxHeight="48.0" styleClass="agency-proposal-flag-frame">
+                                                            <children>
+                                                                <ImageView fx:id="countryFlagImageView" fitWidth="68.0" fitHeight="44.0" preserveRatio="true" smooth="true" pickOnBounds="true"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <ComboBox fx:id="countryCombo" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefWidth="360.0" promptText="Select country" styleClass="agency-proposal-combo"/>
+                                                    </children>
+                                                </HBox>
+                                                <Label text="Message to admin (optional)" styleClass="agency-proposal-field-label"/>
+                                                <TextArea fx:id="messageToAdminField" promptText="Message to admin (optional)" prefRowCount="5" maxWidth="664.0" wrapText="true" styleClass="agency-proposal-text-area"/>
+                                                <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="Submit proposal" onAction="#onSubmitProposal" styleClass="agency-proposal-primary-button" mnemonicParsing="false"/>
+                                                        <Label fx:id="feedbackLabel" text="" wrapText="true" styleClass="offers-subtitle"/>
+                                                    </children>
+                                                </HBox>
                                             </children>
-                                        </HBox>
+                                        </VBox>
                                     </children>
                                 </VBox>
                             </children>
-                        </VBox>
+                        </StackPane>
                     </center>
                 </BorderPane>
             </children>

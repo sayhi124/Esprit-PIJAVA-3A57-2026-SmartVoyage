@@ -7,7 +7,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -31,137 +30,30 @@
                     </children>
                 </VBox>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-home"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-offers"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Agences" onAction="#onAgences">
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agences" onAction="#onAgences">
                     <styleClass>
                         <String fx:value="sidebar-nav-item"/>
                         <String fx:value="sidebar-nav-item-active"/>
                     </styleClass>
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-agencies"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
                 </Button>
-                <Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-messages"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-recommend"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-events"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button fx:id="dashboardIaButton" text="Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-dashboard"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="✉  Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button fx:id="dashboardIaButton" text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
                 <Region VBox.vgrow="ALWAYS"/>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Premium" onAction="#onPremium" styleClass="premium-nav-button">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-premium"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-notifications"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
-                <Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-profile"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
+                <Button text="👤  Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item"/>
                 <Separator styleClass="sidebar-rule"/>
-                <Button text="Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="sidebar-nav-icon"/>
-                                <String fx:value="icon-logout"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </Button>
+                <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
                 <VBox spacing="8.0" styleClass="sidebar-footer-block">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <Button onAction="#onThemeToggle" styleClass="theme-immersive-button" accessibleText="Toggle theme">
-                                    <graphic>
-                                        <Region>
-                                            <styleClass>
-                                                <String fx:value="sidebar-nav-icon"/>
-                                                <String fx:value="icon-theme"/>
-                                            </styleClass>
-                                        </Region>
-                                    </graphic>
-                                </Button>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
                             </children>
                         </HBox>
                     </children>
@@ -181,33 +73,33 @@
                         <Insets top="20.0" right="34.0" bottom="28.0" left="34.0"/>
                     </padding>
                     <top>
-                        <VBox spacing="12.0">
+                        <VBox spacing="14.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="top-mini-bar">
                                     <children>
                                         <Label text="✦ SmartVoyage" styleClass="offers-mini-logo"/>
                                         <Region HBox.hgrow="ALWAYS"/>
-                                        <TextField fx:id="searchField" promptText="Search agencies, country, address..." maxWidth="340.0" prefWidth="340.0" styleClass="offers-search-input"/>
                                     </children>
                                 </HBox>
-                                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="offers-toolbar-row">
+                                <Label text="Agences" styleClass="agency-directory-page-title"/>
+                                <HBox spacing="12.0" alignment="CENTER_LEFT" styleClass="agency-symfony-filter-bar">
                                     <children>
-                                        <ChoiceBox fx:id="countryFilter" prefWidth="180.0"/>
-                                        <ChoiceBox fx:id="verifiedFilter" prefWidth="150.0"/>
-                                        <Region HBox.hgrow="ALWAYS"/>
-                                        <Button fx:id="myAgencyButton" text="Mon agence" onAction="#onMyAgency" styleClass="offers-top-login-button"/>
-                                        <Label fx:id="resultCountLabel" text="0 agencies found" styleClass="offers-subtitle"/>
+                                        <TextField fx:id="searchField" promptText="Rechercher par nom ou description..." minWidth="280.0" HBox.hgrow="ALWAYS" styleClass="agency-symfony-search"/>
+                                        <ChoiceBox fx:id="countryFilter" prefWidth="260.0" minWidth="200.0" maxWidth="320.0"/>
+                                        <Button onAction="#onViewOnMap" text="Voir sur la carte" styleClass="agency-map-purple-button" mnemonicParsing="false"/>
+                                        <Button fx:id="myAgencyButton" text="Mon agence" onAction="#onMyAgency" styleClass="agency-my-agency-outline" mnemonicParsing="false"/>
                                     </children>
                                 </HBox>
+                                <Label fx:id="resultCountLabel" text="Aucune agence trouvée" styleClass="agency-result-count-label"/>
                             </children>
                         </VBox>
                     </top>
                     <center>
-                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="offers-grid-scroll">
+                        <ScrollPane fitToWidth="true" minHeight="0.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true" styleClass="offers-grid-scroll agency-directory-scroll">
                             <content>
-                                <TilePane fx:id="agenciesGrid" prefColumns="3" hgap="18.0" vgap="18.0" styleClass="offers-featured-row">
+                                <TilePane fx:id="agenciesGrid" prefColumns="2" hgap="28.0" vgap="28.0" styleClass="agency-directory-grid">
                                     <padding>
-                                        <Insets top="6.0" right="2.0" bottom="2.0" left="2.0"/>
+                                        <Insets top="10.0" right="8.0" bottom="28.0" left="8.0"/>
                                     </padding>
                                 </TilePane>
                             </content>
