@@ -48,14 +48,12 @@ public class MessagesController {
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
     private static final int PREVIEW_MAX_LEN = 30;
     private static final int MAX_SUGGESTIONS = 8;
-
     private final MessageService messageService = new MessageService();
     private final UserService userService = new UserService();
     private final AgencyAccountService agencyAccountService = new AgencyAccountService();
     private final ObservableList<MessageConversation> allConversations = FXCollections.observableArrayList();
     private final ObservableList<MessageConversation> conversations = FXCollections.observableArrayList();
     private final ObservableList<Message> currentMessages = FXCollections.observableArrayList();
-
     private Integer currentUserId;
     private Integer selectedConversationUserId;
     private int receiverId = -1;
