@@ -189,6 +189,41 @@ public class NavigationManager {
         loadScene("/fxml/user/events_signed_in.fxml", "Smart Voyage - Evenements");
     }
 
+    public void showSignedInOffers() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/offres/offers_signed_in.fxml", "Smart Voyage - Offres");
+    }
+
+    public void showSignedInMessages() {
+        showMessagerie();
+    }
+
+    public void showMessagerie() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/views/messaging/messagerie.fxml", "Smart Voyage - Messagerie");
+    }
+
+    public void showSignedInNotifications() {
+        showNotifications();
+    }
+
+    public void showNotifications() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/views/notifications/notifications.fxml", "Smart Voyage - Notifications");
+    }
+
     public void showAgencyProposal() {
         if (!canAccessSignedInShell()) {
             clearSession();

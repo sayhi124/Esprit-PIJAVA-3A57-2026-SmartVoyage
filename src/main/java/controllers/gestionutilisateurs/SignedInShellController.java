@@ -47,7 +47,7 @@ public class SignedInShellController {
 
     @FXML
     private void onOffres() {
-        showPlaceholder("Offres", "Route Offres signed-in will open here.");
+        NavigationManager.getInstance().showSignedInOffers();
     }
 
     @FXML
@@ -57,7 +57,7 @@ public class SignedInShellController {
 
     @FXML
     private void onMessagerie() {
-        showPlaceholder("Messagerie", "Route Messagerie signed-in will open here.");
+        NavigationManager.getInstance().showSignedInMessages();
     }
 
     @FXML
@@ -77,7 +77,7 @@ public class SignedInShellController {
 
     @FXML
     private void onNotifications() {
-        showPlaceholder("Notifications", "Route Notifications signed-in will open here.");
+        NavigationManager.getInstance().showSignedInNotifications();
     }
 
     @FXML

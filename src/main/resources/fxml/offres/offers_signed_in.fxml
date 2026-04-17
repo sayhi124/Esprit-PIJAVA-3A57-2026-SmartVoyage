@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionoffres.OffersSignedInController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding><Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="SMART VOYAGE" styleClass="sidebar-logo"/>
+                        <Label text="Offers space" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+
+                <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-home"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Offres" onAction="#onOffres">
+                    <styleClass><String fx:value="sidebar-nav-item"/><String fx:value="sidebar-nav-item-active"/></styleClass>
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-offers"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Agences" onAction="#onAgences" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-agencies"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-messages"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-recommend"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-events"/></styleClass></Region></graphic>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator styleClass="sidebar-rule"/>
+
+                <Button text="Premium" onAction="#onPremium" styleClass="premium-nav-button">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-premium"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-notifications"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-profile"/></styleClass></Region></graphic>
+                </Button>
+                <Button text="Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item">
+                    <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-dashboard"/></styleClass></Region></graphic>
+                </Button>
+
+                <Separator styleClass="sidebar-rule"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <Button onAction="#onThemeToggle" styleClass="theme-immersive-button" accessibleText="Toggle theme">
+                            <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-theme"/></styleClass></Region></graphic>
+                        </Button>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Logout" onAction="#onLogout" styleClass="sidebar-nav-item">
+                            <graphic><Region><styleClass><String fx:value="sidebar-nav-icon"/><String fx:value="icon-logout"/></styleClass></Region></graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane styleClass="offers-immersive-stack">
+            <children>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll">
+                    <content>
+                        <VBox spacing="14.0" styleClass="events-root">
+                            <padding><Insets top="22.0" right="22.0" bottom="22.0" left="22.0"/></padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" styleClass="events-header">
+                                    <children>
+                                        <VBox spacing="4.0">
+                                            <children>
+                                                <Label fx:id="userGreetingLabel" text="Bienvenue" styleClass="events-title"/>
+                                                <Label fx:id="roleLabel" text="Utilisateur" styleClass="events-subtitle"/>
+                                            </children>
+                                        </VBox>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Button fx:id="messagesCenterButton" text="Messages" onAction="#onMessagesCenter" styleClass="events-search-btn"/>
+                                        <StackPane>
+                                            <children>
+                                                <Button fx:id="notificationsCenterButton" text="Notifications" onAction="#onNotificationsCenter" styleClass="events-search-btn"/>
+                                                <Label fx:id="notificationsUnreadBadge" text="0" styleClass="navbar-unread-badge" StackPane.alignment="TOP_RIGHT" managed="false" visible="false"/>
+                                            </children>
+                                        </StackPane>
+                                        <Button fx:id="viewReservationRequestsButton" text="View Reservation Requests" onAction="#onViewReservationRequests" styleClass="events-search-btn"/>
+                                        <Button fx:id="createOfferButton" text="Add Offer" onAction="#onCreateOffer" styleClass="events-create-btn"/>
+                                    </children>
+                                </HBox>
+
+                                <Label fx:id="offersStatusLabel" managed="false" visible="false" wrapText="true" styleClass="events-inline-status"/>
+
+                                <StackPane VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <VBox fx:id="offersListView" spacing="12.0">
+                                            <children>
+                                                <HBox spacing="10.0" alignment="CENTER_RIGHT" styleClass="offers-toggle-row">
+                                                    <children>
+                                                        <Button fx:id="offersTabButton" text="Offers" onAction="#showOffersView" styleClass="offers-toggle-button"/>
+                                                        <Button fx:id="myReservationsTabButton" text="My Reservations" onAction="#showReservationsView" styleClass="offers-toggle-button"/>
+                                                    </children>
+                                                </HBox>
+
+                                                <VBox fx:id="offersContainer" spacing="10.0" VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <TextField fx:id="offerSearchField" promptText="Search offers by title, countries, description..." onAction="#onSearchOffers"
+                                                                           HBox.hgrow="ALWAYS" styleClass="events-search-input"/>
+                                                                <Button text="Search" onAction="#onSearchOffers" styleClass="events-search-btn"/>
+                                                            </children>
+                                                        </HBox>
+
+                                                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" VBox.vgrow="ALWAYS">
+                                                            <content>
+                                                                <TilePane fx:id="offersTile" hgap="14.0" vgap="14.0" prefTileWidth="290.0" styleClass="events-tile"/>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox fx:id="reservationsContainer" spacing="8.0" styleClass="events-form-shell" visible="false" managed="false" VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <Label fx:id="userReservationsSectionLabel" text="Mes reservations" styleClass="events-form-title"/>
+                                                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" VBox.vgrow="ALWAYS">
+                                                            <content>
+                                                                <VBox fx:id="userReservationsContainer" spacing="12.0"/>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox fx:id="offersFormView" spacing="12.0" alignment="TOP_CENTER" managed="false" visible="false" styleClass="events-embedded-form-view">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0" maxWidth="820.0">
+                                                    <children>
+                                                        <VBox spacing="2.0">
+                                                            <children>
+                                                                <Label fx:id="formTitleLabel" text="Create Offer" styleClass="events-form-title"/>
+                                                                <Label fx:id="formSubtitleLabel" text="Fill offer details" styleClass="events-form-subtitle"/>
+                                                            </children>
+                                                        </VBox>
+                                                        <Region HBox.hgrow="ALWAYS"/>
+                                                        <Button text="Back" onAction="#onInlineCancel" styleClass="event-form-cancel-btn"/>
+                                                    </children>
+                                                </HBox>
+
+                                                <Label fx:id="formStatusLabel" managed="false" visible="false" wrapText="true" styleClass="events-inline-status"/>
+
+                                                <StackPane fx:id="embeddedFormHost" maxWidth="820.0" styleClass="events-embedded-form-host" VBox.vgrow="ALWAYS"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

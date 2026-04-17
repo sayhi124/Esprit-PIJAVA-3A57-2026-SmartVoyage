@@ -422,7 +422,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onMessagerie() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showSignedInMessages();
     }
 
     @FXML
@@ -442,7 +442,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onNotifications() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showSignedInNotifications();
     }
 
     @FXML

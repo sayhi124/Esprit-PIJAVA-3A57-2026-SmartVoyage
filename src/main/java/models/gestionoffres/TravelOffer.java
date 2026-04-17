@@ -158,7 +158,7 @@ public class TravelOffer {
         return "TravelOffer{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", countries='" + countries + '\'' +
+                ", countries=" + countries +
                 ", departureDate=" + departureDate +
                 ", returnDate=" + returnDate +
                 ", price=" + price +

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.messaging.MessagesController"
+      spacing="10.0" maxWidth="980.0" prefWidth="980.0" styleClass="messages-root">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <children>
+            <Button fx:id="backButton" text="&#8592; Back" onAction="#handleBack" styleClass="message-back-button"/>
+            <Label text="Messagerie" styleClass="events-form-title"/>
+        </children>
+    </HBox>
+
+    <HBox spacing="12" VBox.vgrow="ALWAYS" styleClass="messages-main-layout">
+        <children>
+            <VBox spacing="8.0" styleClass="messages-conversations-panel" prefWidth="300" HBox.hgrow="NEVER">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <children>
+                    <Label text="Conversations" styleClass="events-form-subtitle"/>
+                    <TextField fx:id="conversationSearchField" promptText="Search conversations..." styleClass="messages-search-field"/>
+                    <ListView fx:id="conversationsListView" VBox.vgrow="ALWAYS" styleClass="messages-conversations-list"/>
+                </children>
+            </VBox>
+
+            <VBox spacing="10.0" styleClass="messages-chat-panel" HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <children>
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="chat-header">
+                        <children>
+                            <StackPane styleClass="chat-avatar-wrap">
+                                <children>
+                                    <Label fx:id="chatAvatarLabel" text="?" styleClass="chat-avatar-text"/>
+                                </children>
+                            </StackPane>
+                            <VBox spacing="2">
+                                <children>
+                                    <Label fx:id="chatNameLabel" text="Select a conversation" styleClass="chat-header-name"/>
+                                    <Label fx:id="chatRoleLabel" text="-" styleClass="chat-header-role role-user"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </HBox>
+
+                    <ScrollPane fx:id="messagesScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                                VBox.vgrow="ALWAYS" styleClass="events-scroll messages-scroll">
+                        <content>
+                            <VBox fx:id="messagesContainer" spacing="8.0" styleClass="messages-list"/>
+                        </content>
+                    </ScrollPane>
+
+                    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="chat-input-row">
+                        <children>
+                            <TextArea fx:id="messageInputArea" promptText="Write a message..." prefRowCount="2"
+                                      HBox.hgrow="ALWAYS" styleClass="messages-input"/>
+                            <Button fx:id="sendButton" text="Send" onAction="#onSendMessage" styleClass="chat-send-button"/>
+                        </children>
+                    </HBox>
+
+                    <Label fx:id="messageStatusLabel" managed="false" visible="false" wrapText="true" styleClass="events-inline-status"/>
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>

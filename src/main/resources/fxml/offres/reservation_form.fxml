@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.gestionoffres.ReservationController"
+           prefWidth="760" maxWidth="760" styleClass="reservation-root">
+
+    <padding>
+        <Insets top="18" right="18" bottom="18" left="18"/>
+    </padding>
+
+    <VBox maxWidth="400" spacing="16" styleClass="reservation-card">
+        <padding>
+            <Insets top="25" right="25" bottom="25" left="25"/>
+        </padding>
+
+        <children>
+            <VBox spacing="4">
+                <children>
+                    <Label text="✔ Réserver votre place" styleClass="reservation-title"/>
+                    <Label fx:id="offerSummaryLabel" text="Offre" styleClass="reservation-offer"/>
+                </children>
+            </VBox>
+
+            <HBox alignment="CENTER_LEFT" styleClass="reservation-top-row">
+                <children>
+                    <Label fx:id="priceLabel" text="0 EUR" styleClass="reservation-price"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="seatsBadgeLabel" text="1 places" styleClass="reservation-seats-badge"/>
+                </children>
+            </HBox>
+
+            <VBox spacing="6">
+                <children>
+                    <Label text="Contact" styleClass="reservation-label"/>
+                    <TextField fx:id="contactInfoField" promptText="Email ou téléphone" styleClass="reservation-input"/>
+                </children>
+            </VBox>
+
+            <VBox spacing="6">
+                <children>
+                    <Label text="Places" styleClass="reservation-label"/>
+                    <HBox spacing="10" alignment="CENTER" styleClass="reservation-stepper">
+                        <children>
+                            <Button text="-" onAction="#onDecreaseSeats" styleClass="reservation-step-btn"/>
+                            <Label fx:id="seatsValueLabel" text="1" styleClass="reservation-step-value"/>
+                            <Button text="+" onAction="#onIncreaseSeats" styleClass="reservation-step-btn"/>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+
+            <HBox alignment="CENTER_LEFT" styleClass="reservation-total-row">
+                <children>
+                    <Label text="Prix total" styleClass="reservation-total-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="totalPriceLabel" text="0 EUR" styleClass="reservation-total-value"/>
+                </children>
+            </HBox>
+
+            <Button fx:id="reserveNowButton" text="Réserver maintenant" onAction="#onConfirmReservation" styleClass="reservation-cta"/>
+        </children>
+    </VBox>
+</StackPane>

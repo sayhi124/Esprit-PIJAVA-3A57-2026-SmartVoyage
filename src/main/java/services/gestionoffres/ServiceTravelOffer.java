@@ -139,6 +139,9 @@ public class ServiceTravelOffer implements CRUD<TravelOffer, Integer> {
         if (offer.getTitle() == null || offer.getTitle().isBlank()) {
             throw new IllegalArgumentException("TravelOffer title is required.");
         }
+        if (offer.getCountries() == null || offer.getCountries().isBlank()) {
+            throw new IllegalArgumentException("TravelOffer countries are required.");
+        }
     }
 
     private static void bindOffer(PreparedStatement statement, TravelOffer offer) throws SQLException {

@@ -624,13 +624,13 @@ public class EventsSignedInController {
     }
 
     @FXML private void onHome() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onOffres() { NavigationManager.getInstance().showPostLoginHome(); }
+    @FXML private void onOffres() { NavigationManager.getInstance().showSignedInOffers(); }
     @FXML private void onAgences() { NavigationManager.getInstance().showSignedInAgencies(); }
-    @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInMessages(); }
     @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onEvenement() { /* already on page */ }
     @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
-    @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInNotifications(); }
     @FXML private void onProfile() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onDashboardIa() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onThemeToggle() { NavigationManager.getInstance().toggleTheme(); }

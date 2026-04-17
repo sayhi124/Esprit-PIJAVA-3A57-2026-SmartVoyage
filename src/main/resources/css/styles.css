@@ -410,6 +410,78 @@
     -fx-scale-y: 0.97;
 }
 
+/* Countries multi-select for offer form */
+.offer-countries-list {
+    -fx-background-color: #0f172a;
+    -fx-control-inner-background: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.offer-countries-list .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.offer-countries-list .list-cell:selected {
+    -fx-background-color: linear-gradient(to right, #ec4899, #8b5cf6);
+    -fx-text-fill: white;
+}
+
+.offer-countries-checkcombo {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+}
+
+.offer-countries-checkcombo > .combo-box-base {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.offer-countries-checkcombo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.offer-countries-checkcombo .text {
+    -fx-fill: white;
+}
+
+.offer-countries-checkcombo .list-view {
+    -fx-background-color: #0f172a;
+    -fx-control-inner-background: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.offer-countries-checkcombo .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.offer-countries-checkcombo .list-cell:selected {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #6c5ce7);
+    -fx-text-fill: white;
+}
+
+.check-combo-box {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-text-fill: white;
+}
+
+.check-combo-box .list-cell:selected {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #6c5ce7);
+    -fx-text-fill: white;
+}
+
 /* Secondary — glass */
 .hero-cta-secondary {
     -fx-background-color: rgba(0, 0, 0, 0.45);
@@ -1606,6 +1678,35 @@
     -fx-cursor: hand;
 }
 
+.offers-toggle-row {
+    -fx-padding: 2 0 2 0;
+}
+
+.offers-toggle-button {
+    -fx-background-color: rgba(30, 41, 59, 0.72);
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(148, 163, 184, 0.35);
+    -fx-border-radius: 10;
+    -fx-padding: 9 14 9 14;
+    -fx-cursor: hand;
+}
+
+.offers-toggle-button:hover {
+    -fx-border-color: rgba(226, 178, 255, 0.56);
+    -fx-effect: dropshadow(gaussian, rgba(216, 180, 254, 0.28), 12, 0.2, 0, 1);
+}
+
+.offers-toggle-button.active-tab,
+.active-tab {
+    -fx-background-color: linear-gradient(to right, #ff4d8d, #8a2be2);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.45), 16, 0.28, 0, 2);
+}
+
 .events-scroll {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -1628,6 +1729,392 @@
     -fx-border-width: 1;
     -fx-padding: 0 16 16 16;
     -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.56), 16, 0.20, 0, 5);
+}
+
+.offer-card-clickable {
+    -fx-padding: 0 0 12 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.64), 18, 0.24, 0, 6);
+}
+
+.offer-card-clickable:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-border-color: rgba(56, 189, 248, 0.62);
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.42), 28, 0.30, 0, 2),
+                dropshadow(gaussian, rgba(2, 6, 23, 0.72), 30, 0.34, 0, 10);
+}
+
+.offer-card-cover-wrap {
+    -fx-background-radius: 18 18 0 0;
+    -fx-border-radius: 18 18 0 0;
+    -fx-background-color: rgba(2, 6, 23, 0.82);
+    -fx-overflow: hidden;
+}
+
+.offer-card-image-overlay {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(4, 8, 22, 0.10) 0%,
+        rgba(4, 8, 22, 0.28) 44%,
+        rgba(4, 8, 22, 0.72) 100%);
+    -fx-background-radius: 18 18 0 0;
+}
+
+.offer-card-overlay-content {
+    -fx-padding: 10 10 10 12;
+}
+
+.offer-card-overlay-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.9), 12, 0.24, 0, 2);
+}
+
+.offer-status-badge {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+}
+
+.offer-status-pending {
+    -fx-text-fill: #fde68a;
+    -fx-background-color: rgba(120, 53, 15, 0.62);
+    -fx-border-color: rgba(251, 191, 36, 0.55);
+}
+
+.offer-status-approved {
+    -fx-text-fill: #bbf7d0;
+    -fx-background-color: rgba(22, 101, 52, 0.62);
+    -fx-border-color: rgba(74, 222, 128, 0.52);
+}
+
+.offer-status-rejected {
+    -fx-text-fill: #fecaca;
+    -fx-background-color: rgba(127, 29, 29, 0.62);
+    -fx-border-color: rgba(248, 113, 113, 0.52);
+}
+
+.offer-card-body {
+    -fx-spacing: 8;
+    -fx-padding: 10 12 4 12;
+}
+
+.offer-card-countries {
+    -fx-text-fill: #c4b5fd;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.offer-card-price {
+    -fx-text-fill: #86efac;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+}
+
+.offer-card-dates {
+    -fx-text-fill: rgba(191, 219, 254, 0.85);
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+}
+
+.user-reservation-card {
+    -fx-padding: 12 14 12 14;
+}
+
+.user-reservation-card:hover {
+    -fx-border-color: rgba(56, 189, 248, 0.55);
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.34), 20, 0.25, 0, 3),
+                dropshadow(gaussian, rgba(2, 6, 23, 0.65), 20, 0.22, 0, 8);
+    -fx-translate-y: -1;
+}
+
+.navbar-unread-badge {
+    -fx-background-color: linear-gradient(to right, #ff4d8d, #8a2be2);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 999;
+    -fx-padding: 2 6 2 6;
+    -fx-translate-x: 8;
+    -fx-translate-y: -8;
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.45), 12, 0.28, 0, 1);
+}
+
+.messages-root,
+.notifications-root {
+    -fx-background-color: rgba(9, 17, 34, 0.76);
+    -fx-background-radius: 16;
+    -fx-border-color: transparent;
+}
+
+.messages-main-layout {
+    -fx-background-color: transparent;
+}
+
+.messages-conversations-panel,
+.messages-chat-panel {
+    -fx-background-color: rgba(15, 23, 42, 0.66);
+    -fx-background-radius: 14;
+    -fx-border-color: transparent;
+}
+
+.messages-conversations-list {
+    -fx-background-color: transparent;
+}
+
+.messages-conversations-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+}
+
+.messages-conversations-list .list-cell:filled:selected {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 10;
+}
+
+.conversation-item {
+    -fx-padding: 8 10 8 10;
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+}
+
+.conversation-item:hover {
+    -fx-background-color: rgba(255,255,255,0.05);
+}
+
+.messages-search-field {
+    -fx-background-color: rgba(30, 41, 59, 0.85);
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: rgba(203, 213, 225, 0.7);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(148, 163, 184, 0.34);
+    -fx-border-radius: 10;
+    -fx-padding: 8 10 8 10;
+}
+
+.messages-search-field:focused {
+    -fx-border-color: rgba(236, 72, 153, 0.62);
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.25), 10, 0.2, 0, 0);
+}
+
+.conversation-name {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.conversation-role-badge {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 10;
+    -fx-padding: 2 7;
+}
+
+.conversation-preview {
+    -fx-text-fill: rgba(226, 232, 240, 0.76);
+    -fx-font-size: 11px;
+}
+
+.conversation-time {
+    -fx-text-fill: rgba(191, 219, 254, 0.78);
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+}
+
+.conversation-unread-dot {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #9d4edd);
+    -fx-background-radius: 999;
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.42), 8, 0.24, 0, 0);
+}
+
+.conversation-unread-badge {
+    -fx-background-color: linear-gradient(to right, #f43f5e, #d946ef);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 999;
+    -fx-padding: 2 7 2 7;
+}
+
+.messages-list {
+    -fx-padding: 8 4 8 4;
+}
+
+.chat-header {
+    -fx-padding: 4 2 6 2;
+}
+
+.chat-avatar-wrap {
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-pref-width: 34;
+    -fx-pref-height: 34;
+    -fx-max-width: 34;
+    -fx-max-height: 34;
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #9d4edd);
+    -fx-background-radius: 999;
+}
+
+.chat-avatar-text {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+}
+
+.chat-header-name {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.chat-header-role {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.message-placeholder {
+    -fx-text-fill: rgba(226, 232, 240, 0.7);
+    -fx-font-size: 12px;
+}
+
+.message-bubble {
+    -fx-padding: 0;
+    -fx-background-radius: 14;
+    -fx-max-width: 360;
+}
+
+.message-bubble-sent {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #9d4edd);
+    -fx-background-radius: 12;
+    -fx-padding: 8 12;
+}
+
+.message-bubble-received {
+    -fx-background-color: #2a2a40;
+    -fx-background-radius: 12;
+    -fx-padding: 8 12;
+}
+
+.message-bubble-content {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.message-sent {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #9d4edd);
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 8 12;
+}
+
+.message-received {
+    -fx-background-color: #2a2a40;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 8 12;
+}
+
+.message-bubble-time {
+    -fx-text-fill: rgba(203, 213, 225, 0.85);
+    -fx-font-size: 10px;
+}
+
+.messages-input {
+    -fx-background-color: rgba(30, 41, 59, 0.74);
+    -fx-control-inner-background: rgba(30, 41, 59, 0.74);
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: rgba(203, 213, 225, 0.7);
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8 10;
+}
+
+.chat-send-button {
+    -fx-background-color: linear-gradient(to right, #ff4ecd, #9d4edd);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+
+.chat-send-button:hover {
+    -fx-opacity: 0.94;
+}
+
+.message-back-button {
+    -fx-background-color: rgba(30, 41, 59, 0.8);
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(148, 163, 184, 0.35);
+    -fx-border-radius: 10;
+    -fx-padding: 8 12 8 12;
+    -fx-cursor: hand;
+}
+
+.message-back-button:hover {
+    -fx-border-color: rgba(226, 178, 255, 0.65);
+    -fx-background-color: rgba(51, 65, 85, 0.9);
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.32), 12, 0.22, 0, 1);
+}
+
+.role-user {
+    -fx-text-fill: #4fc3f7;
+}
+
+.role-agency {
+    -fx-text-fill: #c77dff;
+}
+
+.notifications-list {
+    -fx-spacing: 8;
+}
+
+.notification-item {
+    -fx-alignment: center-left;
+    -fx-padding: 10 12 10 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.notification-item:hover {
+    -fx-border-color: rgba(56, 189, 248, 0.55);
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-background-color: rgba(30, 41, 59, 0.72);
+}
+
+.notification-unread {
+    -fx-background-color: rgba(30, 41, 59, 0.7);
+}
+
+.notification-read {
+    -fx-background-color: rgba(15, 23, 42, 0.55);
+}
+
+.notification-dot {
+    -fx-background-color: linear-gradient(to bottom, #ff4d8d, #8a2be2);
+    -fx-background-radius: 999;
+}
+
+.notification-content {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 12px;
+}
+
+.notification-time {
+    -fx-text-fill: rgba(226, 232, 240, 0.68);
+    -fx-font-size: 11px;
 }
 
 /* ---------- Agency profile redesign ---------- */
@@ -2226,6 +2713,28 @@
     -fx-padding: 0;
 }
 
+.offer-image-preview {
+    -fx-background-color: #0b1220;
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(148, 163, 184, 0.30);
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.42), 14, 0.18, 0, 4);
+}
+
+.offer-card-cover-wrap {
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-background-color: rgba(15, 23, 42, 0.85);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(148, 163, 184, 0.20);
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.38), 12, 0.20, 0, 3);
+}
+
+.offer-card-cover-image {
+    -fx-background-radius: 12;
+}
+
 .event-card-title {
     -fx-text-fill: #f8fafc;
     -fx-font-size: 19px;
@@ -2599,4 +3108,250 @@
 .event-form-ok-btn:hover,
 .event-form-cancel-btn:hover {
     -fx-opacity: 0.93;
+}
+
+.reservation-root {
+    -fx-alignment: center;
+}
+
+.reservation-card {
+    -fx-background-color: linear-gradient(to bottom right, #0f172a, #1e293b);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(148, 163, 184, 0.24);
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.62), 24, 0.22, 0, 8);
+}
+
+.reservation-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+.reservation-offer {
+    -fx-text-fill: rgba(203, 213, 225, 0.88);
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.reservation-price {
+    -fx-text-fill: linear-gradient(to right, #ff2d55, #ff6ec7);
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+}
+
+.reservation-seats-badge {
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-background-color: rgba(15, 23, 42, 0.70);
+    -fx-border-color: rgba(148, 163, 184, 0.42);
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-padding: 6 10 6 10;
+}
+
+.reservation-label {
+    -fx-text-fill: rgba(203, 213, 225, 0.86);
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.reservation-input {
+    -fx-background-color: #0b1324;
+    -fx-text-fill: #e2e8f0;
+    -fx-prompt-text-fill: rgba(148, 163, 184, 0.82);
+    -fx-background-radius: 12;
+    -fx-border-color: #334155;
+    -fx-border-radius: 12;
+    -fx-padding: 10 12 10 12;
+    -fx-font-size: 13px;
+}
+
+.reservation-input:focused {
+    -fx-border-color: #38bdf8;
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.24), 10, 0.2, 0, 0);
+}
+
+.reservation-stepper {
+    -fx-background-color: rgba(15, 23, 42, 0.68);
+    -fx-border-color: rgba(100, 116, 139, 0.42);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 8;
+}
+
+.reservation-step-btn {
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-max-width: 34;
+    -fx-max-height: 34;
+    -fx-background-color: rgba(59, 130, 246, 0.16);
+    -fx-text-fill: #dbeafe;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(96, 165, 250, 0.54);
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.reservation-step-btn:hover {
+    -fx-background-color: rgba(96, 165, 250, 0.28);
+}
+
+.reservation-step-value {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-min-width: 42;
+    -fx-alignment: center;
+}
+
+.reservation-total-row {
+    -fx-padding: 2 0 2 0;
+}
+
+.reservation-total-label {
+    -fx-text-fill: rgba(203, 213, 225, 0.84);
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.reservation-total-value {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+}
+
+.reservation-cta {
+    -fx-background-color: linear-gradient(to right, #ff2d55, #ff6ec7);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 12 16 12 16;
+    -fx-max-width: Infinity;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.reservation-cta:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 85, 0.38), 14, 0.2, 0, 4);
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.reservation-cta:disabled {
+    -fx-opacity: 0.52;
+}
+
+.reservation-status-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+}
+
+.reservation-status-approved {
+    -fx-background-color: rgba(34, 197, 94, 0.18);
+    -fx-text-fill: #86efac;
+    -fx-border-color: rgba(34, 197, 94, 0.52);
+}
+
+.reservation-status-pending {
+    -fx-background-color: rgba(250, 204, 21, 0.18);
+    -fx-text-fill: #fde68a;
+    -fx-border-color: rgba(250, 204, 21, 0.52);
+}
+
+.reservation-status-rejected {
+    -fx-background-color: rgba(239, 68, 68, 0.16);
+    -fx-text-fill: #fca5a5;
+    -fx-border-color: rgba(239, 68, 68, 0.52);
+}
+
+.agency-reservation-row {
+    -fx-background-color: rgba(15, 23, 42, 0.62);
+    -fx-border-color: rgba(100, 116, 139, 0.32);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.offer-details-shell {
+    -fx-background-color: linear-gradient(to bottom right, #0f172a, #1e293b);
+    -fx-background-radius: 16;
+    -fx-border-color: rgba(148, 163, 184, 0.30);
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.60), 18, 0.20, 0, 6);
+}
+
+.offer-details-cover-wrap {
+    -fx-background-color: rgba(15, 23, 42, 0.72);
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(100, 116, 139, 0.28);
+    -fx-border-radius: 14;
+    -fx-padding: 0;
+}
+
+.offer-details-cover-image {
+    -fx-background-radius: 14;
+}
+
+.offer-details-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+}
+
+.offer-details-countries {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.offer-details-meta-row {
+    -fx-padding: 4 0 2 0;
+}
+
+.offer-details-meta {
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-color: rgba(15, 23, 42, 0.65);
+    -fx-background-radius: 999;
+    -fx-padding: 6 10 6 10;
+}
+
+.offer-details-description {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 2px;
+    -fx-padding: 4 2 4 2;
+}
+
+.offer-details-reserve-btn {
+    -fx-background-color: linear-gradient(to right, #ff2d55, #ff6ec7);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10 14 10 14;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.offer-details-reserve-btn:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 85, 0.34), 12, 0.2, 0, 4);
 }

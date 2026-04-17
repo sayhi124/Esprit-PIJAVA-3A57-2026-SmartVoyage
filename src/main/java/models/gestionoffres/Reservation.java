@@ -1,5 +1,6 @@
 package models.gestionoffres;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,6 +14,8 @@ public class Reservation {
     private LocalDateTime reservationDate;
     private String status;
     private Boolean isPaid;
+    private BigDecimal totalPrice;
+    private String requesterName;
 
     public Reservation() {
     }
@@ -81,6 +84,22 @@ public class Reservation {
         isPaid = paid;
     }
 
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getRequesterName() {
+        return requesterName;
+    }
+
+    public void setRequesterName(String requesterName) {
+        this.requesterName = requesterName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -103,7 +122,9 @@ public class Reservation {
                 "id=" + id +
                 ", offerId=" + (offer != null ? offer.getId() : null) +
                 ", userId=" + userId +
+                ", requesterName='" + requesterName + '\'' +
                 ", reservedSeats=" + reservedSeats +
+                ", totalPrice=" + totalPrice +
                 ", reservationDate=" + reservationDate +
                 ", status='" + status + '\'' +
                 ", isPaid=" + isPaid +

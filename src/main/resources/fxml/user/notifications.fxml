@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="controllers.notifications.NotificationsController"
+      spacing="10" maxWidth="900.0" prefWidth="900.0" styleClass="notifications-root">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <children>
+            <Label text="Notifications" styleClass="events-form-title"/>
+            <Label fx:id="unreadCountLabel" text="0 unread" styleClass="events-form-subtitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="markAllReadButton" text="Mark all as read" onAction="#onMarkAllAsRead" styleClass="events-search-btn"/>
+        </children>
+    </HBox>
+
+    <Label fx:id="notificationStatusLabel" managed="false" visible="false" wrapText="true" styleClass="events-inline-status"/>
+
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS" styleClass="events-scroll">
+        <content>
+            <VBox fx:id="notificationsListContainer" spacing="8" styleClass="notifications-list">
+                <padding>
+                    <Insets top="4" right="2" bottom="4" left="2"/>
+                </padding>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>
