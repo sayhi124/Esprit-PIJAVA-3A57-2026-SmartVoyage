@@ -43,7 +43,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+				<Button text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -54,7 +54,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Agences" onAction="#onAgences" styleClass="sidebar-nav-item">
+				<Button text="Agencies" onAction="#onAgences" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -65,7 +65,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
+				<Button text="Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -76,7 +76,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item">
+				<Button text="Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -87,7 +87,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item">
+				<Button text="Events" onAction="#onEvenement" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -124,7 +124,7 @@
 					</graphic>
 				</Button>
 
-				<Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
+				<Button text="My Profile" onAction="#onProfile" styleClass="sidebar-nav-item">
 					<graphic>
 						<Region>
 							<styleClass>
@@ -185,7 +185,7 @@
 				<VBox alignment="CENTER" spacing="10.0">
 					<children>
 						<Label fx:id="userGreetingLabel" text="Welcome back" styleClass="offers-title"/>
-						<Label fx:id="roleLabel" text="Utilisateur session active" styleClass="offers-subtitle"/>
+						<Label fx:id="roleLabel" text="User session active" styleClass="offers-subtitle"/>
 					</children>
 				</VBox>
 			</children>

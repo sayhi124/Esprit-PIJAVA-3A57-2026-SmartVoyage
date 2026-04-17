@@ -163,29 +163,7 @@ public class EventFormController {
 
         String title = valueOrEmpty(titleField.getText()).trim();
         String location = valueOrEmpty(locationField.getText()).trim();
-        if (title.isBlank()) {
-            throw new IllegalArgumentException("Title is required.");
-        }
-        if (title.length() < 3) {
-            throw new IllegalArgumentException("Title must contain at least 3 characters.");
-        }
-        if (location.isBlank()) {
-            throw new IllegalArgumentException("Location is required.");
-        }
-        if (location.length() < 2) {
-            throw new IllegalArgumentException("Location must contain at least 2 characters.");
-        }
-        if (eventDatePicker.getValue() == null) {
-            throw new IllegalArgumentException("Date is required.");
-        }
-        if (eventDatePicker.getValue().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Event date cannot be in the past.");
-        }
-
         String description = valueOrEmpty(descriptionArea.getText()).trim();
-        if (description.length() > 500) {
-            throw new IllegalArgumentException("Description cannot exceed 500 characters.");
-        }
 
         Integer hour = hourSpinner.getValue() == null ? 0 : hourSpinner.getValue();
         Integer minute = minuteSpinner.getValue() == null ? 0 : minuteSpinner.getValue();
@@ -193,7 +171,12 @@ public class EventFormController {
         event.setTitle(title);
         event.setLocation(location);
         event.setDescription(description);
-        event.setEventDate(LocalDateTime.of(eventDatePicker.getValue(), java.time.LocalTime.of(hour, minute)));
+        if (eventDatePicker.getValue() == null) {
+            event.setEventDate(null);
+        } else {
+            LocalDateTime dateTime = LocalDateTime.of(eventDatePicker.getValue(), java.time.LocalTime.of(hour, minute));
+            event.setEventDate(dateTime);
+        }
         int capacity = capacitySpinner.getValue() == null ? DEFAULT_CAPACITY : capacitySpinner.getValue();
         event.setMaxParticipants(clampCapacity(capacity));
 

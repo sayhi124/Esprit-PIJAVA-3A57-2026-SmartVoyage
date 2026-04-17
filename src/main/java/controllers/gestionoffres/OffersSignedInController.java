@@ -47,8 +47,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OffersSignedInController {
@@ -133,6 +135,7 @@ public class OffersSignedInController {
     private Integer currentUserId;
     private Integer currentAgencyId;
     private boolean reservationsViewActive;
+    private final Map<Integer, Integer> offerAgencyReceiverCache = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -191,7 +194,7 @@ public class OffersSignedInController {
 
     private void reloadOffers() {
         try {
-            offers = offerService.getAll();
+            offers = offerService.getVisibleToUser(currentUserId);
             offers.sort(Comparator.comparingInt(TravelOffer::getId).reversed());
             reloadReservations();
             renderOffers(offers);
@@ -337,6 +340,20 @@ public class OffersSignedInController {
         deleteBtn.setManaged(canEditOffer);
 
         if (currentAgencyId == null) {
+            Integer receiverId = resolveOfferReceiverId(offer);
+            if (receiverId != null && receiverId > 0 && (currentUserId == null || receiverId.intValue() != currentUserId.intValue())) {
+                Button contactBtn = new Button("Contact Agency");
+                contactBtn.getStyleClass().add("event-action-secondary");
+                contactBtn.setOnAction(e -> {
+                    e.consume();
+                    try {
+                        NavigationManager.getInstance().showMessagesWithReceiver(receiverId);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                actions.getChildren().add(contactBtn);
+            }
             actions.getChildren().add(reserveBtn);
         }
         actions.getChildren().addAll(actionsSpacer, editBtn, deleteBtn);
@@ -365,6 +382,31 @@ public class OffersSignedInController {
             .filter(r -> r.getOffer() != null && r.getOffer().getId() == offerId)
             .findFirst()
             .orElse(null);
+    }
+
+    private Integer resolveOfferReceiverId(TravelOffer offer) {
+        if (offer == null) {
+            return null;
+        }
+        if (offer.getCreatedById() != null && offer.getCreatedById() > 0) {
+            return offer.getCreatedById();
+        }
+        Integer agencyId = offer.getAgencyId();
+        if (agencyId == null || agencyId <= 0) {
+            return null;
+        }
+        if (offerAgencyReceiverCache.containsKey(agencyId)) {
+            return offerAgencyReceiverCache.get(agencyId);
+        }
+        try {
+            Integer responsibleId = agencyAccountService.get(agencyId.longValue())
+                .map(models.gestionagences.AgencyAccount::getResponsableId)
+                .orElse(null);
+            offerAgencyReceiverCache.put(agencyId, responsibleId);
+            return responsibleId;
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     private Image resolveOfferImage(String imagePath) {

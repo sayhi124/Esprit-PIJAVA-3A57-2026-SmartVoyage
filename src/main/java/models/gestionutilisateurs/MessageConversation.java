@@ -4,12 +4,39 @@ import java.time.LocalDateTime;
 
 public class MessageConversation {
 
+    private int groupId;
+    private boolean group;
+    private String groupName;
     private int otherUserId;
     private String otherUserName;
     private String otherUserRole;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
     private int unreadCount;
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    public boolean isGroup() {
+        return group;
+    }
+
+    public void setGroup(boolean group) {
+        this.group = group;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
     public int getOtherUserId() {
         return otherUserId;

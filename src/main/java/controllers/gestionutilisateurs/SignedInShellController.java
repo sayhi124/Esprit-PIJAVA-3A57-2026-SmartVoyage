@@ -14,6 +14,8 @@ public class SignedInShellController {
     private Label roleLabel;
     @FXML
     private Button dashboardIaButton;
+    @FXML
+    private Button profileSidebarButton;
 
     @FXML
     private void initialize() {
@@ -35,7 +37,7 @@ public class SignedInShellController {
         userGreetingLabel.setText("Welcome back, " + displayName);
 
         boolean agencyAdmin = nav.canAccessAgencyAdminFeatures();
-        roleLabel.setText(agencyAdmin ? "Agence Admin session active" : "Utilisateur session active");
+        roleLabel.setText(agencyAdmin ? "Agency Admin session active" : "User session active");
         dashboardIaButton.setVisible(agencyAdmin);
         dashboardIaButton.setManaged(agencyAdmin);
     }
@@ -62,7 +64,7 @@ public class SignedInShellController {
 
     @FXML
     private void onRecommandation() {
-        showPlaceholder("Recommandation", "Route Recommandation signed-in will open here.");
+        NavigationManager.getInstance().showSignedInPosts();
     }
 
     @FXML
@@ -82,7 +84,7 @@ public class SignedInShellController {
 
     @FXML
     private void onProfile() {
-        showPlaceholder("Mon Profil", "Route Profile signed-in will open here.");
+        NavigationManager.getInstance().showUserProfile();
     }
 
     @FXML

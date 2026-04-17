@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.AdminDashboardController"
+            styleClass="immersive-root admin-dashboard-root"
+            stylesheets="@../../css/styles.css, @../../css/admin_styles.css, @../../css/admin_dashboard.css">
+
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive admin-sidebar">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+
+                <Button fx:id="dashboardNavButton" text="Admin Dashboard" onAction="#onDashboard" defaultButton="false">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-admin"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="agencesNavButton" text="Agencies" onAction="#onAgences" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-agencies"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="offersNavButton" text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-offers"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-messages"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="eventsNavButton" text="Events" onAction="#onEvenement" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-events"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="recommendationsNavButton" text="Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-recommend"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button onAction="#onBackToHome" styleClass="theme-immersive-button" accessibleText="Logout">
+                                    <graphic>
+                                        <Region>
+                                            <styleClass>
+                                                <String fx:value="sidebar-nav-icon"/>
+                                                <String fx:value="icon-logout"/>
+                                            </styleClass>
+                                        </Region>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll">
+            <content>
+                <VBox spacing="25" styleClass="dashboard-content">
+                    <padding>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
+                    </padding>
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label fx:id="sectionTitleLabel" text="Admin Dashboard" styleClass="dashboard-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Export" onAction="#onExport" styleClass="action-button primary"/>
+                </HBox>
+            </HBox>
+
+            <StackPane VBox.vgrow="ALWAYS">
+                <children>
+                    <VBox fx:id="dashboardOverviewPane" spacing="20" fillWidth="true">
+                        <children>
+                            <HBox spacing="20" styleClass="cards-container">
+                                <VBox styleClass="stat-card">
+                                    <Label text="Total Users" styleClass="card-label"/>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="revenueValue" text="0" styleClass="card-value revenue"/>
+                                    </HBox>
+                                    <Label text="Registered accounts" styleClass="card-subtitle"/>
+                                </VBox>
+
+                                <VBox styleClass="stat-card">
+                                    <Label text="Agencies" styleClass="card-label"/>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="ordersValue" text="0" styleClass="card-value orders"/>
+                                    </HBox>
+                                    <Label text="Agency accounts" styleClass="card-subtitle"/>
+                                </VBox>
+
+                                <VBox styleClass="stat-card">
+                                    <Label text="Events" styleClass="card-label"/>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="usersValue" text="0" styleClass="card-value users"/>
+                                    </HBox>
+                                    <Label text="Published events" styleClass="card-subtitle"/>
+                                </VBox>
+
+                                <VBox styleClass="stat-card">
+                                    <Label text="Feedbacks" styleClass="card-label"/>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="growthValue" text="0" styleClass="card-value growth"/>
+                                    </HBox>
+                                    <Label text="App feedback records" styleClass="card-subtitle"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="15" styleClass="chart-section">
+                                <Label text="Feedback Activity (Last 6 Months)" styleClass="section-title"/>
+                                <StackPane styleClass="chart-container">
+                                    <LineChart fx:id="revenueChart" styleClass="revenue-chart">
+                                        <xAxis>
+                                            <CategoryAxis fx:id="xAxis" styleClass="chart-axis"/>
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis fx:id="yAxis" styleClass="chart-axis"/>
+                                        </yAxis>
+                                    </LineChart>
+                                </StackPane>
+                            </VBox>
+
+                            <VBox spacing="15" VBox.vgrow="ALWAYS">
+                                <Label text="Top Users" styleClass="section-title"/>
+                                <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="customersTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="nameColumn" text="Username" prefWidth="220"/>
+                                            <TableColumn fx:id="dealsColumn" text="Email" prefWidth="260"/>
+                                            <TableColumn fx:id="valueColumn" text="Role" prefWidth="130"/>
+                                            <TableColumn fx:id="userActionsColumn" text="Actions" prefWidth="140"/>
+                                        </columns>
+                                    </TableView>
+                                </VBox>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="agenciesPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Agencies" styleClass="card-label"/>
+                                        <Label fx:id="agenciesCountValue" text="0" styleClass="card-value users"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Posts publies" styleClass="card-label"/>
+                                        <Label fx:id="postsCountValue" text="0" styleClass="card-value orders"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Interactions" styleClass="card-label"/>
+                                        <Label fx:id="interactionsRateValue" text="0.00 / post" styleClass="card-value growth"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Pending requests" styleClass="card-label"/>
+                                        <Label fx:id="pendingCountValue" text="0" styleClass="card-value revenue"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Validation des demandes d'agence" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <TableView fx:id="proposalsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="applicantColumn" text="Applicant" prefWidth="130"/>
+                                            <TableColumn fx:id="agencyColumn" text="Requested agency" prefWidth="230"/>
+                                            <TableColumn fx:id="countryColumn" text="Pays" prefWidth="90"/>
+                                            <TableColumn fx:id="requestedAtColumn" text="Date demande" prefWidth="150"/>
+                                            <TableColumn fx:id="statusColumn" text="Statut" prefWidth="120"/>
+                                            <TableColumn fx:id="messageColumn" text="Message" prefWidth="260"/>
+                                            <TableColumn fx:id="proposalActionsColumn" text="Actions" prefWidth="170"/>
+                                        </columns>
+                                    </TableView>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <children>
+                                        </children>
+                                    </HBox>
+                                    <Label fx:id="agenciesStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+
+                            <Label text="Analytique agences" styleClass="section-title"/>
+                            <HBox spacing="16">
+                                <children>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Verified vs pending agencies" styleClass="card-label"/>
+                                            <PieChart fx:id="agenciesStatusChart" prefHeight="240"/>
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Posts par agence (top 8)" styleClass="card-label"/>
+                                            <BarChart fx:id="agenciesPostsChart" prefHeight="240">
+                                                <xAxis>
+                                                    <CategoryAxis fx:id="agencyPostsXAxis"/>
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis fx:id="agencyPostsYAxis"/>
+                                                </yAxis>
+                                            </BarChart>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Toutes les agences" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <TableView fx:id="agenciesTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="agencyIdColumn" text="#" prefWidth="60"/>
+                                            <TableColumn fx:id="agencyNameColumn" text="Nom" prefWidth="220"/>
+                                            <TableColumn fx:id="agencyOwnerColumn" text="Responsable" prefWidth="150"/>
+                                            <TableColumn fx:id="agencyVerifiedColumn" text="Verifiee" prefWidth="120"/>
+                                            <TableColumn fx:id="agencyCreatedColumn" text="Creee le" prefWidth="160"/>
+                                            <TableColumn fx:id="agencyUpdatedColumn" text="Mise a jour" prefWidth="160"/>
+                                            <TableColumn fx:id="agencyPostsColumn" text="Posts" prefWidth="90"/>
+                                            <TableColumn fx:id="agencyInteractionsColumn" text="Interactions" prefWidth="120"/>
+                                            <TableColumn fx:id="agencyActionsColumn" text="Actions" prefWidth="160"/>
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="offersPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Total offers" styleClass="card-label"/>
+                                        <Label fx:id="offersTotalCountValue" text="0" styleClass="card-value users"/>
+                                        <Label text="All offers in database" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Approved" styleClass="card-label"/>
+                                        <Label fx:id="offersApprovedCountValue" text="0" styleClass="card-value revenue"/>
+                                        <Label text="Visible to users" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Pending" styleClass="card-label"/>
+                                        <Label fx:id="offersPendingCountValue" text="0" styleClass="card-value growth"/>
+                                        <Label text="Awaiting admin decision" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Rejected" styleClass="card-label"/>
+                                        <Label fx:id="offersRejectedCountValue" text="0" styleClass="card-value orders"/>
+                                        <Label text="Rejected by moderation" styleClass="card-subtitle"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Offers moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" minHeight="380" prefHeight="420" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" minHeight="320" prefHeight="380" VBox.vgrow="ALWAYS">
+                                        <content>
+                                            <VBox fx:id="offersCardsContainer" spacing="10" fillWidth="true"/>
+                                        </content>
+                                    </ScrollPane>
+                                    <Label fx:id="offersStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="eventsPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Total events" styleClass="card-label"/>
+                                        <Label fx:id="eventsTotalCountValue" text="0" styleClass="card-value users"/>
+                                        <Label text="All events in database" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Approved" styleClass="card-label"/>
+                                        <Label fx:id="eventsApprovedCountValue" text="0" styleClass="card-value revenue"/>
+                                        <Label text="Visible to users" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Pending" styleClass="card-label"/>
+                                        <Label fx:id="eventsPendingCountValue" text="0" styleClass="card-value growth"/>
+                                        <Label text="Awaiting admin decision" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Rejected" styleClass="card-label"/>
+                                        <Label fx:id="eventsRejectedCountValue" text="0" styleClass="card-value orders"/>
+                                        <Label text="Rejected by moderation" styleClass="card-subtitle"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Events analytics" styleClass="section-title"/>
+                            <HBox spacing="16">
+                                <children>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Events created (last 6 months)" styleClass="card-label"/>
+                                            <LineChart fx:id="eventsTimelineChart" prefHeight="240" styleClass="revenue-chart">
+                                                <xAxis>
+                                                    <CategoryAxis fx:id="eventsTimelineXAxis"/>
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis fx:id="eventsTimelineYAxis"/>
+                                                </yAxis>
+                                            </LineChart>
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Events by status" styleClass="card-label"/>
+                                            <PieChart fx:id="eventsStatusChart" prefHeight="240"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Top event locations" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10">
+                                <children>
+                                    <ScrollPane fitToWidth="true" prefHeight="220" styleClass="offers-moderation-scroll">
+                                        <content>
+                                            <VBox fx:id="eventLocationCardsContainer" spacing="10" styleClass="offers-moderation-cards"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+
+                            <Label text="Pending events moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" minHeight="380" prefHeight="420" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <ScrollPane fitToWidth="true" minHeight="320" prefHeight="380" VBox.vgrow="ALWAYS" styleClass="offers-moderation-scroll">
+                                        <content>
+                                            <VBox fx:id="eventModerationCardsContainer" spacing="12" styleClass="offers-moderation-cards"/>
+                                        </content>
+                                    </ScrollPane>
+                                    <Label fx:id="eventsStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="recommendationsPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Posts" styleClass="card-label"/>
+                                        <Label fx:id="recPostsCountValue" text="0" styleClass="card-value users"/>
+                                        <Label text="Published recommendations" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Comments" styleClass="card-label"/>
+                                        <Label fx:id="recCommentsCountValue" text="0" styleClass="card-value growth"/>
+                                        <Label text="User discussions" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Likes" styleClass="card-label"/>
+                                        <Label fx:id="recLikesCountValue" text="0" styleClass="card-value revenue"/>
+                                        <Label text="Engagement signals" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Interactions" styleClass="card-label"/>
+                                        <Label fx:id="recInteractionsRateValue" text="0.00 / post" styleClass="card-value orders"/>
+                                        <Label text="(likes + comments) / post" styleClass="card-subtitle"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Recommendations analytics" styleClass="section-title"/>
+                            <HBox spacing="16">
+                                <children>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Posts created (last 6 months)" styleClass="card-label"/>
+                                            <LineChart fx:id="recommendationsTimelineChart" prefHeight="240" styleClass="revenue-chart">
+                                                <xAxis>
+                                                    <CategoryAxis fx:id="recommendationsTimelineXAxis"/>
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis fx:id="recommendationsTimelineYAxis"/>
+                                                </yAxis>
+                                            </LineChart>
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Top countries by posts" styleClass="card-label"/>
+                                            <PieChart fx:id="recommendationsTopCountriesChart" prefHeight="240"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <VBox fx:id="recommendationsInlineEditor" styleClass="table-container" spacing="10" managed="false" visible="false">
+                                <children>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <children>
+                                            <Label fx:id="recommendationsEditorTitle" text="Edit" styleClass="section-title"/>
+                                            <Region HBox.hgrow="ALWAYS"/>
+                                            <Button text="Back to list" onAction="#onCancelRecommendationsInlineEdit" styleClass="action-button secondary"/>
+                                        </children>
+                                    </HBox>
+                                    <StackPane fx:id="recommendationsEditorHost" prefHeight="420"/>
+                                </children>
+                            </VBox>
+
+                            <Label text="Posts moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <ScrollPane fitToWidth="true" prefHeight="260" VBox.vgrow="ALWAYS" styleClass="offers-moderation-scroll">
+                                        <content>
+                                            <VBox fx:id="recommendationsPostsCardsContainer" spacing="12" styleClass="offers-moderation-cards"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+
+                            <Label text="Comments moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <ScrollPane fitToWidth="true" prefHeight="260" VBox.vgrow="ALWAYS" styleClass="offers-moderation-scroll">
+                                        <content>
+                                            <VBox fx:id="recommendationsCommentsCardsContainer" spacing="12" styleClass="offers-moderation-cards"/>
+                                        </content>
+                                    </ScrollPane>
+                                    <Label fx:id="recommendationsStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </children>
+            </StackPane>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

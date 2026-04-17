@@ -24,27 +24,27 @@
                 <VBox spacing="4.0">
                     <children>
                         <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
-                        <Label text="Mon agence" styleClass="sidebar-subtitle"/>
+                        <Label text="My agency" styleClass="sidebar-subtitle"/>
                     </children>
                 </VBox>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
-                <Button text="🧳  Offres" onAction="#onOffres" styleClass="sidebar-nav-item"/>
-                <Button text="📍  Agences" onAction="#onAgences">
+                <Button text="🧳  Offers" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agencies" onAction="#onAgences">
                     <styleClass>
                         <String fx:value="sidebar-nav-item"/>
                         <String fx:value="sidebar-nav-item-active"/>
                     </styleClass>
                 </Button>
-                <Button text="✉  Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
-                <Button text="⭐  Recommandation" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
-                <Button text="📅  Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button text="✉  Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Events" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
                 <Button text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
                 <Region VBox.vgrow="ALWAYS"/>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
                 <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
-                <Button text="👤  Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item"/>
+                <Button text="👤  My Profile" onAction="#onProfile" styleClass="sidebar-nav-item"/>
                 <Separator styleClass="sidebar-rule"/>
                 <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">
@@ -86,8 +86,6 @@
                                                 <HBox spacing="12.0" alignment="CENTER">
                                                     <children>
                                                         <Button fx:id="statusActionButton" text="Action" visible="false" managed="false" styleClass="agency-proposal-primary-button" mnemonicParsing="false"/>
-                                                        <Button fx:id="simulateApprovalButton" text="Simulate Admin Approval" onAction="#onSimulateApproval"
-                                                                visible="false" managed="false" styleClass="agency-proposal-secondary-button" mnemonicParsing="false"/>
                                                     </children>
                                                 </HBox>
                                             </children>
@@ -95,7 +93,7 @@
                                         <VBox fx:id="formContainer" spacing="12.0" alignment="TOP_CENTER" maxWidth="664.0" fillWidth="true">
                                             <children>
                                                 <Label text="Submit agency admin proposal" styleClass="offers-title" textAlignment="CENTER" wrapText="true"/>
-                                                <Label text="Pays chargés depuis l'API (drapeau à gauche, choix à droite). Remplissez le nom de l'agence."
+                                                <Label text="Countries are loaded from API (flag on the left, choice on the right). Fill in the requested agency name."
                                                        wrapText="true" styleClass="offers-subtitle" textAlignment="CENTER"/>
                                                 <Label text="Agency name" styleClass="agency-proposal-field-label"/>
                                                 <TextField fx:id="agencyNameField" promptText="Agency name" maxWidth="664.0" styleClass="agency-proposal-text-field"/>

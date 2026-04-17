@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Message {
 
     private int id;
+    private int groupId;
     private int senderId;
     private int receiverId;
     private String content;
@@ -21,6 +22,14 @@ public class Message {
 
     public int getSenderId() {
         return senderId;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public void setSenderId(int senderId) {

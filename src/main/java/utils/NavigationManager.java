@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import enums.gestionutilisateurs.UserRole;
+import models.gestionposts.Post;
 import models.gestionutilisateurs.User;
 import services.gestionutilisateurs.UserService;
 
@@ -33,6 +34,7 @@ public class NavigationManager {
     private boolean lightTheme;
     private UserService userService;
     private User sessionUser;
+    private Post selectedPost;
     private Long selectedAgencyId;
     private Instant sessionIssuedAt;
     private static final java.time.Duration SESSION_TTL = java.time.Duration.ofDays(7);
@@ -89,6 +91,7 @@ public class NavigationManager {
         copy.setRole(source.getRole());
         copy.setIsActive(source.getIsActive());
         copy.setProfileImageId(source.getProfileImageId());
+        copy.setPhone(source.getPhone());
         copy.setEmailVerified(source.getEmailVerified());
         copy.setFaceVerified(source.getFaceVerified());
         sessionUser = copy;
@@ -153,10 +156,26 @@ public class NavigationManager {
         this.selectedAgencyId = agencyId;
     }
 
+    public Optional<Post> selectedPost() {
+        return Optional.ofNullable(selectedPost);
+    }
+
+    public Post getSelectedPost() {
+        return selectedPost;
+    }
+
+    public void setSelectedPost(Post post) {
+        this.selectedPost = post;
+    }
+
     public void showPostLoginHome() {
         if (!canAccessSignedInShell()) {
             clearSession();
             showLogin();
+            return;
+        }
+        if (canAccessAdminFeatures()) {
+            showAdminDashboard();
             return;
         }
         showSignedInShell();
@@ -177,7 +196,7 @@ public class NavigationManager {
             showLogin();
             return;
         }
-        loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agences");
+        loadScene("/fxml/agency/agencies_signed_in.fxml", "Smart Voyage - Agencies");
     }
 
     public void showSignedInEvents() {
@@ -200,6 +219,34 @@ public class NavigationManager {
 
     public void showSignedInMessages() {
         showMessagerie();
+    }
+
+    public void showMessagesWithReceiver(int receiverId) {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        if (receiverId <= 0) {
+            showMessagerie();
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(NavigationManager.class.getResource("/views/messaging/messagerie.fxml")));
+            Parent root = loader.load();
+            Object controller = loader.getController();
+            if (controller instanceof controllers.messaging.MessagesController messagesController) {
+                try {
+                    messagesController.setReceiverId(receiverId);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            applyScene(root, "Smart Voyage - Messagerie");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showMessagerie();
+        }
     }
 
     public void showMessagerie() {
@@ -261,12 +308,21 @@ public class NavigationManager {
         loadScene("/fxml/agency/agency_post_create.fxml", "Smart Voyage - Add Agency Post");
     }
 
+    public void showUserProfile() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/user/user_profile.fxml", "Smart Voyage - Mon Profil");
+    }
+
     public void showWelcome() {
         loadScene("/fxml/user/welcome.fxml", "Smart Voyage");
     }
 
     public void showGuestOffers() {
-        loadScene("/fxml/user/offers_guest.fxml", "Offres");
+        loadScene("/fxml/user/offers_guest.fxml", "Offers");
     }
 
     public void showGuestFeedbacks() {
@@ -278,11 +334,42 @@ public class NavigationManager {
     }
 
     public void showLogin() {
-        loadScene("/fxml/user/login.fxml", "Connexion");
+        loadScene("/fxml/user/login.fxml", "Sign in");
     }
 
     public void showRegister() {
-        loadScene("/fxml/user/register.fxml", "Inscription");
+        loadScene("/fxml/user/register.fxml", "Sign up");
+    }
+
+    public void showAdminLogin() {
+        loadScene("/fxml/user/admin_login.fxml", "Admin Sign in");
+    }
+
+    public void showAdminDashboard() {
+        if (!canAccessAdminFeatures()) {
+            showPostLoginHome();
+            return;
+        }
+        loadScene("/fxml/user/admin_dashboard.fxml", "Smart Voyage - Admin Dashboard");
+    }
+
+    public void showSignedInPosts() {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        loadScene("/fxml/posts/posts_view.fxml", "Smart Voyage - Posts");
+    }
+
+    public void showPostDetail(Post post) {
+        if (!canAccessSignedInShell()) {
+            clearSession();
+            showLogin();
+            return;
+        }
+        this.selectedPost = post;
+        loadScene("/fxml/posts/post_detail.fxml", "Smart Voyage - Post Detail");
     }
 
     private void loadScene(String resource, String title) {
@@ -326,6 +413,13 @@ public class NavigationManager {
             String form = css.toExternalForm();
             if (!scene.getStylesheets().contains(form)) {
                 scene.getStylesheets().add(form);
+            }
+        }
+        var postsCss = NavigationManager.class.getResource("/css/posts_styles.css");
+        if (postsCss != null) {
+            String postsForm = postsCss.toExternalForm();
+            if (!scene.getStylesheets().contains(postsForm)) {
+                scene.getStylesheets().add(postsForm);
             }
         }
         var bridge = NavigationManager.class.getResource("/css/controlsfx-modena-bridge.css");

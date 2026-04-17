@@ -148,7 +148,7 @@ public class MyAgencyController {
             bindAgencyToView();
             applyEditVisibility();
             if (!canEditAgency) {
-                feedbackLabel.setText("Read-only profile. Only agency owner admin can update this page.");
+                feedbackLabel.setText("");
             } else {
                 feedbackLabel.setText("");
             }
@@ -250,6 +250,7 @@ public class MyAgencyController {
         draft.setAddress(blankToNull(editAddressField.getText()));
         String countryRaw = blankToNull(editCountryField.getText());
         draft.setCountry(countryRaw != null ? countryRaw.toUpperCase(Locale.ROOT) : null);
+        agencyService.applyResolvedCountryIfMissing(draft);
 
         AgencyAccountValidationResult validation = agencyService.validateAgencyProfileFields(draft);
         if (!validation.isValid()) {
@@ -799,11 +800,11 @@ public class MyAgencyController {
     @FXML private void onOffres() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onAgences() { NavigationManager.getInstance().showSignedInAgencies(); }
     @FXML private void onMessagerie() { NavigationManager.getInstance().showSignedInMessages(); }
-    @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onRecommandation() { NavigationManager.getInstance().showSignedInPosts(); }
     @FXML private void onEvenement() { NavigationManager.getInstance().showSignedInEvents(); }
     @FXML private void onPremium() { NavigationManager.getInstance().showSignedInShell(); }
     @FXML private void onNotifications() { NavigationManager.getInstance().showSignedInNotifications(); }
-    @FXML private void onProfile() { NavigationManager.getInstance().showSignedInShell(); }
+    @FXML private void onProfile() { NavigationManager.getInstance().showUserProfile(); }
     @FXML private void onDashboardIa() { NavigationManager.getInstance().showSignedInShell(); }
 
     @FXML

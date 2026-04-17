@@ -15,7 +15,8 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.gestionutilisateurs.WelcomeController"
-            styleClass="immersive-root">
+            styleClass="immersive-root"
+            stylesheets="@../../css/styles.css, @../../css/admin_styles.css">
     <left>
         <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
             <padding>
@@ -43,7 +44,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+                <Button text="Offers" onAction="#onOffres" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -84,7 +85,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item">
+                <Button text="Sign in" onAction="#onSignIn" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -94,12 +95,22 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item">
+                <Button text="Sign up" onAction="#onSignUp" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
                                 <String fx:value="sidebar-nav-icon"/>
                                 <String fx:value="icon-signup"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+                <Button text="Admin" onAction="#onAdmin" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-admin"/>
                             </styleClass>
                         </Region>
                     </graphic>

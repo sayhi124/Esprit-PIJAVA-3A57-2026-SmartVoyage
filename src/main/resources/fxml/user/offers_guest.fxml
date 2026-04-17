@@ -40,7 +40,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Offres" onAction="#onOffres">
+                <Button text="Offers" onAction="#onOffres">
                     <styleClass>
                         <String fx:value="sidebar-nav-item"/>
                         <String fx:value="sidebar-nav-item-active"/>
@@ -85,7 +85,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Connexion" onAction="#onSignIn" styleClass="sidebar-nav-item">
+                <Button text="Sign in" onAction="#onSignIn" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -95,7 +95,7 @@
                         </Region>
                     </graphic>
                 </Button>
-                <Button text="Inscription" onAction="#onSignUp" styleClass="sidebar-nav-item">
+                <Button text="Sign up" onAction="#onSignUp" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -150,7 +150,7 @@
                                                    HBox.hgrow="ALWAYS" styleClass="offers-search-input"/>
                                     </children>
                                 </HBox>
-                                <JFXButton text="Connexion" onAction="#onSignIn" styleClass="offers-top-login-button"/>
+                                <JFXButton text="Sign in" onAction="#onSignIn" styleClass="offers-top-login-button"/>
                             </children>
                         </HBox>
                     </top>

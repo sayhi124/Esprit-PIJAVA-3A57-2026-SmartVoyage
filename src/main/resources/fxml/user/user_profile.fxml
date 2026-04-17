@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionutilisateurs.UserProfileController"
+            styleClass="immersive-root">
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="✦ SmartVoyage" styleClass="sidebar-logo"/>
+                        <Label text="Signed-in mode" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⌂  Home" onAction="#onHome" styleClass="sidebar-nav-item"/>
+                <Button text="🧳  Offers" onAction="#onOffres" styleClass="sidebar-nav-item"/>
+                <Button text="📍  Agencies" onAction="#onAgences" styleClass="sidebar-nav-item"/>
+                <Button text="✉  Messages" onAction="#onMessagerie" styleClass="sidebar-nav-item"/>
+                <Button text="⭐  Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item"/>
+                <Button text="📅  Events" onAction="#onEvenement" styleClass="sidebar-nav-item"/>
+                <Button text="📊  Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="👑  Premium" onAction="#onPremium" styleClass="premium-nav-button"/>
+                <Button text="🔔  Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item"/>
+                <Button fx:id="profileSidebarButton" text="👤  My Profile" onAction="#onProfile">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                </Button>
+                <Separator styleClass="sidebar-rule"/>
+                <Button text="⎋  Deconnexion" onAction="#onLogout" styleClass="sidebar-nav-item"/>
+                <VBox spacing="8.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Button text="🌙" onAction="#onThemeToggle" styleClass="theme-immersive-button"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane styleClass="offers-immersive-stack">
+            <children>
+                <Region styleClass="offers-page-overlay"/>
+                <Region styleClass="offers-cards-spotlight"/>
+                <VBox spacing="18.0" styleClass="user-profile-root" maxWidth="1240.0">
+                    <padding><Insets top="26.0" right="26.0" bottom="30.0" left="26.0"/></padding>
+                    <children>
+                        <VBox spacing="6.0" styleClass="user-profile-header">
+                            <children>
+                                <Label text="My Profile" styleClass="user-profile-kicker"/>
+                                <Label fx:id="pageTitleLabel" text="My Profile" styleClass="user-profile-title"/>
+                                <Label text="Mettez a jour vos informations personnelles." styleClass="user-profile-subtitle"/>
+                            </children>
+                        </VBox>
+
+                        <HBox spacing="20.0" alignment="TOP_LEFT">
+                            <children>
+                                <VBox spacing="14.0" HBox.hgrow="ALWAYS">
+                                    <styleClass>
+                                        <String fx:value="user-profile-card"/>
+                                        <String fx:value="user-profile-main-card"/>
+                                    </styleClass>
+                                    <padding><Insets top="22.0" right="22.0" bottom="20.0" left="22.0"/></padding>
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label text="Personal information" styleClass="user-profile-section-title"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Button text="Save" onAction="#onSaveProfile" styleClass="user-profile-save-btn"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="28.0" alignment="TOP_LEFT">
+                                            <children>
+                                                <VBox alignment="TOP_CENTER" spacing="12.0">
+                                                    <children>
+                                                        <StackPane styleClass="user-profile-avatar-shell">
+                                                            <children>
+                                                                <ImageView fx:id="profileImageView" fitWidth="148.0" fitHeight="148.0" preserveRatio="false" smooth="true"/>
+                                                                <Label fx:id="profileImageFallbackLabel" text="U" styleClass="user-profile-avatar-fallback"/>
+                                                            </children>
+                                                        </StackPane>
+                                                        <Button text="Change photo" onAction="#onUploadProfileImage" styleClass="user-profile-image-btn"/>
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Username" styleClass="user-profile-label"/>
+                                                        <TextField fx:id="usernameField" promptText="Your username" styleClass="user-profile-input"/>
+                                                        <Label fx:id="usernameErrorLabel" managed="false" visible="false" styleClass="user-profile-error"/>
+                                                        <Label text="Email" styleClass="user-profile-label"/>
+                                                        <TextField fx:id="emailField" promptText="votre@email.com" styleClass="user-profile-input"/>
+                                                        <Label fx:id="emailErrorLabel" managed="false" visible="false" styleClass="user-profile-error"/>
+                                                        <Label text="Phone" styleClass="user-profile-label"/>
+                                                        <TextField fx:id="phoneField" promptText="+216 99 999 999" styleClass="user-profile-input"/>
+                                                        <Label fx:id="phoneErrorLabel" managed="false" visible="false" styleClass="user-profile-error"/>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                        <Label fx:id="statusLabel" managed="false" visible="false" wrapText="true" styleClass="user-profile-status"/>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="14.0" prefWidth="380.0" minWidth="340.0" maxWidth="430.0">
+                                    <children>
+                                        <VBox spacing="10.0">
+                                            <styleClass>
+                                                <String fx:value="user-profile-card"/>
+                                                <String fx:value="user-profile-side-card"/>
+                                            </styleClass>
+                                            <padding><Insets top="16.0" right="16.0" bottom="16.0" left="16.0"/></padding>
+                                            <children>
+                                                <Label text="Created events" styleClass="user-profile-section-title"/>
+                                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="user-profile-mini-scroll">
+                                                    <content>
+                                                        <VBox fx:id="eventsCreatedBox" spacing="8.0"/>
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="10.0">
+                                            <styleClass>
+                                                <String fx:value="user-profile-card"/>
+                                                <String fx:value="user-profile-side-card"/>
+                                            </styleClass>
+                                            <padding><Insets top="16.0" right="16.0" bottom="16.0" left="16.0"/></padding>
+                                            <children>
+                                                <Label text="Rate the app" styleClass="user-profile-section-title"/>
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button fx:id="feedbackStar1Button" text="★" userData="1"
+                                                                onAction="#onFeedbackStarSelected"
+                                                                onMouseEntered="#onFeedbackStarHover"
+                                                                onMouseExited="#onFeedbackStarExit"
+                                                                styleClass="star-rating-button"/>
+                                                        <Button fx:id="feedbackStar2Button" text="★" userData="2"
+                                                                onAction="#onFeedbackStarSelected"
+                                                                onMouseEntered="#onFeedbackStarHover"
+                                                                onMouseExited="#onFeedbackStarExit"
+                                                                styleClass="star-rating-button"/>
+                                                        <Button fx:id="feedbackStar3Button" text="★" userData="3"
+                                                                onAction="#onFeedbackStarSelected"
+                                                                onMouseEntered="#onFeedbackStarHover"
+                                                                onMouseExited="#onFeedbackStarExit"
+                                                                styleClass="star-rating-button"/>
+                                                        <Button fx:id="feedbackStar4Button" text="★" userData="4"
+                                                                onAction="#onFeedbackStarSelected"
+                                                                onMouseEntered="#onFeedbackStarHover"
+                                                                onMouseExited="#onFeedbackStarExit"
+                                                                styleClass="star-rating-button"/>
+                                                        <Button fx:id="feedbackStar5Button" text="★" userData="5"
+                                                                onAction="#onFeedbackStarSelected"
+                                                                onMouseEntered="#onFeedbackStarHover"
+                                                                onMouseExited="#onFeedbackStarExit"
+                                                                styleClass="star-rating-button"/>
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="feedbackNoteArea" promptText="Your feedback..." wrapText="true" prefRowCount="3" styleClass="user-profile-input"/>
+                                                <Button text="Publish feedback" onAction="#onSubmitFeedback" styleClass="user-profile-image-btn"/>
+                                                <Label fx:id="feedbackStatusLabel" managed="false" visible="false" wrapText="true" styleClass="user-profile-status"/>
+                                                <Label text="My previous feedback" styleClass="user-profile-label"/>
+                                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="user-profile-mini-scroll">
+                                                    <content>
+                                                        <VBox fx:id="feedbackHistoryBox" spacing="8.0"/>
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

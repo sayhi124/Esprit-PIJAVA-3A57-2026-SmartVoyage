@@ -328,19 +328,19 @@ public class OffersGuestController {
 
     private void promptLoginRequired() {
         Notifications.create()
-                .title("Connexion requise")
+                .title("Sign-in required")
                 .text("Sign in to unlock offer details.")
                 .hideAfter(Duration.seconds(2.2))
                 .showInformation();
 
-        ButtonType signIn = new ButtonType("Se connecter", ButtonBar.ButtonData.OK_DONE);
-        ButtonType signUp = new ButtonType("S'inscrire", ButtonBar.ButtonData.OTHER);
-        ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType signIn = new ButtonType("Sign in", ButtonBar.ButtonData.OK_DONE);
+        ButtonType signUp = new ButtonType("Sign up", ButtonBar.ButtonData.OTHER);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "", signIn, signUp, cancel);
-        alert.setTitle("Connexion requise");
-        alert.setHeaderText("Cette offre est en mode aperçu invité.");
-        alert.setContentText("Connectez-vous ou créez un compte pour voir les détails complets.");
+        alert.setTitle("Sign-in required");
+        alert.setHeaderText("This offer is displayed in guest preview mode.");
+        alert.setContentText("Sign in or create an account to view full details.");
         alert.showAndWait().ifPresent(choice -> {
             if (choice == signIn) {
                 NavigationManager.getInstance().showLogin();

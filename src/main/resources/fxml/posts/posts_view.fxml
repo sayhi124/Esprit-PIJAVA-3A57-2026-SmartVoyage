@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gestionposts.PostsController"
+            styleClass="immersive-root">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox prefWidth="278.0" minWidth="260.0" spacing="10.0" styleClass="sidebar-immersive">
+            <padding>
+                <Insets top="22.0" right="16.0" bottom="18.0" left="16.0"/>
+            </padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label text="SMART VOYAGE" styleClass="sidebar-logo"/>
+                        <Label text="Recommandations" styleClass="sidebar-subtitle"/>
+                    </children>
+                </VBox>
+
+                <Separator styleClass="sidebar-rule"/>
+
+                <Button text="Home" onAction="#onHome" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-home"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Offres" onAction="#onOffres" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-offers"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Agences" onAction="#onAgences" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-agencies"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Messagerie" onAction="#onMessagerie" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-messages"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Recommandation" onAction="#onRecommandation">
+                    <styleClass>
+                        <String fx:value="sidebar-nav-item"/>
+                        <String fx:value="sidebar-nav-item-active"/>
+                    </styleClass>
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-recommend"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Evenement" onAction="#onEvenement" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-events"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator styleClass="sidebar-rule"/>
+
+                <Button text="Premium" onAction="#onPremium" styleClass="premium-nav-button">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-premium"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Notifications" onAction="#onNotifications" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-notifications"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Mon Profil" onAction="#onProfile" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-profile"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Button text="Dashboard IA" onAction="#onDashboardIa" styleClass="sidebar-nav-item">
+                    <graphic>
+                        <Region>
+                            <styleClass>
+                                <String fx:value="sidebar-nav-icon"/>
+                                <String fx:value="icon-dashboard"/>
+                            </styleClass>
+                        </Region>
+                    </graphic>
+                </Button>
+
+                <Separator styleClass="sidebar-rule"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-footer-block">
+                    <children>
+                        <Button onAction="#onThemeToggle" styleClass="theme-immersive-button">
+                            <graphic>
+                                <Region>
+                                    <styleClass>
+                                        <String fx:value="sidebar-nav-icon"/>
+                                        <String fx:value="icon-theme"/>
+                                    </styleClass>
+                                </Region>
+                            </graphic>
+                        </Button>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Logout" onAction="#onLogout" styleClass="sidebar-nav-item">
+                            <graphic>
+                                <Region>
+                                    <styleClass>
+                                        <String fx:value="sidebar-nav-icon"/>
+                                        <String fx:value="icon-logout"/>
+                                    </styleClass>
+                                </Region>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <StackPane styleClass="posts-immersive-stack">
+            <children>
+                <Region styleClass="posts-page-overlay"/>
+                <Region styleClass="posts-cards-spotlight"/>
+
+                <VBox spacing="14.0" styleClass="posts-root">
+                    <padding>
+                        <Insets top="22.0" right="22.0" bottom="22.0" left="22.0"/>
+                    </padding>
+                    <children>
+                        <!-- Header -->
+                        <HBox alignment="CENTER_LEFT" styleClass="posts-header">
+                            <children>
+                                <VBox spacing="4.0">
+                                    <children>
+                                        <Label fx:id="userGreetingLabel" text="Bienvenue" styleClass="posts-title"/>
+                                        <Label fx:id="roleLabel" text="Utilisateur" styleClass="posts-subtitle"/>
+                                    </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="myPostsButton" text="Mes posts" onAction="#onMyPosts" styleClass="posts-search-btn posts-toolbar-btn"/>
+                                        <Button fx:id="addPostButton" text="+ Nouveau Post" onAction="#onAddPost" styleClass="posts-add-btn"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </HBox>
+
+                        <!-- Status Message -->
+                        <Label fx:id="postsStatusLabel" managed="false" visible="false" wrapText="true" styleClass="posts-inline-status"/>
+
+                        <!-- Filters -->
+                        <HBox spacing="12.0" alignment="CENTER_LEFT" styleClass="posts-filters">
+                            <children>
+                                <!-- Search Field -->
+                                <TextField fx:id="searchField"
+                                           promptText="Rechercher par titre, contenu ou localisation..."
+                                           HBox.hgrow="ALWAYS"
+                                           styleClass="posts-search-input"/>
+
+                                <!-- Country Filter -->
+                                <ComboBox fx:id="countryComboBox"
+                                          promptText="Filtrer par pays"
+                                          prefWidth="220.0"
+                                          styleClass="posts-combo"/>
+
+                                <!-- Search Button -->
+                                <Button fx:id="searchButton" text="Rechercher" onAction="#onSearch" styleClass="posts-search-btn"/>
+
+                                <!-- Clear Filters -->
+                                <Button fx:id="clearFiltersButton" text="Effacer" onAction="#onClearFilters" styleClass="posts-clear-btn"/>
+                            </children>
+                        </HBox>
+
+                        <!-- Content Stack (List View / Form View) -->
+                        <StackPane fx:id="contentStack" VBox.vgrow="ALWAYS">
+                            <children>
+                                <!-- List View -->
+                                <VBox fx:id="listView" spacing="10.0" styleClass="posts-list-view">
+                                    <children>
+                                        <!-- Posts Grid -->
+                                        <ScrollPane fx:id="postsScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="posts-scroll" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <FlowPane fx:id="postsFlowPane" styleClass="posts-flow">
+                                                    <padding>
+                                                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                                                    </padding>
+                                                </FlowPane>
+                                            </content>
+                                        </ScrollPane>
+
+                                        <!-- Pagination -->
+                                        <HBox spacing="12.0" alignment="CENTER" styleClass="posts-pagination">
+                                            <children>
+                                                <Button fx:id="prevPageButton" text="◀ Précédent" onAction="#onPrevPage" styleClass="posts-page-btn"/>
+                                                <Label fx:id="pageLabel" text="Page 1 / 1" styleClass="posts-page-label"/>
+                                                <Button fx:id="nextPageButton" text="Suivant ▶" onAction="#onNextPage" styleClass="posts-page-btn"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label fx:id="totalPostsLabel" text="Total: 0 post" styleClass="posts-total-label"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <!-- Inline Form View -->
+                                <VBox fx:id="formView" spacing="12.0" styleClass="posts-form-view" managed="false" visible="false">
+                                    <children>
+                                        <!-- Form Header -->
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label fx:id="formTitleLabel" text="Nouveau Post" styleClass="posts-form-title"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Button text="← Retour" onAction="#onBackToList" styleClass="posts-back-btn"/>
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Error Label -->
+                                        <Label fx:id="formErrorLabel" managed="false" visible="false" wrapText="true" styleClass="posts-inline-status"/>
+
+                                        <!-- Form Fields -->
+                                        <VBox spacing="16.0" styleClass="posts-form-content" VBox.vgrow="ALWAYS">
+                                            <padding>
+                                                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                                            </padding>
+                                            <children>
+                                                <!-- Titre -->
+                                                <VBox spacing="4.0">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Label text="Titre *" styleClass="posts-form-label"/>
+                                                                <Region HBox.hgrow="ALWAYS"/>
+                                                                <Label fx:id="titreCounter" text="0/100" styleClass="posts-form-counter"/>
+                                                            </children>
+                                                        </HBox>
+                                                        <TextField fx:id="formTitreField" promptText="Entrez le titre (10-100 caractères)" styleClass="posts-form-input"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Location -->
+                                                <VBox spacing="4.0">
+                                                    <children>
+                                                        <Label text="Pays / Localisation *" styleClass="posts-form-label"/>
+                                                        <ComboBox fx:id="formLocationCombo" promptText="Sélectionnez un pays" editable="true" styleClass="posts-form-combo"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Media -->
+                                                <VBox spacing="8.0">
+                                                    <children>
+                                                        <Label text="Media" styleClass="posts-form-label"/>
+                                                        <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <StackPane styleClass="post-inline-preview-shell">
+                                                                    <children>
+                                                                        <ImageView fx:id="formImagePreview" fitWidth="60" fitHeight="60" preserveRatio="false" smooth="true"/>
+                                                                    </children>
+                                                                </StackPane>
+                                                                <TextField fx:id="formImageUrlField" promptText="Local path or URL" HBox.hgrow="ALWAYS" styleClass="posts-form-input"/>
+                                                                <Button text="Browse" onAction="#onBrowseFormImage" styleClass="posts-form-browse-btn"/>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Contenu -->
+                                                <VBox spacing="4.0" VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Label text="Contenu *" styleClass="posts-form-label"/>
+                                                                <Region HBox.hgrow="ALWAYS"/>
+                                                                <Label fx:id="contenuCounter" text="0/5000" styleClass="posts-form-counter"/>
+                                                            </children>
+                                                        </HBox>
+                                                        <TextArea fx:id="formContenuArea" promptText="Décrivez votre expérience de voyage (min 50 caractères)" wrapText="true" VBox.vgrow="ALWAYS" styleClass="posts-form-textarea"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Buttons -->
+                                                <HBox spacing="12.0" alignment="CENTER_RIGHT">
+                                                    <children>
+                                                        <Button text="Annuler" onAction="#onCancelForm" styleClass="posts-clear-btn"/>
+                                                        <Button text="Enregistrer" onAction="#onSaveForm" styleClass="posts-save-btn"/>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

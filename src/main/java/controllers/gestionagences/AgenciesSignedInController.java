@@ -18,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import models.gestionagences.AgencyAccount;
 import models.gestionagences.ImageAsset;
@@ -40,9 +41,11 @@ public class AgenciesSignedInController {
 
     private static final double AGENCY_CARD_WIDTH = 416;
     private static final double AGENCY_IMG_HEIGHT = 256;
+    private static final double DIRECTORY_FLAG_OUTER = 48;
+    private static final double DIRECTORY_FLAG_INNER = 38;
 
     /** First entry in the country ChoiceBox; must match REST-backed labels in {@link #applyCountryCatalog}. */
-    private static final String LABEL_ALL_COUNTRIES = "Tous les pays";
+    private static final String LABEL_ALL_COUNTRIES = "All countries";
 
     private PauseTransition searchDebounce;
 
@@ -74,7 +77,7 @@ public class AgenciesSignedInController {
         boolean agencyAdmin = nav.canAccessAgencyAdminFeatures();
         myAgencyButton.setVisible(agencyAdmin);
         myAgencyButton.setManaged(agencyAdmin);
-        roleInfoLabel.setText(agencyAdmin ? "Agence Admin mode" : "User mode");
+        roleInfoLabel.setText(agencyAdmin ? "Agency Admin mode" : "User mode");
 
         setupFilters();
         bindSearchDebounce();
@@ -99,6 +102,8 @@ public class AgenciesSignedInController {
         if (agenciesGrid == null) {
             return;
         }
+        agenciesGrid.setAlignment(Pos.TOP_CENTER);
+        agenciesGrid.setMaxWidth(Double.MAX_VALUE);
         Runnable updateColumns = () -> {
             double w = agenciesGrid.getWidth();
             if (w <= 1 && agenciesGrid.getScene() != null) {
@@ -205,12 +210,12 @@ public class AgenciesSignedInController {
 
     private static String formatAgencyResultCount(int n) {
         if (n == 0) {
-            return "Aucune agence trouvée";
+            return "No agencies found";
         }
         if (n == 1) {
-            return "1 agence trouvée";
+            return "1 agency found";
         }
-        return n + " agences trouvées";
+        return n + " agencies found";
     }
 
     private boolean matchesQuery(AgencyAccount agency, String query) {
@@ -279,7 +284,8 @@ public class AgenciesSignedInController {
         Label title = new Label(safe(agency.getAgencyName(), "Agency"));
         title.getStyleClass().add("agency-directory-title");
         title.setWrapText(true);
-        title.setMaxWidth(AGENCY_CARD_WIDTH - 36);
+
+        StackPane flagBadge = buildCountryFlagBadge(agency);
 
         Label desc = new Label(safe(agency.getDescription(), "No description yet."));
         desc.getStyleClass().add("agency-directory-desc");
@@ -287,7 +293,19 @@ public class AgenciesSignedInController {
         desc.setMaxHeight(120);
         desc.setMinHeight(52);
 
-        body.getChildren().addAll(title, desc);
+        if (flagBadge != null) {
+            HBox titleRow = new HBox(12);
+            titleRow.getStyleClass().add("agency-directory-title-row");
+            titleRow.setAlignment(Pos.TOP_LEFT);
+            Region titleSpring = new Region();
+            HBox.setHgrow(titleSpring, Priority.ALWAYS);
+            title.maxWidthProperty().bind(titleRow.widthProperty().subtract(DIRECTORY_FLAG_OUTER + 12));
+            titleRow.getChildren().addAll(title, titleSpring, flagBadge);
+            body.getChildren().addAll(titleRow, desc);
+        } else {
+            title.setMaxWidth(AGENCY_CARD_WIDTH - 36);
+            body.getChildren().addAll(title, desc);
+        }
 
         String addr = safe(agency.getAddress());
         if (!addr.isBlank()) {
@@ -313,9 +331,26 @@ public class AgenciesSignedInController {
 
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
+        footer.setSpacing(10);
         footer.getStyleClass().add("agency-directory-footer");
         footer.setPadding(new Insets(4, 18, 16, 18));
-        Button details = new Button("Voir l'agence \u2192");
+
+        Integer receiverId = agency.getResponsableId();
+        Integer sessionUserId = NavigationManager.getInstance().sessionUser().map(models.gestionutilisateurs.User::getId).orElse(null);
+        if (receiverId != null && receiverId > 0 && (sessionUserId == null || receiverId.intValue() != sessionUserId.intValue())) {
+            Button contactBtn = new Button("Contact Agency");
+            contactBtn.getStyleClass().add("event-action-secondary");
+            contactBtn.setOnAction(e -> {
+                try {
+                    NavigationManager.getInstance().showMessagesWithReceiver(receiverId);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            footer.getChildren().add(contactBtn);
+        }
+
+        Button details = new Button("View agency \u2192");
         details.getStyleClass().add("agency-directory-cta");
         details.setOnAction(e -> onAgencyDetails(agency));
         footer.getChildren().add(details);
@@ -323,6 +358,34 @@ public class AgenciesSignedInController {
         card.getChildren().addAll(hero, body, footer);
         VBox.setVgrow(body, Priority.ALWAYS);
         return card;
+    }
+
+    /**
+     * Circular flag from ISO-3166-1 alpha-2 (see {@link CountryCatalog#resolveIso2} for name/address parsing).
+     */
+    private StackPane buildCountryFlagBadge(AgencyAccount agency) {
+        String iso = CountryCatalog.resolveIso2(agency.getCountry(), agency.getAddress());
+        if (iso == null) {
+            return null;
+        }
+        String url = CountryCatalog.flagPngUrl(iso);
+        if (url == null) {
+            return null;
+        }
+        StackPane ring = new StackPane();
+        ring.getStyleClass().add("agency-directory-flag-badge");
+        ring.setMinSize(DIRECTORY_FLAG_OUTER, DIRECTORY_FLAG_OUTER);
+        ring.setPrefSize(DIRECTORY_FLAG_OUTER, DIRECTORY_FLAG_OUTER);
+        ring.setMaxSize(DIRECTORY_FLAG_OUTER, DIRECTORY_FLAG_OUTER);
+
+        ImageView flagIv = new ImageView(new Image(url, true));
+        flagIv.setFitWidth(DIRECTORY_FLAG_INNER);
+        flagIv.setFitHeight(DIRECTORY_FLAG_INNER);
+        flagIv.setPreserveRatio(false);
+        double rad = DIRECTORY_FLAG_INNER / 2.0;
+        flagIv.setClip(new Circle(rad, rad, rad));
+        ring.getChildren().add(flagIv);
+        return ring;
     }
 
     private static String abbreviateUrl(String url) {
@@ -407,7 +470,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onHome() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showPostLoginHome();
     }
 
     @FXML
@@ -427,7 +490,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onRecommandation() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showPostLoginHome();
     }
 
     @FXML
@@ -437,7 +500,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onPremium() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showPostLoginHome();
     }
 
     @FXML
@@ -447,7 +510,7 @@ public class AgenciesSignedInController {
 
     @FXML
     private void onProfile() {
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showUserProfile();
     }
 
     @FXML
@@ -455,7 +518,7 @@ public class AgenciesSignedInController {
         if (!NavigationManager.getInstance().canAccessAgencyAdminFeatures()) {
             return;
         }
-        NavigationManager.getInstance().showSignedInShell();
+        NavigationManager.getInstance().showPostLoginHome();
     }
 
     @FXML

@@ -138,7 +138,7 @@ public class ImageAssetService {
 
     private static void validatePayload(ImageAsset entity) {
         if (entity.getMimeType() == null || entity.getMimeType().isBlank()) {
-            throw new IllegalArgumentException("Le type MIME de l'image est obligatoire.");
+            throw new IllegalArgumentException("Image MIME type is required.");
         }
         String mime = entity.getMimeType().trim().toLowerCase(Locale.ROOT);
         if (!ALLOWED_MIME.contains(mime)) {
