@@ -2,13 +2,16 @@ package services.gestionposts;
 
 import models.gestionposts.Post;
 import services.CRUD;
+import utils.Countries;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service métier pour la gestion des posts.
@@ -47,6 +50,9 @@ public class PostService implements CRUD<Post, Long> {
         }
         Post stored = postDAO.findById(entity.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Post introuvable."));
+        if (isDemoPost(stored)) {
+            throw new IllegalArgumentException("Les posts de demonstration ne peuvent pas etre modifies.");
+        }
         if (stored.getUserId() == null || !stored.getUserId().equals(authorUserId)) {
             throw new IllegalArgumentException("Vous ne pouvez modifier que vos propres posts.");
         }
@@ -70,6 +76,9 @@ public class PostService implements CRUD<Post, Long> {
         }
         Post stored = postDAO.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post introuvable."));
+        if (isDemoPost(stored)) {
+            throw new IllegalArgumentException("Les posts de demonstration ne peuvent pas etre supprimes.");
+        }
         if (stored.getUserId() == null || !stored.getUserId().equals(authorUserId)) {
             throw new IllegalArgumentException("Vous ne pouvez supprimer que vos propres posts.");
         }
@@ -109,6 +118,21 @@ public class PostService implements CRUD<Post, Long> {
 
     public int countByLocation(String location) throws SQLException {
         return postDAO.countByLocation(location);
+    }
+
+    public List<Post> findByUserPaginated(Integer userId, int page) throws SQLException {
+        if (userId == null) {
+            return List.of();
+        }
+        int offset = (page - 1) * POSTS_PER_PAGE;
+        return postDAO.findByUserId(userId, offset, POSTS_PER_PAGE);
+    }
+
+    public int countByUser(Integer userId) throws SQLException {
+        if (userId == null) {
+            return 0;
+        }
+        return postDAO.countByUserId(userId);
     }
 
     /**
@@ -270,5 +294,70 @@ public class PostService implements CRUD<Post, Long> {
 
     public int getPostsPerPage() {
         return POSTS_PER_PAGE;
+    }
+
+    public boolean isDemoPost(Post post) {
+        if (post == null || post.getTitre() == null) {
+            return false;
+        }
+        return post.getTitre().startsWith("Recommandation voyage - ");
+    }
+
+    /**
+     * Garantit un minimum de posts de demo sur des pays differents.
+     * Si la base contient deja certains pays, seuls les pays manquants sont injectes.
+     */
+    public void ensureDemoPostsForDistinctCountries(Integer authorUserId, int targetDistinctCountries) throws SQLException {
+        if (targetDistinctCountries <= 0) {
+            return;
+        }
+
+        int resolvedAuthorUserId = (authorUserId != null && authorUserId > 0) ? authorUserId : 1;
+        String[] imagePool = {
+                "/images/welcome/featured-paris-eiffel.jpg",
+                "/images/welcome/featured-maldives-beach.jpg",
+                "/images/welcome/hero-aerial-lagoon.jpg"
+        };
+
+        List<String> allCountries = Countries.getAllCountries();
+        Set<String> existingLocations = new HashSet<>();
+        for (String location : findAllLocationsFromPosts()) {
+            if (location != null && !location.isBlank()) {
+                existingLocations.add(location.trim().toLowerCase(Locale.ROOT));
+            }
+        }
+
+        if (existingLocations.size() >= targetDistinctCountries) {
+            return;
+        }
+
+        for (int i = 0; i < allCountries.size(); i++) {
+            String country = allCountries.get(i);
+            String normalizedCountry = country.toLowerCase(Locale.ROOT);
+            if (existingLocations.contains(normalizedCountry)) {
+                continue;
+            }
+            if (existingLocations.size() >= targetDistinctCountries) {
+                break;
+            }
+
+            String title = "Recommandation voyage - " + country;
+            String content = "Decouvrez " + country + " avec un itineraire equilibre entre lieux iconiques, experiences locales et temps libre. " +
+                    "Pour optimiser votre budget, planifiez les transports en amont, privilegiez les activites a proximite et gardez une demi-journee flexible " +
+                    "pour les imprevus ou les meilleures opportunites sur place.";
+
+            Post post = new Post();
+            post.setTitre(title);
+            post.setContenu(content);
+            post.setLocation(country);
+            post.setImageUrl(imagePool[i % imagePool.length]);
+            post.setUserId(resolvedAuthorUserId);
+            create(post);
+            existingLocations.add(normalizedCountry);
+        }
+    }
+
+    public void seedDemoPostsForAllCountriesIfEmpty(Integer authorUserId) throws SQLException {
+        ensureDemoPostsForDistinctCountries(authorUserId, Countries.getAllCountries().size());
     }
 }

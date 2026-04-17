@@ -74,17 +74,19 @@ public class PostDetailController implements Initializable {
 
     private void updatePostActionButtonsVisibility() {
         Optional<User> currentUser = NavigationManager.getInstance().sessionUser();
+        boolean isDemo = post != null && post.getTitre() != null && post.getTitre().startsWith("Recommandation voyage - ");
         boolean isAuthor = currentUser.isPresent() && 
                           post.getUserId() != null && 
                           currentUser.get().getId().intValue() == post.getUserId();
+        boolean canManage = isAuthor && !isDemo;
 
         if (editPostButton != null) {
-            editPostButton.setVisible(isAuthor);
-            editPostButton.setManaged(isAuthor);
+            editPostButton.setVisible(canManage);
+            editPostButton.setManaged(canManage);
         }
         if (deletePostButton != null) {
-            deletePostButton.setVisible(isAuthor);
-            deletePostButton.setManaged(isAuthor);
+            deletePostButton.setVisible(canManage);
+            deletePostButton.setManaged(canManage);
         }
     }
 
@@ -92,7 +94,8 @@ public class PostDetailController implements Initializable {
         newCommentArea.textProperty().addListener((obs, oldVal, newVal) -> {
             int len = newVal != null ? newVal.length() : 0;
             commentCounter.setText(len + "/1000");
-            commentCounter.setStyle(len < 5 || len > 1000 ? "-fx-text-fill: #e74c3c;" : "-fx-text-fill: #27ae60;");
+            commentCounter.getStyleClass().removeAll("counter-ok", "counter-bad");
+            commentCounter.getStyleClass().add((len >= 5 && len <= 1000) ? "counter-ok" : "counter-bad");
         });
     }
 
@@ -190,7 +193,7 @@ public class PostDetailController implements Initializable {
 
             if (comments.isEmpty()) {
                 Label noComments = new Label("Aucun commentaire. Soyez le premier à commenter !");
-                noComments.setStyle("-fx-text-fill: #718096; -fx-font-style: italic;");
+                noComments.getStyleClass().add("post-comment-empty");
                 commentsList.getChildren().add(noComments);
             } else {
                 for (Comment comment : comments) {
@@ -204,19 +207,20 @@ public class PostDetailController implements Initializable {
 
     private void addCommentCard(Comment comment) {
         VBox card = new VBox(5);
-        card.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 12px; -fx-background-radius: 8px;");
+        card.getStyleClass().add("post-comment-card");
 
         // Header with author and date
         HBox header = new HBox(10);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        header.getStyleClass().add("post-comment-header");
 
         String authorName = comment.getAuthorUsername() != null ? comment.getAuthorUsername() : "Utilisateur " + comment.getUserId();
         Label authorLabel = new Label("👤 " + authorName);
-        authorLabel.setStyle("-fx-text-fill: #1E88E5; -fx-font-weight: bold; -fx-font-size: 13px;");
+        authorLabel.getStyleClass().add("post-comment-author");
 
         Label dateLabel = new Label(comment.getCreatedAt() != null ?
                 comment.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "");
-        dateLabel.setStyle("-fx-text-fill: #718096; -fx-font-size: 11px;");
+        dateLabel.getStyleClass().add("post-comment-date");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -226,7 +230,7 @@ public class PostDetailController implements Initializable {
         // Content
         Label contentLabel = new Label(comment.getContent());
         contentLabel.setWrapText(true);
-        contentLabel.setStyle("-fx-text-fill: #e2e8f0; -fx-font-size: 13px;");
+        contentLabel.getStyleClass().add("post-comment-content");
 
         card.getChildren().addAll(header, contentLabel);
 
@@ -236,14 +240,15 @@ public class PostDetailController implements Initializable {
         if (currentUser.isPresent() && currentUser.get().getId().intValue() == comment.getUserId()) {
             actions = new HBox(10);
             actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+            actions.getStyleClass().add("post-comment-actions");
 
             Button editBtn = new Button("✏️ Modifier");
-            editBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #8b9dc3; -fx-font-size: 11px; -fx-cursor: hand;");
+            editBtn.getStyleClass().addAll("event-action-secondary", "post-comment-edit-btn");
             HBox finalActions = actions;
             editBtn.setOnAction(e -> onEditComment(comment, card, contentLabel, finalActions));
 
             Button deleteBtn = new Button("🗑️ Supprimer");
-            deleteBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #e74c3c; -fx-font-size: 11px; -fx-cursor: hand;");
+            deleteBtn.getStyleClass().addAll("event-action-danger", "post-comment-delete-btn");
             deleteBtn.setOnAction(e -> onDeleteComment(comment));
 
             actions.getChildren().addAll(editBtn, deleteBtn);
@@ -298,15 +303,15 @@ public class PostDetailController implements Initializable {
 
         // Create inline edit form
         VBox editForm = new VBox(8);
-        editForm.setStyle("-fx-background-color: rgba(30,136,229,0.1); -fx-padding: 10px; -fx-background-radius: 8px;");
+        editForm.getStyleClass().add("post-comment-edit-wrap");
 
         TextArea editArea = new TextArea(comment.getContent());
         editArea.setWrapText(true);
         editArea.setPrefRowCount(3);
-        editArea.setStyle("-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #e2e8f0; -fx-prompt-text-fill: #718096;");
+        editArea.getStyleClass().add("post-comment-edit-area");
 
         Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px;");
+        errorLabel.getStyleClass().add("post-comment-error");
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
 
@@ -314,10 +319,10 @@ public class PostDetailController implements Initializable {
         btnBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
 
         Button saveBtn = new Button("💾 Enregistrer");
-        saveBtn.setStyle("-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 6 15; -fx-background-radius: 4; -fx-cursor: hand;");
+        saveBtn.getStyleClass().addAll("event-action-primary", "post-comment-save-btn");
 
         Button cancelBtn = new Button("❌ Annuler");
-        cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #718096; -fx-font-size: 12px; -fx-padding: 6 15; -fx-border-color: #718096; -fx-border-radius: 4; -fx-cursor: hand;");
+        cancelBtn.getStyleClass().addAll("event-action-secondary", "post-comment-cancel-btn");
 
         btnBox.getChildren().addAll(cancelBtn, saveBtn);
         editForm.getChildren().addAll(editArea, errorLabel, btnBox);
@@ -345,7 +350,8 @@ public class PostDetailController implements Initializable {
 
             comment.setContent(newContent);
             try {
-                commentService.update(comment);
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+                commentService.updateByAuthor(comment, actorUserId);
                 // Restore original view
                 card.getChildren().remove(editForm);
                 contentLabel.setText(newContent);
@@ -391,13 +397,14 @@ public class PostDetailController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                commentService.delete(comment.getId());
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+                commentService.deleteByAuthor(comment.getId(), actorUserId);
                 loadComments();
 
                 if (onPostUpdated != null) {
                     onPostUpdated.run();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | IllegalArgumentException e) {
                 showError("Erreur lors de la suppression: " + e.getMessage());
             }
         }
@@ -436,10 +443,11 @@ public class PostDetailController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                postService.delete(post.getId());
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+                postService.deleteByAuthor(post.getId(), actorUserId);
                 // Navigate back to posts list
                 NavigationManager.getInstance().showSignedInPosts();
-            } catch (SQLException e) {
+            } catch (SQLException | IllegalArgumentException e) {
                 showError("Erreur lors de la suppression: " + e.getMessage());
             }
         }

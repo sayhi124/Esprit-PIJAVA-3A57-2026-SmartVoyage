@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,10 +24,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import models.gestionagences.AgencyAdminApplication;
+import models.gestionposts.Comment;
+import models.gestionposts.Post;
 import models.gestionevenements.TravelEvent;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -38,7 +42,11 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import services.gestionagences.AgencyAccountService;
 import services.gestionagences.AgencyAdminApplicationService;
 import services.gestionevenements.TravelEventService;
+import services.gestionposts.CommentService;
+import services.gestionposts.LikeService;
+import services.gestionposts.PostService;
 import services.gestionutilisateurs.UserService;
+import utils.Countries;
 import utils.DbConnexion;
 import utils.NavigationManager;
 
@@ -79,6 +87,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private VBox dashboardOverviewPane;
     @FXML private VBox agenciesPane;
     @FXML private VBox eventsPane;
+    @FXML private VBox recommendationsPane;
     @FXML private Label sectionTitleLabel;
     @FXML private Label agenciesCountValue;
     @FXML private Label postsCountValue;
@@ -96,6 +105,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private Button dashboardNavButton;
     @FXML private Button agencesNavButton;
     @FXML private Button eventsNavButton;
+    @FXML private Button recommendationsNavButton;
     @FXML private PieChart agenciesStatusChart;
     @FXML private BarChart<String, Number> agenciesPostsChart;
     @FXML private CategoryAxis agencyPostsXAxis;
@@ -131,15 +141,48 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<EventLocationRow, String> eventLocationCountColumn;
     @FXML private TableColumn<EventLocationRow, String> eventLocationUpcomingColumn;
     @FXML private Label eventsStatusLabel;
+    @FXML private Label recPostsCountValue;
+    @FXML private Label recCommentsCountValue;
+    @FXML private Label recLikesCountValue;
+    @FXML private Label recInteractionsRateValue;
+    @FXML private LineChart<String, Number> recommendationsTimelineChart;
+    @FXML private CategoryAxis recommendationsTimelineXAxis;
+    @FXML private NumberAxis recommendationsTimelineYAxis;
+    @FXML private PieChart recommendationsTopCountriesChart;
+    @FXML private TableView<AdminPostRow> adminPostsTable;
+    @FXML private TableColumn<AdminPostRow, String> adminPostIdColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostTitleColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostAuthorColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostLocationColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostCreatedColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostLikesColumn;
+    @FXML private TableColumn<AdminPostRow, String> adminPostCommentsColumn;
+    @FXML private TableColumn<AdminPostRow, AdminPostRow> adminPostActionsColumn;
+    @FXML private TableView<AdminCommentRow> adminCommentsTable;
+    @FXML private TableColumn<AdminCommentRow, String> adminCommentIdColumn;
+    @FXML private TableColumn<AdminCommentRow, String> adminCommentPostTitleColumn;
+    @FXML private TableColumn<AdminCommentRow, String> adminCommentAuthorColumn;
+    @FXML private TableColumn<AdminCommentRow, String> adminCommentCreatedColumn;
+    @FXML private TableColumn<AdminCommentRow, String> adminCommentContentColumn;
+    @FXML private TableColumn<AdminCommentRow, AdminCommentRow> adminCommentActionsColumn;
+    @FXML private Label recommendationsStatusLabel;
+    @FXML private VBox recommendationsInlineEditor;
+    @FXML private Label recommendationsEditorTitle;
+    @FXML private StackPane recommendationsEditorHost;
 
     private final ObservableList<CustomerData> customerData = FXCollections.observableArrayList();
     private final ObservableList<AgencyProposalRow> proposalRows = FXCollections.observableArrayList();
     private final ObservableList<AgencySummaryRow> agencySummaryRows = FXCollections.observableArrayList();
     private final ObservableList<EventModerationRow> eventModerationRows = FXCollections.observableArrayList();
     private final ObservableList<EventLocationRow> eventLocationRows = FXCollections.observableArrayList();
+    private final ObservableList<AdminPostRow> adminPostRows = FXCollections.observableArrayList();
+    private final ObservableList<AdminCommentRow> adminCommentRows = FXCollections.observableArrayList();
     private final AgencyAdminApplicationService applicationService = new AgencyAdminApplicationService();
     private final AgencyAccountService agencyAccountService = new AgencyAccountService();
     private final TravelEventService travelEventService = new TravelEventService();
+    private final PostService postService = new PostService();
+    private final CommentService commentService = new CommentService();
+    private final LikeService likeService = new LikeService();
     private final UserService userService = new UserService();
     private Timeline liveRefreshTimeline;
     private String lastAgenciesDataSignature;
@@ -155,6 +198,7 @@ public class AdminDashboardController implements Initializable {
         initializeTable();
         initializeAgenciesSection();
         initializeEventsSection();
+        initializeRecommendationsSection();
         setupLiveRefresh();
         showDashboardSection();
     }
@@ -166,6 +210,9 @@ public class AdminDashboardController implements Initializable {
             }
             if (eventsPane != null && eventsPane.isVisible()) {
                 refreshEventsModerationData();
+            }
+            if (recommendationsPane != null && recommendationsPane.isVisible()) {
+                refreshRecommendationsData();
             }
         }));
         liveRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -383,45 +430,81 @@ public class AdminDashboardController implements Initializable {
     }
 
     private void showDashboardSection() {
+        hideRecommendationsInlineEditor();
         dashboardOverviewPane.setVisible(true);
         dashboardOverviewPane.setManaged(true);
         agenciesPane.setVisible(false);
         agenciesPane.setManaged(false);
         eventsPane.setVisible(false);
         eventsPane.setManaged(false);
+        if (recommendationsPane != null) {
+            recommendationsPane.setVisible(false);
+            recommendationsPane.setManaged(false);
+        }
         sectionTitleLabel.setText("Admin Dashboard");
         setSidebarActive(dashboardNavButton);
         setAgenciesStatus("");
         setEventsStatus("");
+        setRecommendationsStatus("");
         refreshOverviewMetrics();
         refreshOverviewChart();
         loadTopUsers();
     }
 
     private void showAgenciesSection() {
+        hideRecommendationsInlineEditor();
         dashboardOverviewPane.setVisible(false);
         dashboardOverviewPane.setManaged(false);
         agenciesPane.setVisible(true);
         agenciesPane.setManaged(true);
         eventsPane.setVisible(false);
         eventsPane.setManaged(false);
+        if (recommendationsPane != null) {
+            recommendationsPane.setVisible(false);
+            recommendationsPane.setManaged(false);
+        }
         sectionTitleLabel.setText("Agencies - Validation");
         setSidebarActive(agencesNavButton);
         refreshAgencyAdminData();
         setEventsStatus("");
+        setRecommendationsStatus("");
     }
 
     private void showEventsSection() {
+        hideRecommendationsInlineEditor();
         dashboardOverviewPane.setVisible(false);
         dashboardOverviewPane.setManaged(false);
         agenciesPane.setVisible(false);
         agenciesPane.setManaged(false);
         eventsPane.setVisible(true);
         eventsPane.setManaged(true);
+        if (recommendationsPane != null) {
+            recommendationsPane.setVisible(false);
+            recommendationsPane.setManaged(false);
+        }
         sectionTitleLabel.setText("Events - Pending Approval");
         setSidebarActive(eventsNavButton);
         setAgenciesStatus("");
         refreshEventsModerationData();
+        setRecommendationsStatus("");
+    }
+
+    private void showRecommendationsSection() {
+        dashboardOverviewPane.setVisible(false);
+        dashboardOverviewPane.setManaged(false);
+        agenciesPane.setVisible(false);
+        agenciesPane.setManaged(false);
+        eventsPane.setVisible(false);
+        eventsPane.setManaged(false);
+        if (recommendationsPane != null) {
+            recommendationsPane.setVisible(true);
+            recommendationsPane.setManaged(true);
+        }
+        sectionTitleLabel.setText("Recommendations - Moderation");
+        setSidebarActive(recommendationsNavButton);
+        setAgenciesStatus("");
+        setEventsStatus("");
+        refreshRecommendationsData();
     }
 
     private void setSidebarActive(Button active) {
@@ -433,6 +516,9 @@ public class AdminDashboardController implements Initializable {
         }
         if (eventsNavButton != null) {
             eventsNavButton.getStyleClass().remove("sidebar-nav-item-active");
+        }
+        if (recommendationsNavButton != null) {
+            recommendationsNavButton.getStyleClass().remove("sidebar-nav-item-active");
         }
         if (active != null && !active.getStyleClass().contains("sidebar-nav-item-active")) {
             active.getStyleClass().add("sidebar-nav-item-active");
@@ -623,6 +709,367 @@ public class AdminDashboardController implements Initializable {
         eventLocationRows.setAll(rows);
     }
 
+    private void initializeRecommendationsSection() {
+        if (adminPostIdColumn != null) {
+            adminPostIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        }
+        if (adminPostTitleColumn != null) {
+            adminPostTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        }
+        if (adminPostAuthorColumn != null) {
+            adminPostAuthorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        }
+        if (adminPostLocationColumn != null) {
+            adminPostLocationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+        }
+        if (adminPostCreatedColumn != null) {
+            adminPostCreatedColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
+        }
+        if (adminPostLikesColumn != null) {
+            adminPostLikesColumn.setCellValueFactory(new PropertyValueFactory<>("likes"));
+        }
+        if (adminPostCommentsColumn != null) {
+            adminPostCommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
+        }
+        if (adminPostActionsColumn != null) {
+            adminPostActionsColumn.setCellValueFactory(cell -> new javafx.beans.property.ReadOnlyObjectWrapper<>(cell.getValue()));
+            adminPostActionsColumn.setCellFactory(col -> new TableCell<>() {
+                private final Button editBtn = new Button("Edit");
+                private final Button deleteBtn = new Button("Delete");
+                private final javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(8, editBtn, deleteBtn);
+                {
+                    editBtn.getStyleClass().addAll("action-button", "primary");
+                    deleteBtn.getStyleClass().addAll("action-button", "secondary");
+                    editBtn.setOnAction(evt -> {
+                        AdminPostRow row = getItem();
+                        if (row != null) {
+                            editRecommendationPost(row);
+                        }
+                    });
+                    deleteBtn.setOnAction(evt -> {
+                        AdminPostRow row = getItem();
+                        if (row != null) {
+                            deleteRecommendationPost(row);
+                        }
+                    });
+                }
+
+                @Override
+                protected void updateItem(AdminPostRow item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setGraphic(empty || item == null ? null : box);
+                }
+            });
+        }
+        if (adminPostsTable != null) {
+            adminPostsTable.setItems(adminPostRows);
+            adminPostsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }
+
+        if (adminCommentIdColumn != null) {
+            adminCommentIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        }
+        if (adminCommentPostTitleColumn != null) {
+            adminCommentPostTitleColumn.setCellValueFactory(new PropertyValueFactory<>("postTitle"));
+        }
+        if (adminCommentAuthorColumn != null) {
+            adminCommentAuthorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        }
+        if (adminCommentCreatedColumn != null) {
+            adminCommentCreatedColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
+        }
+        if (adminCommentContentColumn != null) {
+            adminCommentContentColumn.setCellValueFactory(new PropertyValueFactory<>("content"));
+        }
+        if (adminCommentActionsColumn != null) {
+            adminCommentActionsColumn.setCellValueFactory(cell -> new javafx.beans.property.ReadOnlyObjectWrapper<>(cell.getValue()));
+            adminCommentActionsColumn.setCellFactory(col -> new TableCell<>() {
+                private final Button editBtn = new Button("Edit");
+                private final Button deleteBtn = new Button("Delete");
+                private final javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(8, editBtn, deleteBtn);
+                {
+                    editBtn.getStyleClass().addAll("action-button", "primary");
+                    deleteBtn.getStyleClass().addAll("action-button", "secondary");
+                    editBtn.setOnAction(evt -> {
+                        AdminCommentRow row = getItem();
+                        if (row != null) {
+                            editRecommendationComment(row);
+                        }
+                    });
+                    deleteBtn.setOnAction(evt -> {
+                        AdminCommentRow row = getItem();
+                        if (row != null) {
+                            deleteRecommendationComment(row);
+                        }
+                    });
+                }
+
+                @Override
+                protected void updateItem(AdminCommentRow item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setGraphic(empty || item == null ? null : box);
+                }
+            });
+        }
+        if (adminCommentsTable != null) {
+            adminCommentsTable.setItems(adminCommentRows);
+            adminCommentsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }
+        if (recommendationsTimelineXAxis != null) {
+            recommendationsTimelineXAxis.setLabel("Month");
+        }
+        if (recommendationsTimelineYAxis != null) {
+            recommendationsTimelineYAxis.setLabel("Posts");
+        }
+        refreshRecommendationsData();
+    }
+
+    private void refreshRecommendationsData() {
+        try {
+            ensureRecommendationTables();
+            refreshRecommendationKpis();
+            refreshRecommendationTimelineChart();
+            refreshRecommendationTopCountriesChart();
+            refreshRecommendationPostsTable();
+            refreshRecommendationCommentsTable();
+            setRecommendationsStatus("");
+        } catch (SQLException e) {
+            setRecommendationsStatus("Unable to load recommendation analytics: " + e.getMessage());
+        }
+    }
+
+    private void ensureRecommendationTables() throws SQLException {
+        // Triggers CREATE TABLE IF NOT EXISTS in DAO implementations.
+        commentService.countByPostId(0L);
+        likeService.countByPostId(0L);
+    }
+
+    private void refreshRecommendationKpis() throws SQLException {
+        String sql = """
+                SELECT
+                    (SELECT COUNT(*) FROM post) AS posts_count,
+                    (SELECT COUNT(*) FROM comment) AS comments_count,
+                    (SELECT COUNT(*) FROM post_like) AS likes_count
+                """;
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                long posts = rs.getLong("posts_count");
+                long comments = rs.getLong("comments_count");
+                long likes = rs.getLong("likes_count");
+                if (recPostsCountValue != null) recPostsCountValue.setText(String.valueOf(posts));
+                if (recCommentsCountValue != null) recCommentsCountValue.setText(String.valueOf(comments));
+                if (recLikesCountValue != null) recLikesCountValue.setText(String.valueOf(likes));
+                if (recInteractionsRateValue != null) {
+                    if (posts > 0) {
+                        recInteractionsRateValue.setText(String.format("%.2f / post", ((double) (comments + likes)) / posts));
+                    } else {
+                        recInteractionsRateValue.setText("0.00 / post");
+                    }
+                }
+            }
+        }
+    }
+
+    private void refreshRecommendationTimelineChart() throws SQLException {
+        if (recommendationsTimelineChart == null) {
+            return;
+        }
+        String sql = """
+                SELECT DATE_FORMAT(created_at, '%b') AS month_label, COUNT(*) AS total
+                FROM post
+                WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m'), DATE_FORMAT(created_at, '%b')
+                ORDER BY DATE_FORMAT(created_at, '%Y-%m')
+                """;
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Created posts");
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                series.getData().add(new XYChart.Data<>(rs.getString("month_label"), rs.getLong("total")));
+            }
+        }
+        recommendationsTimelineChart.getData().clear();
+        recommendationsTimelineChart.getData().add(series);
+        if (series.getNode() != null) {
+            series.getNode().setStyle("-fx-stroke: linear-gradient(to right, #22c55e, #06b6d4); -fx-stroke-width: 3px;");
+        }
+    }
+
+    private void refreshRecommendationTopCountriesChart() throws SQLException {
+        if (recommendationsTopCountriesChart == null) {
+            return;
+        }
+        String sql = """
+                SELECT COALESCE(NULLIF(TRIM(location), ''), 'Unknown') AS loc, COUNT(*) AS total
+                FROM post
+                GROUP BY COALESCE(NULLIF(TRIM(location), ''), 'Unknown')
+                ORDER BY total DESC
+                LIMIT 8
+                """;
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                data.add(new PieChart.Data(rs.getString("loc"), rs.getLong("total")));
+            }
+        }
+        recommendationsTopCountriesChart.setData(data);
+        recommendationsTopCountriesChart.setLegendVisible(true);
+        recommendationsTopCountriesChart.setLabelsVisible(true);
+    }
+
+    private void refreshRecommendationPostsTable() throws SQLException {
+        String sql = """
+                SELECT p.id,
+                       p.title,
+                       COALESCE(u.username, CONCAT('User #', p.user_id)) AS author,
+                       COALESCE(NULLIF(TRIM(p.location), ''), '-') AS location,
+                       p.created_at,
+                       (SELECT COUNT(*) FROM post_like l WHERE l.post_id = p.id) AS likes_count,
+                       (SELECT COUNT(*) FROM comment c WHERE c.post_id = p.id) AS comments_count
+                FROM post p
+                LEFT JOIN `user` u ON u.id = p.user_id
+                ORDER BY p.created_at DESC
+                LIMIT 120
+                """;
+        Connection c = DbConnexion.getInstance().getConnection();
+        List<AdminPostRow> rows = new ArrayList<>();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                rows.add(AdminPostRow.from(rs));
+            }
+        }
+        adminPostRows.setAll(rows);
+    }
+
+    private void refreshRecommendationCommentsTable() throws SQLException {
+        String sql = """
+                SELECT c.id,
+                       COALESCE(NULLIF(TRIM(c.content), ''), '-') AS content,
+                       c.created_at,
+                       COALESCE(u.username, CONCAT('User #', c.user_id)) AS author,
+                       COALESCE(p.title, '-') AS post_title
+                FROM comment c
+                LEFT JOIN `user` u ON u.id = c.user_id
+                LEFT JOIN post p ON p.id = c.post_id
+                ORDER BY c.created_at DESC
+                LIMIT 200
+                """;
+        Connection c = DbConnexion.getInstance().getConnection();
+        List<AdminCommentRow> rows = new ArrayList<>();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                rows.add(AdminCommentRow.from(rs));
+            }
+        }
+        adminCommentRows.setAll(rows);
+    }
+
+    private void editRecommendationPost(AdminPostRow row) {
+        try {
+            Post post = postService.findById(row.idRaw)
+                    .orElseThrow(() -> new IllegalArgumentException("Post introuvable."));
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/posts/post_form.fxml"));
+            javafx.scene.Parent root = loader.load();
+            controllers.gestionposts.PostFormController formController = loader.getController();
+
+            formController.setPost(post);
+            formController.setCountriesList(FXCollections.observableArrayList(Countries.getAllCountries()));
+            formController.setOnSave(() -> {
+                setRecommendationsStatus("Post updated: #" + row.id);
+                hideRecommendationsInlineEditor();
+                refreshRecommendationsData();
+            });
+            formController.setOnCancel(this::hideRecommendationsInlineEditor);
+
+            showRecommendationsInlineEditor("Edit Post #" + row.id, root);
+        } catch (IOException | SQLException | IllegalArgumentException e) {
+            setRecommendationsStatus("Unable to edit post: " + e.getMessage());
+        }
+    }
+
+    private void deleteRecommendationPost(AdminPostRow row) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("Delete post");
+        confirm.setContentText("Delete post #" + row.id + " ?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+        try {
+            postService.delete(row.idRaw);
+            setRecommendationsStatus("Post deleted: #" + row.id);
+            refreshRecommendationsData();
+        } catch (SQLException | IllegalArgumentException e) {
+            setRecommendationsStatus("Unable to delete post: " + e.getMessage());
+        }
+    }
+
+    private void editRecommendationComment(AdminCommentRow row) {
+        try {
+            Comment comment = commentService.findById(row.idRaw)
+                    .orElseThrow(() -> new IllegalArgumentException("Commentaire introuvable."));
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/posts/comment_form.fxml"));
+            javafx.scene.Parent root = loader.load();
+            controllers.gestionposts.CommentFormController formController = loader.getController();
+
+            formController.setComment(comment);
+            formController.setOnSave(() -> {
+                setRecommendationsStatus("Comment updated: #" + row.id);
+                hideRecommendationsInlineEditor();
+                refreshRecommendationsData();
+            });
+            formController.setOnCancel(this::hideRecommendationsInlineEditor);
+
+            showRecommendationsInlineEditor("Edit Comment #" + row.id, root);
+        } catch (IOException | SQLException | IllegalArgumentException e) {
+            setRecommendationsStatus("Unable to edit comment: " + e.getMessage());
+        }
+    }
+
+    private void showRecommendationsInlineEditor(String title, javafx.scene.Parent root) {
+        if (recommendationsInlineEditor == null || recommendationsEditorHost == null) {
+            return;
+        }
+        recommendationsEditorTitle.setText(title == null ? "Edit" : title);
+        recommendationsEditorHost.getChildren().setAll(root);
+        recommendationsInlineEditor.setVisible(true);
+        recommendationsInlineEditor.setManaged(true);
+    }
+
+    private void hideRecommendationsInlineEditor() {
+        if (recommendationsInlineEditor == null || recommendationsEditorHost == null) {
+            return;
+        }
+        recommendationsEditorHost.getChildren().clear();
+        recommendationsInlineEditor.setVisible(false);
+        recommendationsInlineEditor.setManaged(false);
+    }
+
+    @FXML
+    private void onCancelRecommendationsInlineEdit() {
+        hideRecommendationsInlineEditor();
+    }
+
+    private void deleteRecommendationComment(AdminCommentRow row) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("Delete comment");
+        confirm.setContentText("Delete comment #" + row.id + " ?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+        try {
+            commentService.delete(row.idRaw);
+            setRecommendationsStatus("Comment deleted: #" + row.id);
+            refreshRecommendationsData();
+        } catch (SQLException | IllegalArgumentException e) {
+            setRecommendationsStatus("Unable to delete comment: " + e.getMessage());
+        }
+    }
+
     private void refreshAgencyAdminData() {
         try {
             List<AgencyAdminApplication> pending = applicationService.findPending();
@@ -748,6 +1195,7 @@ public class AdminDashboardController implements Initializable {
         initializeStats();
         refreshAgencyAdminData();
         refreshEventsModerationData();
+        refreshRecommendationsData();
     }
 
     @FXML
@@ -974,12 +1422,7 @@ public class AdminDashboardController implements Initializable {
 
     @FXML
     private void onRecommandation() {
-        animateValue(revenueValue, "$536,541");
-        animateValue(ordersValue, "3,621");
-        animateValue(usersValue, "1,852");
-        animateValue(growthValue, "34%");
-        updateChartData("Recommendations", new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}, new double[]{8000, 9000, 8500, 11000, 10500, 13000});
-        showDashboardSection();
+        showRecommendationsSection();
     }
 
     private void approveProposal(AgencyProposalRow row) {
@@ -1079,6 +1522,21 @@ public class AdminDashboardController implements Initializable {
             eventsStatusLabel.setManaged(true);
             eventsStatusLabel.setVisible(true);
             eventsStatusLabel.setText(message);
+        }
+    }
+
+    private void setRecommendationsStatus(String message) {
+        if (recommendationsStatusLabel == null) {
+            return;
+        }
+        if (message == null || message.isBlank()) {
+            recommendationsStatusLabel.setManaged(false);
+            recommendationsStatusLabel.setVisible(false);
+            recommendationsStatusLabel.setText("");
+        } else {
+            recommendationsStatusLabel.setManaged(true);
+            recommendationsStatusLabel.setVisible(true);
+            recommendationsStatusLabel.setText(message);
         }
     }
 
@@ -1294,5 +1752,90 @@ public class AdminDashboardController implements Initializable {
         public String getLocation() { return location; }
         public String getEventsCount() { return eventsCount; }
         public String getUpcomingCount() { return upcomingCount; }
+    }
+
+    public static class AdminPostRow {
+        private final long idRaw;
+        private final String id;
+        private final String title;
+        private final String author;
+        private final String location;
+        private final String createdAt;
+        private final String likes;
+        private final String comments;
+
+        private AdminPostRow(long idRaw, String id, String title, String author, String location,
+                             String createdAt, String likes, String comments) {
+            this.idRaw = idRaw;
+            this.id = id;
+            this.title = title;
+            this.author = author;
+            this.location = location;
+            this.createdAt = createdAt;
+            this.likes = likes;
+            this.comments = comments;
+        }
+
+        public static AdminPostRow from(ResultSet rs) throws SQLException {
+            long id = rs.getLong("id");
+            Timestamp createdTs = rs.getTimestamp("created_at");
+            String created = createdTs == null ? "-" : DATE_FMT.format(createdTs.toLocalDateTime());
+            return new AdminPostRow(
+                    id,
+                    String.valueOf(id),
+                    safeCell(rs.getString("title")),
+                    safeCell(rs.getString("author")),
+                    safeCell(rs.getString("location")),
+                    created,
+                    String.valueOf(rs.getLong("likes_count")),
+                    String.valueOf(rs.getLong("comments_count"))
+            );
+        }
+
+        public String getId() { return id; }
+        public String getTitle() { return title; }
+        public String getAuthor() { return author; }
+        public String getLocation() { return location; }
+        public String getCreatedAt() { return createdAt; }
+        public String getLikes() { return likes; }
+        public String getComments() { return comments; }
+    }
+
+    public static class AdminCommentRow {
+        private final long idRaw;
+        private final String id;
+        private final String postTitle;
+        private final String author;
+        private final String createdAt;
+        private final String content;
+
+        private AdminCommentRow(long idRaw, String id, String postTitle, String author, String createdAt, String content) {
+            this.idRaw = idRaw;
+            this.id = id;
+            this.postTitle = postTitle;
+            this.author = author;
+            this.createdAt = createdAt;
+            this.content = content;
+        }
+
+        public static AdminCommentRow from(ResultSet rs) throws SQLException {
+            long id = rs.getLong("id");
+            Timestamp createdTs = rs.getTimestamp("created_at");
+            String created = createdTs == null ? "-" : DATE_FMT.format(createdTs.toLocalDateTime());
+            return new AdminCommentRow(
+                    id,
+                    String.valueOf(id),
+                    safeCell(rs.getString("post_title")),
+                    safeCell(rs.getString("author")),
+                    created,
+                    safeCell(rs.getString("content"))
+            );
+        }
+
+        public String getId() { return id; }
+        public String getPostTitle() { return postTitle; }
+        public String getAuthor() { return author; }
+        public String getCreatedAt() { return createdAt; }
+        public String getContent() { return content; }
     }
 }

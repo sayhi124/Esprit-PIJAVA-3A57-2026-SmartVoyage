@@ -923,3 +923,335 @@
 .comment-form-save-btn:hover {
     -fx-background-color: linear-gradient(to right, #1976D2, #0097A7);
 }
+
+/* ============================================
+   RECOMMENDATIONS REDESIGN V2 (Events + Agency aligned)
+   ============================================ */
+
+.posts-root {
+    -fx-background-color: rgba(10, 7, 23, 0.58);
+    -fx-background-radius: 18;
+    -fx-border-color: rgba(226, 178, 255, 0.28);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+}
+
+.posts-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 23px;
+    -fx-font-weight: 800;
+}
+
+.posts-subtitle {
+    -fx-text-fill: rgba(226, 232, 240, 0.82);
+    -fx-font-size: 12px;
+}
+
+.posts-inline-status {
+    -fx-background-color: rgba(239, 68, 68, 0.14);
+    -fx-border-color: rgba(252, 165, 165, 0.42);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #fee2e2;
+    -fx-padding: 8 11 8 11;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.posts-filters {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.posts-search-input,
+.posts-form-input,
+.posts-form-textarea,
+.post-form-input,
+.post-form-textarea,
+.comment-form-textarea,
+.post-detail-textarea,
+.posts-form-combo,
+.post-form-combo,
+.posts-combo {
+    -fx-background-color: rgba(255, 255, 255, 0.07);
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: rgba(203, 213, 225, 0.76);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(226, 178, 255, 0.25);
+    -fx-border-radius: 10;
+    -fx-padding: 10 12 10 12;
+}
+
+.posts-search-input:focused,
+.posts-form-input:focused,
+.posts-form-textarea:focused,
+.post-form-input:focused,
+.post-form-textarea:focused,
+.comment-form-textarea:focused,
+.post-detail-textarea:focused,
+.posts-form-combo:focused,
+.post-form-combo:focused,
+.posts-combo:focused {
+    -fx-border-color: rgba(236, 72, 153, 0.62);
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.28), 10, 0.2, 0, 0);
+}
+
+.posts-search-btn,
+.posts-page-btn,
+.posts-back-btn,
+.post-form-cancel-btn,
+.comment-form-cancel-btn,
+.post-detail-edit-btn,
+.post-detail-close-btn,
+.posts-clear-btn {
+    -fx-background-color: rgba(139, 92, 246, 0.28);
+    -fx-text-fill: #f8fafc;
+    -fx-border-color: rgba(226, 178, 255, 0.36);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+}
+
+.posts-search-btn:hover,
+.posts-page-btn:hover,
+.posts-back-btn:hover,
+.post-form-cancel-btn:hover,
+.comment-form-cancel-btn:hover,
+.post-detail-edit-btn:hover,
+.post-detail-close-btn:hover,
+.posts-clear-btn:hover {
+    -fx-background-color: linear-gradient(to right, rgba(79, 70, 229, 0.62), rgba(192, 38, 211, 0.55));
+    -fx-border-color: rgba(216, 180, 254, 0.75);
+    -fx-text-fill: #ffffff;
+}
+
+.posts-add-btn,
+.posts-save-btn,
+.post-form-save-btn,
+.comment-form-save-btn,
+.post-detail-submit-btn {
+    -fx-background-color: linear-gradient(to right, #f43f5e, #d946ef);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+}
+
+.posts-add-btn:hover,
+.posts-save-btn:hover,
+.post-form-save-btn:hover,
+.comment-form-save-btn:hover,
+.post-detail-submit-btn:hover {
+    -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.5), 16, 0.28, 0, 3);
+    -fx-translate-y: -1;
+}
+
+.post-card {
+    -fx-background-color: linear-gradient(to bottom, #171629, #111827);
+    -fx-background-radius: 18;
+    -fx-border-color: rgba(148, 163, 184, 0.32);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-padding: 0 16 16 16;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.56), 16, 0.20, 0, 5);
+}
+
+.post-card:hover {
+    -fx-translate-y: -1;
+    -fx-effect: dropshadow(gaussian, rgba(147, 51, 234, 0.28), 20, 0.24, 0, 7);
+}
+
+.post-card-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 19px;
+    -fx-font-weight: 800;
+}
+
+.post-card-text {
+    -fx-text-fill: #aebed3;
+    -fx-font-size: 12.5px;
+}
+
+.post-card-location {
+    -fx-text-fill: #c4b5fd;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.post-card-date,
+.post-card-stat,
+.posts-total-label,
+.posts-page-label,
+.post-form-hint,
+.comment-form-counter,
+.post-detail-count,
+.post-comment-date {
+    -fx-text-fill: #cbd5e1;
+}
+
+.post-card-actions {
+    -fx-alignment: center;
+    -fx-spacing: 8;
+    -fx-padding: 6 0 0 0;
+    -fx-pref-wrap-length: 248;
+}
+
+.post-card-actions .button {
+    -fx-min-width: 98;
+}
+
+.post-card-comment-btn,
+.post-card-like-btn,
+.post-card-edit-btn,
+.post-card-delete-btn {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+}
+
+.posts-form-view,
+.post-form-root,
+.comment-form-root,
+.post-detail-root {
+    -fx-background-color: linear-gradient(to bottom, rgba(7, 11, 25, 0.92), rgba(5, 10, 23, 0.94));
+    -fx-background-radius: 16;
+    -fx-border-color: rgba(148, 163, 184, 0.30);
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+.post-detail-header,
+.post-detail-footer,
+.posts-pagination {
+    -fx-border-color: rgba(226, 178, 255, 0.25) transparent transparent transparent;
+}
+
+.post-detail-title,
+.post-detail-section-title,
+.post-form-title,
+.comment-form-title,
+.posts-form-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-weight: 800;
+}
+
+.post-detail-text,
+.comment-form-label,
+.post-form-label,
+.posts-form-label,
+.post-comment-content,
+.post-comment-empty {
+    -fx-text-fill: #dbeafe;
+}
+
+.post-comment-empty {
+    -fx-font-style: italic;
+}
+
+.post-comment-card {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: rgba(148, 163, 184, 0.24);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12;
+}
+
+.post-comment-author {
+    -fx-text-fill: #c4b5fd;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+}
+
+.post-comment-actions {
+    -fx-padding: 4 0 0 0;
+}
+
+.post-comment-edit-wrap {
+    -fx-background-color: rgba(139, 92, 246, 0.12);
+    -fx-border-color: rgba(196, 181, 253, 0.35);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+.post-comment-edit-area {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: rgba(203, 213, 225, 0.76);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(226, 178, 255, 0.30);
+    -fx-border-radius: 8;
+}
+
+.post-comment-error {
+    -fx-text-fill: #fda4af;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.counter-ok {
+    -fx-text-fill: #4ade80;
+}
+
+.counter-bad {
+    -fx-text-fill: #f87171;
+}
+
+.posts-toolbar-btn {
+    -fx-background-color: linear-gradient(to right, rgba(99, 102, 241, 0.42), rgba(168, 85, 247, 0.36));
+    -fx-border-color: rgba(196, 181, 253, 0.55);
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 11;
+    -fx-border-radius: 11;
+    -fx-effect: dropshadow(gaussian, rgba(79, 70, 229, 0.28), 10, 0.2, 0, 2);
+}
+
+.posts-toolbar-btn:hover {
+    -fx-translate-y: -1;
+    -fx-background-color: linear-gradient(to right, rgba(79, 70, 229, 0.62), rgba(192, 38, 211, 0.55));
+    -fx-border-color: rgba(216, 180, 254, 0.75);
+}
+
+.posts-toolbar-btn-active {
+    -fx-background-color: linear-gradient(to right, #ec4899, #d946ef);
+    -fx-border-color: rgba(244, 114, 182, 0.85);
+    -fx-text-fill: #ffffff;
+}
+
+/* Force card CTA colors to match requested screenshot intent */
+.post-card .post-card-comment-btn,
+.post-card .post-card-comment-btn.event-action-join {
+    -fx-background-color: linear-gradient(to right, #22c55e, #16a34a);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.post-card .post-card-comment-btn:hover,
+.post-card .post-card-comment-btn.event-action-join:hover {
+    -fx-background-color: linear-gradient(to right, #16a34a, #15803d);
+    -fx-opacity: 0.98;
+}
+
+.post-card .post-card-like-btn,
+.post-card .post-card-like-btn.event-action-like {
+    -fx-background-color: linear-gradient(to right, #ef4444, #dc2626);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.post-card .post-card-like-btn:hover,
+.post-card .post-card-like-btn.event-action-like:hover {
+    -fx-background-color: linear-gradient(to right, #dc2626, #b91c1c);
+    -fx-opacity: 0.98;
+}

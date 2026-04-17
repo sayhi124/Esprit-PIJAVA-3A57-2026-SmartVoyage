@@ -48,9 +48,19 @@ public interface PostDAO {
     List<Post> findByLocation(String location, int offset, int limit) throws SQLException;
 
     /**
+     * Récupère les posts d'un utilisateur avec pagination.
+     */
+    List<Post> findByUserId(Integer userId, int offset, int limit) throws SQLException;
+
+    /**
      * Compte les posts par pays.
      */
     int countByLocation(String location) throws SQLException;
+
+    /**
+     * Compte les posts d'un utilisateur.
+     */
+    int countByUserId(Integer userId) throws SQLException;
 
     /**
      * Recherche des posts par mot-clé (titre, contenu ou location).

@@ -44,6 +44,7 @@ public class PostFormController implements Initializable {
     private PostService postService;
     private Stage stage;
     private Runnable onSave;
+    private Runnable onCancel;
 
     private static final int TITRE_MIN = 10;
     private static final int TITRE_MAX = 100;
@@ -115,23 +116,20 @@ public class PostFormController implements Initializable {
         titreField.textProperty().addListener((obs, oldVal, newVal) -> {
             int len = newVal != null ? newVal.length() : 0;
             titreCounter.setText(len + "/" + TITRE_MAX);
-            if (len < TITRE_MIN || len > TITRE_MAX) {
-                titreCounter.setStyle("-fx-text-fill: #e74c3c;");
-            } else {
-                titreCounter.setStyle("-fx-text-fill: #27ae60;");
-            }
+            applyCounterState(titreCounter, len >= TITRE_MIN && len <= TITRE_MAX);
         });
 
         // Compteur pour le contenu
         contenuArea.textProperty().addListener((obs, oldVal, newVal) -> {
             int len = newVal != null ? newVal.length() : 0;
             contenuCounter.setText(len + "/" + CONTENU_MAX);
-            if (len < CONTENU_MIN || len > CONTENU_MAX) {
-                contenuCounter.setStyle("-fx-text-fill: #e74c3c;");
-            } else {
-                contenuCounter.setStyle("-fx-text-fill: #27ae60;");
-            }
+            applyCounterState(contenuCounter, len >= CONTENU_MIN && len <= CONTENU_MAX);
         });
+    }
+
+    private void applyCounterState(Label label, boolean valid) {
+        label.getStyleClass().removeAll("counter-ok", "counter-bad");
+        label.getStyleClass().add(valid ? "counter-ok" : "counter-bad");
     }
 
     public void setPost(Post post) {
@@ -158,6 +156,10 @@ public class PostFormController implements Initializable {
 
     public void setOnSave(Runnable onSave) {
         this.onSave = onSave;
+    }
+
+    public void setOnCancel(Runnable onCancel) {
+        this.onCancel = onCancel;
     }
 
     private void loadPostData() {
@@ -218,7 +220,13 @@ public class PostFormController implements Initializable {
 
     @FXML
     private void onCancel() {
-        closeForm();
+        if (stage != null) {
+            closeForm();
+            return;
+        }
+        if (onCancel != null) {
+            onCancel.run();
+        }
     }
 
     private void closeForm() {

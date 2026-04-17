@@ -55,6 +55,22 @@ public class PostDAOImpl implements PostDAO {
 
     private static final String COUNT_BY_LOCATION = "SELECT COUNT(*) FROM post WHERE location = ?";
 
+        private static final String SELECT_BY_USER_ID = """
+            SELECT id, title, content, location, image_url, user_id,
+               created_at, updated_at
+            FROM post
+                WHERE user_id = ?
+                  AND title NOT LIKE 'Recommandation voyage - %'
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+            """;
+
+            private static final String COUNT_BY_USER_ID = """
+                SELECT COUNT(*) FROM post
+                WHERE user_id = ?
+                  AND title NOT LIKE 'Recommandation voyage - %'
+                """;
+
     private static final String SEARCH = """
             SELECT id, title, content, location, image_url, user_id,
                    created_at, updated_at
@@ -192,6 +208,37 @@ public class PostDAOImpl implements PostDAO {
         Connection c = DbConnexion.getInstance().getConnection();
         try (PreparedStatement ps = c.prepareStatement(COUNT_BY_LOCATION)) {
             ps.setString(1, location);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Post> findByUserId(Integer userId, int offset, int limit) throws SQLException {
+        List<Post> posts = new ArrayList<>();
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(SELECT_BY_USER_ID)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, limit);
+            ps.setInt(3, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    posts.add(mapRow(rs));
+                }
+            }
+        }
+        return posts;
+    }
+
+    @Override
+    public int countByUserId(Integer userId) throws SQLException {
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(COUNT_BY_USER_ID)) {
+            ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);

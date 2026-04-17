@@ -361,6 +361,13 @@ public class NavigationManager {
                 scene.getStylesheets().add(form);
             }
         }
+        var postsCss = NavigationManager.class.getResource("/css/posts_styles.css");
+        if (postsCss != null) {
+            String postsForm = postsCss.toExternalForm();
+            if (!scene.getStylesheets().contains(postsForm)) {
+                scene.getStylesheets().add(postsForm);
+            }
+        }
         var bridge = NavigationManager.class.getResource("/css/controlsfx-modena-bridge.css");
         if (bridge != null) {
             String b = bridge.toExternalForm();

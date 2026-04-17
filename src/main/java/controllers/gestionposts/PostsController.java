@@ -57,6 +57,7 @@ public class PostsController implements Initializable {
     @FXML private Label totalPostsLabel;
 
     @FXML private Button addPostButton;
+    @FXML private Button myPostsButton;
 
     // Inline Form Fields
     @FXML private StackPane contentStack;
@@ -81,6 +82,8 @@ public class PostsController implements Initializable {
     private String currentSearch = "";
     private String currentCountry = null;
     private Post editingPost = null;
+    private boolean demoSeedChecked = false;
+    private boolean onlyMyPostsMode = false;
 
     public PostsController() {
         this.postService = new PostService();
@@ -226,10 +229,22 @@ public class PostsController implements Initializable {
         postsFlowPane.getChildren().clear();
 
         try {
+            if (!demoSeedChecked) {
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(1);
+                postService.ensureDemoPostsForDistinctCountries(actorUserId, 40);
+                demoSeedChecked = true;
+            }
+
             List<Post> posts;
+            Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+
+            if (onlyMyPostsMode) {
+                posts = postService.findByUserPaginated(actorUserId, currentPage);
+                totalPosts = postService.countByUser(actorUserId);
+            }
 
             // Déterminer quelle requête exécuter selon les filtres
-            if (currentCountry != null && !currentSearch.isEmpty()) {
+            else if (currentCountry != null && !currentSearch.isEmpty()) {
                 // Filtre combiné pays + recherche
                 posts = postService.searchByLocationAndKeywordPaginated(currentCountry, currentSearch, currentPage);
                 totalPosts = postService.countSearchByLocationAndKeyword(currentCountry, currentSearch);
@@ -254,7 +269,7 @@ public class PostsController implements Initializable {
 
             // Afficher les posts
             if (posts.isEmpty()) {
-                showStatus("Aucun post trouvé.");
+                showStatus(onlyMyPostsMode ? "Aucun post personnel trouvé." : "Aucun post trouvé.");
             } else {
                 hideStatus();
                 for (Post post : posts) {
@@ -263,6 +278,7 @@ public class PostsController implements Initializable {
             }
 
             totalPostsLabel.setText("Total: " + totalPosts + " post" + (totalPosts > 1 ? "s" : ""));
+            updateMyPostsButtonState();
 
         } catch (SQLException e) {
             showStatus("Erreur lors du chargement des posts: " + e.getMessage());
@@ -313,8 +329,26 @@ public class PostsController implements Initializable {
         countryComboBox.getSelectionModel().selectFirst();
         currentSearch = "";
         currentCountry = null;
+        onlyMyPostsMode = false;
         currentPage = 1;
         loadPosts();
+    }
+
+    @FXML
+    private void onMyPosts() {
+        onlyMyPostsMode = !onlyMyPostsMode;
+        currentPage = 1;
+        loadPosts();
+    }
+
+    private void updateMyPostsButtonState() {
+        if (myPostsButton == null) {
+            return;
+        }
+        myPostsButton.getStyleClass().remove("posts-toolbar-btn-active");
+        if (onlyMyPostsMode) {
+            myPostsButton.getStyleClass().add("posts-toolbar-btn-active");
+        }
     }
 
     @FXML

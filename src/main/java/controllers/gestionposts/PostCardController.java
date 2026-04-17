@@ -153,17 +153,19 @@ public class PostCardController implements Initializable {
 
     private void updateActionButtonsVisibility() {
         Optional<User> currentUser = NavigationManager.getInstance().sessionUser();
+        boolean isDemo = post != null && post.getTitre() != null && post.getTitre().startsWith("Recommandation voyage - ");
         boolean isAuthor = currentUser.isPresent() && 
                           post.getUserId() != null && 
                           currentUser.get().getId().intValue() == post.getUserId();
+        boolean canManage = isAuthor && !isDemo;
 
         if (editButton != null) {
-            editButton.setVisible(isAuthor);
-            editButton.setManaged(isAuthor);
+            editButton.setVisible(canManage);
+            editButton.setManaged(canManage);
         }
         if (deleteButton != null) {
-            deleteButton.setVisible(isAuthor);
-            deleteButton.setManaged(isAuthor);
+            deleteButton.setVisible(canManage);
+            deleteButton.setManaged(canManage);
         }
     }
 

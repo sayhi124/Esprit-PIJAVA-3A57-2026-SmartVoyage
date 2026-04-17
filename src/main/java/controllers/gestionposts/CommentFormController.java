@@ -26,6 +26,7 @@ public class CommentFormController implements Initializable {
     private final CommentService commentService;
     private Stage stage;
     private Runnable onSaveCallback;
+    private Runnable onCancelCallback;
 
     public CommentFormController() {
         this.commentService = new CommentService();
@@ -40,12 +41,8 @@ public class CommentFormController implements Initializable {
         contentArea.textProperty().addListener((obs, oldVal, newVal) -> {
             int len = newVal != null ? newVal.length() : 0;
             counterLabel.setText(len + "/1000");
-
-            if (len < 5 || len > 1000) {
-                counterLabel.setStyle("-fx-text-fill: #e74c3c;");
-            } else {
-                counterLabel.setStyle("-fx-text-fill: #27ae60;");
-            }
+            counterLabel.getStyleClass().removeAll("counter-ok", "counter-bad");
+            counterLabel.getStyleClass().add((len >= 5 && len <= 1000) ? "counter-ok" : "counter-bad");
         });
     }
 
@@ -67,6 +64,10 @@ public class CommentFormController implements Initializable {
 
     public void setOnSave(Runnable callback) {
         this.onSaveCallback = callback;
+    }
+
+    public void setOnCancel(Runnable callback) {
+        this.onCancelCallback = callback;
     }
 
     @FXML
@@ -101,6 +102,10 @@ public class CommentFormController implements Initializable {
     private void onCancel() {
         if (stage != null) {
             stage.close();
+            return;
+        }
+        if (onCancelCallback != null) {
+            onCancelCallback.run();
         }
     }
 

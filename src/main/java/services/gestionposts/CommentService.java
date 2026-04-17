@@ -4,6 +4,7 @@ import models.gestionposts.Comment;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service pour la gestion des commentaires avec validation.
@@ -40,6 +41,20 @@ public class CommentService {
         commentDAO.update(comment);
     }
 
+    public void updateByAuthor(Comment comment, Integer authorUserId) throws IllegalArgumentException, SQLException {
+        validate(comment);
+        if (authorUserId == null) {
+            throw new IllegalArgumentException("Utilisateur invalide.");
+        }
+        if (comment.getId() == null) {
+            throw new IllegalArgumentException("Commentaire introuvable.");
+        }
+        if (!commentDAO.isAuthor(comment.getId(), authorUserId)) {
+            throw new IllegalArgumentException("Vous ne pouvez modifier que vos propres commentaires.");
+        }
+        commentDAO.update(comment);
+    }
+
     /**
      * Supprime un commentaire.
      *
@@ -48,6 +63,23 @@ public class CommentService {
      */
     public void delete(Long id) throws SQLException {
         commentDAO.delete(id);
+    }
+
+    public void deleteByAuthor(Long id, Integer authorUserId) throws SQLException {
+        if (id == null) {
+            throw new IllegalArgumentException("Commentaire introuvable.");
+        }
+        if (authorUserId == null) {
+            throw new IllegalArgumentException("Utilisateur invalide.");
+        }
+        if (!commentDAO.isAuthor(id, authorUserId)) {
+            throw new IllegalArgumentException("Vous ne pouvez supprimer que vos propres commentaires.");
+        }
+        commentDAO.delete(id);
+    }
+
+    public Optional<Comment> findById(Long id) throws SQLException {
+        return commentDAO.findById(id);
     }
 
     /**

@@ -206,7 +206,12 @@
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="addPostButton" text="+ Nouveau Post" onAction="#onAddPost" styleClass="posts-add-btn"/>
+                                <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="myPostsButton" text="Mes posts" onAction="#onMyPosts" styleClass="posts-search-btn posts-toolbar-btn"/>
+                                        <Button fx:id="addPostButton" text="+ Nouveau Post" onAction="#onAddPost" styleClass="posts-add-btn"/>
+                                    </children>
+                                </HBox>
                             </children>
                         </HBox>
 

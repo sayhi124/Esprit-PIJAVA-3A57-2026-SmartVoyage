@@ -96,7 +96,7 @@
                     </graphic>
                 </Button>
 
-                <Button text="Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item">
+                <Button fx:id="recommendationsNavButton" text="Recommendations" onAction="#onRecommandation" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -386,6 +386,108 @@
                                         </columns>
                                     </TableView>
                                     <Label fx:id="eventsStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="recommendationsPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Posts" styleClass="card-label"/>
+                                        <Label fx:id="recPostsCountValue" text="0" styleClass="card-value users"/>
+                                        <Label text="Published recommendations" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Comments" styleClass="card-label"/>
+                                        <Label fx:id="recCommentsCountValue" text="0" styleClass="card-value growth"/>
+                                        <Label text="User discussions" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Likes" styleClass="card-label"/>
+                                        <Label fx:id="recLikesCountValue" text="0" styleClass="card-value revenue"/>
+                                        <Label text="Engagement signals" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Interactions" styleClass="card-label"/>
+                                        <Label fx:id="recInteractionsRateValue" text="0.00 / post" styleClass="card-value orders"/>
+                                        <Label text="(likes + comments) / post" styleClass="card-subtitle"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Recommendations analytics" styleClass="section-title"/>
+                            <HBox spacing="16">
+                                <children>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Posts created (last 6 months)" styleClass="card-label"/>
+                                            <LineChart fx:id="recommendationsTimelineChart" prefHeight="240" styleClass="revenue-chart">
+                                                <xAxis>
+                                                    <CategoryAxis fx:id="recommendationsTimelineXAxis"/>
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis fx:id="recommendationsTimelineYAxis"/>
+                                                </yAxis>
+                                            </LineChart>
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Top countries by posts" styleClass="card-label"/>
+                                            <PieChart fx:id="recommendationsTopCountriesChart" prefHeight="240"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <VBox fx:id="recommendationsInlineEditor" styleClass="table-container" spacing="10" managed="false" visible="false">
+                                <children>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <children>
+                                            <Label fx:id="recommendationsEditorTitle" text="Edit" styleClass="section-title"/>
+                                            <Region HBox.hgrow="ALWAYS"/>
+                                            <Button text="Back to list" onAction="#onCancelRecommendationsInlineEdit" styleClass="action-button secondary"/>
+                                        </children>
+                                    </HBox>
+                                    <StackPane fx:id="recommendationsEditorHost" prefHeight="420"/>
+                                </children>
+                            </VBox>
+
+                            <Label text="Posts moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <TableView fx:id="adminPostsTable" styleClass="data-table" prefHeight="260" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="adminPostIdColumn" text="#" prefWidth="70"/>
+                                            <TableColumn fx:id="adminPostTitleColumn" text="Title" prefWidth="280"/>
+                                            <TableColumn fx:id="adminPostAuthorColumn" text="Author" prefWidth="150"/>
+                                            <TableColumn fx:id="adminPostLocationColumn" text="Location" prefWidth="170"/>
+                                            <TableColumn fx:id="adminPostCreatedColumn" text="Created" prefWidth="170"/>
+                                            <TableColumn fx:id="adminPostLikesColumn" text="Likes" prefWidth="100"/>
+                                            <TableColumn fx:id="adminPostCommentsColumn" text="Comments" prefWidth="110"/>
+                                            <TableColumn fx:id="adminPostActionsColumn" text="Actions" prefWidth="190"/>
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </VBox>
+
+                            <Label text="Comments moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <TableView fx:id="adminCommentsTable" styleClass="data-table" prefHeight="260" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="adminCommentIdColumn" text="#" prefWidth="70"/>
+                                            <TableColumn fx:id="adminCommentPostTitleColumn" text="Post" prefWidth="250"/>
+                                            <TableColumn fx:id="adminCommentAuthorColumn" text="Author" prefWidth="140"/>
+                                            <TableColumn fx:id="adminCommentCreatedColumn" text="Created" prefWidth="170"/>
+                                            <TableColumn fx:id="adminCommentContentColumn" text="Content" prefWidth="340"/>
+                                            <TableColumn fx:id="adminCommentActionsColumn" text="Actions" prefWidth="190"/>
+                                        </columns>
+                                    </TableView>
+                                    <Label fx:id="recommendationsStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
                                 </children>
                             </VBox>
                         </children>
