@@ -339,6 +339,11 @@ public class PostsController implements Initializable {
     }
 
     private void onEditPost(Post post) {
+        Optional<User> currentUser = NavigationManager.getInstance().sessionUser();
+        if (currentUser.isEmpty() || post.getUserId() == null || currentUser.get().getId().intValue() != post.getUserId()) {
+            showStatus("Vous ne pouvez modifier que vos propres posts.");
+            return;
+        }
         showInlineForm(post);
     }
 
@@ -408,7 +413,8 @@ public class PostsController implements Initializable {
             if (editingPost == null) {
                 postService.create(postToSave);
             } else {
-                postService.update(postToSave);
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+                postService.updateByAuthor(postToSave, actorUserId);
             }
 
             loadPosts();
@@ -442,10 +448,11 @@ public class PostsController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                postService.delete(post.getId());
+                Integer actorUserId = NavigationManager.getInstance().sessionUser().map(u -> u.getId().intValue()).orElse(null);
+                postService.deleteByAuthor(post.getId(), actorUserId);
                 loadPosts();
                 showStatus("Post supprimé avec succès !");
-            } catch (SQLException e) {
+            } catch (SQLException | IllegalArgumentException e) {
                 showStatus("Erreur lors de la suppression: " + e.getMessage());
             }
         }

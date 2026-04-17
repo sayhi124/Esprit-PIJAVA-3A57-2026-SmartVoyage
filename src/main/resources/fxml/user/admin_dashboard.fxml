@@ -8,6 +8,7 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -84,7 +85,7 @@
                     </graphic>
                 </Button>
 
-                <Button text="Events" onAction="#onEvenement" styleClass="sidebar-nav-item">
+                <Button fx:id="eventsNavButton" text="Events" onAction="#onEvenement" styleClass="sidebar-nav-item">
                     <graphic>
                         <Region>
                             <styleClass>
@@ -131,10 +132,12 @@
     </left>
 
     <center>
-        <VBox spacing="25" styleClass="dashboard-content">
-            <padding>
-                <Insets top="30" right="30" bottom="30" left="30"/>
-            </padding>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll">
+            <content>
+                <VBox spacing="25" styleClass="dashboard-content">
+                    <padding>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
+                    </padding>
 
             <HBox spacing="15" alignment="CENTER_LEFT">
                 <Label fx:id="sectionTitleLabel" text="Admin Dashboard" styleClass="dashboard-title"/>
@@ -302,10 +305,97 @@
                             </VBox>
                         </children>
                     </VBox>
+
+                    <VBox fx:id="eventsPane" spacing="16" visible="false" managed="false">
+                        <children>
+                            <HBox spacing="14">
+                                <children>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Total events" styleClass="card-label"/>
+                                        <Label fx:id="eventsTotalCountValue" text="0" styleClass="card-value users"/>
+                                        <Label text="All events in database" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Approved" styleClass="card-label"/>
+                                        <Label fx:id="eventsApprovedCountValue" text="0" styleClass="card-value revenue"/>
+                                        <Label text="Visible to users" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Pending" styleClass="card-label"/>
+                                        <Label fx:id="eventsPendingCountValue" text="0" styleClass="card-value growth"/>
+                                        <Label text="Awaiting admin decision" styleClass="card-subtitle"/>
+                                    </VBox>
+                                    <VBox styleClass="stat-card">
+                                        <Label text="Rejected" styleClass="card-label"/>
+                                        <Label fx:id="eventsRejectedCountValue" text="0" styleClass="card-value orders"/>
+                                        <Label text="Rejected by moderation" styleClass="card-subtitle"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Events analytics" styleClass="section-title"/>
+                            <HBox spacing="16">
+                                <children>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Events created (last 6 months)" styleClass="card-label"/>
+                                            <LineChart fx:id="eventsTimelineChart" prefHeight="240" styleClass="revenue-chart">
+                                                <xAxis>
+                                                    <CategoryAxis fx:id="eventsTimelineXAxis"/>
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis fx:id="eventsTimelineYAxis"/>
+                                                </yAxis>
+                                            </LineChart>
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Events by status" styleClass="card-label"/>
+                                            <PieChart fx:id="eventsStatusChart" prefHeight="240"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Top event locations" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10">
+                                <children>
+                                    <TableView fx:id="eventsLocationsTable" styleClass="data-table" prefHeight="220">
+                                        <columns>
+                                            <TableColumn fx:id="eventLocationNameColumn" text="Location" prefWidth="300"/>
+                                            <TableColumn fx:id="eventLocationCountColumn" text="Events" prefWidth="120"/>
+                                            <TableColumn fx:id="eventLocationUpcomingColumn" text="Upcoming" prefWidth="120"/>
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </VBox>
+
+                            <Label text="Pending events moderation" styleClass="section-title"/>
+                            <VBox styleClass="table-container" spacing="10" minHeight="380" prefHeight="420" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <TableView fx:id="pendingEventsTable" styleClass="data-table events-moderation-table" minHeight="320" prefHeight="380" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="eventIdColumn" text="#" prefWidth="80"/>
+                                            <TableColumn fx:id="eventTitleColumn" text="Title" prefWidth="340"/>
+                                            <TableColumn fx:id="eventLocationColumn" text="Location" prefWidth="230"/>
+                                            <TableColumn fx:id="eventDateColumn" text="Event date" prefWidth="220"/>
+                                            <TableColumn fx:id="eventOwnerColumn" text="Created by" prefWidth="170"/>
+                                            <TableColumn fx:id="eventStatusColumn" text="Status" prefWidth="140"/>
+                                            <TableColumn fx:id="eventActionsColumn" text="Actions" prefWidth="220"/>
+                                        </columns>
+                                    </TableView>
+                                    <Label fx:id="eventsStatusLabel" visible="false" managed="false" styleClass="card-subtitle"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
                 </children>
             </StackPane>
 
-        </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>

@@ -1810,6 +1810,24 @@
     -fx-cursor: hand;
 }
 
+.events-toolbar-btn {
+    -fx-background-color: linear-gradient(to right, rgba(99, 102, 241, 0.42), rgba(168, 85, 247, 0.36));
+    -fx-border-color: rgba(196, 181, 253, 0.55);
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 11;
+    -fx-border-radius: 11;
+    -fx-effect: dropshadow(gaussian, rgba(79, 70, 229, 0.28), 10, 0.2, 0, 2);
+}
+
+.events-toolbar-btn:hover {
+    -fx-translate-y: -1;
+    -fx-background-color: linear-gradient(to right, rgba(79, 70, 229, 0.62), rgba(192, 38, 211, 0.55));
+    -fx-border-color: rgba(216, 180, 254, 0.75);
+}
+
 .events-scroll {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -2478,6 +2496,7 @@
     -fx-alignment: center;
     -fx-spacing: 8;
     -fx-padding: 6 0 0 0;
+    -fx-pref-wrap-length: 248;
 }
 
 .event-card-participation-row {
@@ -2486,6 +2505,8 @@
 }
 
 .event-action-primary,
+.event-action-join,
+.event-action-like,
 .event-action-sponsor,
 .event-action-secondary,
 .event-action-danger {
@@ -2497,12 +2518,25 @@
     -fx-cursor: hand;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-min-width: 0;
+    -fx-min-width: -1;
+    -fx-max-width: -1;
     -fx-alignment: center;
 }
 
 .event-action-primary {
     -fx-background-color: linear-gradient(to right, #ec4899, #d946ef);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.event-action-join {
+    -fx-background-color: linear-gradient(to right, #22c55e, #16a34a);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.event-action-like {
+    -fx-background-color: linear-gradient(to right, #ef4444, #dc2626);
     -fx-text-fill: #ffffff;
     -fx-border-color: transparent;
 }
@@ -2546,10 +2580,21 @@
 }
 
 .event-action-primary:hover,
+.event-action-join:hover,
+.event-action-like:hover,
 .event-action-sponsor:hover,
 .event-action-secondary:hover,
 .event-action-danger:hover {
     -fx-opacity: 0.94;
+}
+
+.event-side-action-btn {
+    -fx-min-width: 76;
+    -fx-pref-width: 84;
+    -fx-max-width: 92;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-padding: 8 10 8 10;
 }
 
 .sponsor-form-dialog {

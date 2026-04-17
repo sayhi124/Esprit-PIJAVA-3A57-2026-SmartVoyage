@@ -98,7 +98,16 @@
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="createEventButton" text="Create Event" onAction="#onCreateEvent" styleClass="events-create-btn"/>
+                                <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="allEventsButton" text="All events" onAction="#onAllEvents" styleClass="events-search-btn events-toolbar-btn"/>
+                                        <Button fx:id="favoritesButton" text="Favoris" onAction="#onFavorites" styleClass="events-search-btn events-toolbar-btn"/>
+                                        <Button fx:id="mesEventsButton" text="Mes events" onAction="#onMesEvents" styleClass="events-search-btn events-toolbar-btn"/>
+                                        <Button fx:id="myRequestsButton" text="Mes demandes" onAction="#onMyRequests" styleClass="events-search-btn events-toolbar-btn"/>
+                                        <Button fx:id="mySponsorsButton" text="Sponsors" onAction="#onMySponsors" styleClass="events-search-btn events-toolbar-btn"/>
+                                        <Button fx:id="createEventButton" text="Create Event" onAction="#onCreateEvent" styleClass="events-create-btn"/>
+                                    </children>
+                                </HBox>
                             </children>
                         </HBox>
 
@@ -116,11 +125,27 @@
                                             </children>
                                         </HBox>
 
-                                        <ScrollPane fx:id="eventsScroll" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TilePane fx:id="eventsTile" hgap="14.0" vgap="14.0" prefTileWidth="290.0" styleClass="events-tile"/>
-                                            </content>
-                                        </ScrollPane>
+                                        <HBox spacing="12.0" alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ScrollPane fx:id="eventsScroll" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <TilePane fx:id="eventsTile" hgap="14.0" vgap="14.0" prefTileWidth="290.0" styleClass="events-tile"/>
+                                                    </content>
+                                                </ScrollPane>
+
+                                                <VBox fx:id="ownerRequestsPanel" spacing="8.0" prefWidth="330.0" minWidth="300.0" maxWidth="360.0" managed="false" visible="false" styleClass="chart-container">
+                                                    <children>
+                                                        <Label fx:id="ownerRequestsTitleLabel" text="Pending Requests" styleClass="section-title"/>
+                                                        <Label fx:id="ownerRequestsStatusLabel" managed="false" visible="false" wrapText="true" styleClass="events-inline-status"/>
+                                                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="events-scroll" VBox.vgrow="ALWAYS">
+                                                            <content>
+                                                                <VBox fx:id="ownerRequestsList" spacing="8.0"/>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
                                     </children>
                                 </VBox>
 

@@ -176,3 +176,25 @@
     -fx-font-size: 13px;
     -fx-padding: 12 15;
 }
+
+.events-moderation-table {
+    -fx-fixed-cell-size: 52;
+}
+
+.events-moderation-table .column-header {
+    -fx-padding: 14 16;
+}
+
+.events-moderation-table .column-header .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.events-moderation-table .table-row-cell {
+    -fx-padding: 14 0;
+}
+
+.events-moderation-table .table-cell {
+    -fx-font-size: 14px;
+    -fx-padding: 14 16;
+}

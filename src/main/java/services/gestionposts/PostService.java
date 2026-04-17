@@ -40,12 +40,40 @@ public class PostService implements CRUD<Post, Long> {
         postDAO.update(entity);
     }
 
+    public void updateByAuthor(Post entity, Integer authorUserId) throws SQLException {
+        validate(entity, false);
+        if (authorUserId == null) {
+            throw new IllegalArgumentException("Utilisateur invalide.");
+        }
+        Post stored = postDAO.findById(entity.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Post introuvable."));
+        if (stored.getUserId() == null || !stored.getUserId().equals(authorUserId)) {
+            throw new IllegalArgumentException("Vous ne pouvez modifier que vos propres posts.");
+        }
+        postDAO.update(entity);
+    }
+
     @Override
     public void delete(Long id) throws SQLException {
         if (id == null) {
             throw new IllegalArgumentException("L'identifiant du post est obligatoire pour la suppression.");
         }
         postDAO.delete(id);
+    }
+
+    public void deleteByAuthor(Long postId, Integer authorUserId) throws SQLException {
+        if (postId == null) {
+            throw new IllegalArgumentException("L'identifiant du post est obligatoire pour la suppression.");
+        }
+        if (authorUserId == null) {
+            throw new IllegalArgumentException("Utilisateur invalide.");
+        }
+        Post stored = postDAO.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post introuvable."));
+        if (stored.getUserId() == null || !stored.getUserId().equals(authorUserId)) {
+            throw new IllegalArgumentException("Vous ne pouvez supprimer que vos propres posts.");
+        }
+        postDAO.delete(postId);
     }
 
     public Optional<Post> findById(Long id) throws SQLException {
@@ -124,6 +152,8 @@ public class PostService implements CRUD<Post, Long> {
             throw new IllegalArgumentException("Le post est obligatoire.");
         }
 
+        post.validateForPersistence(isCreate);
+
         // Validation ID pour update
         if (!isCreate && post.getId() == null) {
             errors.add("L'identifiant du post est obligatoire pour la modification.");
@@ -140,6 +170,9 @@ public class PostService implements CRUD<Post, Long> {
             if (titre.length() > 100) {
                 errors.add("Le titre ne doit pas dépasser 100 caractères (actuellement : " + titre.length() + ").");
             }
+            if (hasExcessiveRepetition(titre)) {
+                errors.add("Le titre contient une répétition excessive de caractères.");
+            }
         }
 
         // Validation contenu (min 50, max 5000)
@@ -152,6 +185,9 @@ public class PostService implements CRUD<Post, Long> {
             }
             if (contenu.length() > 5000) {
                 errors.add("Le contenu ne doit pas dépasser 5000 caractères (actuellement : " + contenu.length() + ").");
+            }
+            if (hasExcessiveRepetition(contenu)) {
+                errors.add("Le contenu contient une répétition excessive de caractères.");
             }
         }
 
@@ -212,6 +248,24 @@ public class PostService implements CRUD<Post, Long> {
         return lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
                lower.endsWith(".png") || lower.endsWith(".gif") ||
                lower.endsWith(".webp") || lower.endsWith(".bmp");
+    }
+
+    private boolean hasExcessiveRepetition(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        int streak = 1;
+        for (int i = 1; i < value.length(); i++) {
+            if (Character.toLowerCase(value.charAt(i)) == Character.toLowerCase(value.charAt(i - 1))) {
+                streak++;
+                if (streak >= 8) {
+                    return true;
+                }
+            } else {
+                streak = 1;
+            }
+        }
+        return false;
     }
 
     public int getPostsPerPage() {

@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import models.gestionagences.AgencyAdminApplication;
+import models.gestionevenements.TravelEvent;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -36,6 +37,7 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import services.gestionagences.AgencyAccountService;
 import services.gestionagences.AgencyAdminApplicationService;
+import services.gestionevenements.TravelEventService;
 import services.gestionutilisateurs.UserService;
 import utils.DbConnexion;
 import utils.NavigationManager;
@@ -76,6 +78,7 @@ public class AdminDashboardController implements Initializable {
 
     @FXML private VBox dashboardOverviewPane;
     @FXML private VBox agenciesPane;
+    @FXML private VBox eventsPane;
     @FXML private Label sectionTitleLabel;
     @FXML private Label agenciesCountValue;
     @FXML private Label postsCountValue;
@@ -92,6 +95,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private Label agenciesStatusLabel;
     @FXML private Button dashboardNavButton;
     @FXML private Button agencesNavButton;
+    @FXML private Button eventsNavButton;
     @FXML private PieChart agenciesStatusChart;
     @FXML private BarChart<String, Number> agenciesPostsChart;
     @FXML private CategoryAxis agencyPostsXAxis;
@@ -106,12 +110,36 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<AgencySummaryRow, String> agencyPostsColumn;
     @FXML private TableColumn<AgencySummaryRow, String> agencyInteractionsColumn;
     @FXML private TableColumn<AgencySummaryRow, AgencySummaryRow> agencyActionsColumn;
+    @FXML private TableView<EventModerationRow> pendingEventsTable;
+    @FXML private TableColumn<EventModerationRow, String> eventIdColumn;
+    @FXML private TableColumn<EventModerationRow, String> eventTitleColumn;
+    @FXML private TableColumn<EventModerationRow, String> eventLocationColumn;
+    @FXML private TableColumn<EventModerationRow, String> eventDateColumn;
+    @FXML private TableColumn<EventModerationRow, String> eventOwnerColumn;
+    @FXML private TableColumn<EventModerationRow, String> eventStatusColumn;
+    @FXML private TableColumn<EventModerationRow, EventModerationRow> eventActionsColumn;
+    @FXML private Label eventsTotalCountValue;
+    @FXML private Label eventsApprovedCountValue;
+    @FXML private Label eventsPendingCountValue;
+    @FXML private Label eventsRejectedCountValue;
+    @FXML private LineChart<String, Number> eventsTimelineChart;
+    @FXML private CategoryAxis eventsTimelineXAxis;
+    @FXML private NumberAxis eventsTimelineYAxis;
+    @FXML private PieChart eventsStatusChart;
+    @FXML private TableView<EventLocationRow> eventsLocationsTable;
+    @FXML private TableColumn<EventLocationRow, String> eventLocationNameColumn;
+    @FXML private TableColumn<EventLocationRow, String> eventLocationCountColumn;
+    @FXML private TableColumn<EventLocationRow, String> eventLocationUpcomingColumn;
+    @FXML private Label eventsStatusLabel;
 
     private final ObservableList<CustomerData> customerData = FXCollections.observableArrayList();
     private final ObservableList<AgencyProposalRow> proposalRows = FXCollections.observableArrayList();
     private final ObservableList<AgencySummaryRow> agencySummaryRows = FXCollections.observableArrayList();
+    private final ObservableList<EventModerationRow> eventModerationRows = FXCollections.observableArrayList();
+    private final ObservableList<EventLocationRow> eventLocationRows = FXCollections.observableArrayList();
     private final AgencyAdminApplicationService applicationService = new AgencyAdminApplicationService();
     private final AgencyAccountService agencyAccountService = new AgencyAccountService();
+    private final TravelEventService travelEventService = new TravelEventService();
     private final UserService userService = new UserService();
     private Timeline liveRefreshTimeline;
     private String lastAgenciesDataSignature;
@@ -126,6 +154,7 @@ public class AdminDashboardController implements Initializable {
         initializeChart();
         initializeTable();
         initializeAgenciesSection();
+        initializeEventsSection();
         setupLiveRefresh();
         showDashboardSection();
     }
@@ -134,6 +163,9 @@ public class AdminDashboardController implements Initializable {
         liveRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(5), evt -> {
             if (agenciesPane != null && agenciesPane.isVisible()) {
                 refreshAgencyAdminDataIfChanged();
+            }
+            if (eventsPane != null && eventsPane.isVisible()) {
+                refreshEventsModerationData();
             }
         }));
         liveRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -355,9 +387,12 @@ public class AdminDashboardController implements Initializable {
         dashboardOverviewPane.setManaged(true);
         agenciesPane.setVisible(false);
         agenciesPane.setManaged(false);
+        eventsPane.setVisible(false);
+        eventsPane.setManaged(false);
         sectionTitleLabel.setText("Admin Dashboard");
-        setSidebarActive(dashboardNavButton, agencesNavButton);
+        setSidebarActive(dashboardNavButton);
         setAgenciesStatus("");
+        setEventsStatus("");
         refreshOverviewMetrics();
         refreshOverviewChart();
         loadTopUsers();
@@ -368,18 +403,224 @@ public class AdminDashboardController implements Initializable {
         dashboardOverviewPane.setManaged(false);
         agenciesPane.setVisible(true);
         agenciesPane.setManaged(true);
+        eventsPane.setVisible(false);
+        eventsPane.setManaged(false);
         sectionTitleLabel.setText("Agencies - Validation");
-        setSidebarActive(agencesNavButton, dashboardNavButton);
+        setSidebarActive(agencesNavButton);
         refreshAgencyAdminData();
+        setEventsStatus("");
     }
 
-    private void setSidebarActive(Button active, Button inactive) {
-        if (inactive != null) {
-            inactive.getStyleClass().remove("sidebar-nav-item-active");
+    private void showEventsSection() {
+        dashboardOverviewPane.setVisible(false);
+        dashboardOverviewPane.setManaged(false);
+        agenciesPane.setVisible(false);
+        agenciesPane.setManaged(false);
+        eventsPane.setVisible(true);
+        eventsPane.setManaged(true);
+        sectionTitleLabel.setText("Events - Pending Approval");
+        setSidebarActive(eventsNavButton);
+        setAgenciesStatus("");
+        refreshEventsModerationData();
+    }
+
+    private void setSidebarActive(Button active) {
+        if (dashboardNavButton != null) {
+            dashboardNavButton.getStyleClass().remove("sidebar-nav-item-active");
+        }
+        if (agencesNavButton != null) {
+            agencesNavButton.getStyleClass().remove("sidebar-nav-item-active");
+        }
+        if (eventsNavButton != null) {
+            eventsNavButton.getStyleClass().remove("sidebar-nav-item-active");
         }
         if (active != null && !active.getStyleClass().contains("sidebar-nav-item-active")) {
             active.getStyleClass().add("sidebar-nav-item-active");
         }
+    }
+
+    private void initializeEventsSection() {
+        eventIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        eventTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        eventLocationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+        eventDateColumn.setCellValueFactory(new PropertyValueFactory<>("eventDate"));
+        eventOwnerColumn.setCellValueFactory(new PropertyValueFactory<>("owner"));
+        eventStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        eventActionsColumn.setCellValueFactory(cell -> new javafx.beans.property.ReadOnlyObjectWrapper<>(cell.getValue()));
+        eventActionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button approveBtn = new Button("Approve");
+            private final Button rejectBtn = new Button("Reject");
+            private final javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(8, approveBtn, rejectBtn);
+            {
+                approveBtn.getStyleClass().addAll("action-button", "primary");
+                rejectBtn.getStyleClass().addAll("action-button", "secondary");
+                approveBtn.setOnAction(evt -> {
+                    EventModerationRow row = getItem();
+                    if (row != null) {
+                        approvePendingEvent(row);
+                    }
+                });
+                rejectBtn.setOnAction(evt -> {
+                    EventModerationRow row = getItem();
+                    if (row != null) {
+                        rejectPendingEvent(row);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(EventModerationRow item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty || item == null ? null : box);
+            }
+        });
+        pendingEventsTable.setItems(eventModerationRows);
+        pendingEventsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        if (eventLocationNameColumn != null) {
+            eventLocationNameColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+        }
+        if (eventLocationCountColumn != null) {
+            eventLocationCountColumn.setCellValueFactory(new PropertyValueFactory<>("eventsCount"));
+        }
+        if (eventLocationUpcomingColumn != null) {
+            eventLocationUpcomingColumn.setCellValueFactory(new PropertyValueFactory<>("upcomingCount"));
+        }
+        if (eventsLocationsTable != null) {
+            eventsLocationsTable.setItems(eventLocationRows);
+            eventsLocationsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }
+        if (eventsTimelineXAxis != null) {
+            eventsTimelineXAxis.setLabel("Month");
+        }
+        if (eventsTimelineYAxis != null) {
+            eventsTimelineYAxis.setLabel("Events");
+        }
+        refreshEventsModerationData();
+    }
+
+    private void refreshEventsModerationData() {
+        try {
+            refreshEventsAnalytics();
+            List<TravelEvent> pending = travelEventService.findPending();
+            eventModerationRows.setAll(pending.stream().map(EventModerationRow::from).toList());
+            eventsPendingCountValue.setText(String.valueOf(pending.size()));
+            if (pending.isEmpty()) {
+                setEventsStatus("No pending events right now.");
+            } else {
+                setEventsStatus("");
+            }
+        } catch (SQLException e) {
+            setEventsStatus("Unable to load pending events: " + e.getMessage());
+        }
+    }
+
+    private void refreshEventsAnalytics() throws SQLException {
+        refreshEventsKpis();
+        refreshEventsTimelineChart();
+        refreshEventsStatusChart();
+        refreshTopEventLocations();
+    }
+
+    private void refreshEventsKpis() throws SQLException {
+        String sql = """
+                SELECT
+                    COUNT(*) AS total_events,
+                    SUM(CASE WHEN status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_events,
+                    SUM(CASE WHEN status = 'PENDING' THEN 1 ELSE 0 END) AS pending_events,
+                    SUM(CASE WHEN status = 'REJECTED' THEN 1 ELSE 0 END) AS rejected_events
+                FROM travel_event
+                """;
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                if (eventsTotalCountValue != null) {
+                    eventsTotalCountValue.setText(String.valueOf(rs.getLong("total_events")));
+                }
+                if (eventsApprovedCountValue != null) {
+                    eventsApprovedCountValue.setText(String.valueOf(rs.getLong("approved_events")));
+                }
+                if (eventsRejectedCountValue != null) {
+                    eventsRejectedCountValue.setText(String.valueOf(rs.getLong("rejected_events")));
+                }
+            }
+        }
+    }
+
+    private void refreshEventsTimelineChart() throws SQLException {
+        if (eventsTimelineChart == null) {
+            return;
+        }
+        String sql = """
+                SELECT DATE_FORMAT(created_at, '%b') AS month_label, COUNT(*) AS total
+                FROM travel_event
+                WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m'), DATE_FORMAT(created_at, '%b')
+                ORDER BY DATE_FORMAT(created_at, '%Y-%m')
+                """;
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Created events");
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                series.getData().add(new XYChart.Data<>(rs.getString("month_label"), rs.getLong("total")));
+            }
+        }
+        eventsTimelineChart.getData().clear();
+        eventsTimelineChart.getData().add(series);
+        if (series.getNode() != null) {
+            series.getNode().setStyle("-fx-stroke: linear-gradient(to right, #f97316, #ef4444); -fx-stroke-width: 3px;");
+        }
+    }
+
+    private void refreshEventsStatusChart() throws SQLException {
+        if (eventsStatusChart == null) {
+            return;
+        }
+        String sql = """
+                SELECT status, COUNT(*) AS total
+                FROM travel_event
+                GROUP BY status
+                """;
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        Connection c = DbConnexion.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String status = rs.getString("status");
+                data.add(new PieChart.Data(status == null || status.isBlank() ? "PENDING" : status, rs.getLong("total")));
+            }
+        }
+        eventsStatusChart.setData(data);
+        eventsStatusChart.setLegendVisible(true);
+        eventsStatusChart.setLabelsVisible(true);
+    }
+
+    private void refreshTopEventLocations() throws SQLException {
+        if (eventsLocationsTable == null) {
+            return;
+        }
+        String sql = """
+                SELECT
+                    COALESCE(NULLIF(TRIM(location), ''), 'Unknown') AS location_name,
+                    COUNT(*) AS events_count,
+                    SUM(CASE WHEN event_date >= NOW() THEN 1 ELSE 0 END) AS upcoming_count
+                FROM travel_event
+                GROUP BY COALESCE(NULLIF(TRIM(location), ''), 'Unknown')
+                ORDER BY events_count DESC, upcoming_count DESC
+                LIMIT 8
+                """;
+        Connection c = DbConnexion.getInstance().getConnection();
+        List<EventLocationRow> rows = new ArrayList<>();
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                rows.add(new EventLocationRow(
+                        rs.getString("location_name"),
+                        String.valueOf(rs.getLong("events_count")),
+                        String.valueOf(rs.getLong("upcoming_count"))
+                ));
+            }
+        }
+        eventLocationRows.setAll(rows);
     }
 
     private void refreshAgencyAdminData() {
@@ -506,6 +747,7 @@ public class AdminDashboardController implements Initializable {
     private void onRefresh() {
         initializeStats();
         refreshAgencyAdminData();
+        refreshEventsModerationData();
     }
 
     @FXML
@@ -727,12 +969,7 @@ public class AdminDashboardController implements Initializable {
 
     @FXML
     private void onEvenement() {
-        animateValue(revenueValue, "$456,230");
-        animateValue(ordersValue, "2,180");
-        animateValue(usersValue, "890");
-        animateValue(growthValue, "56%");
-        updateChartData("Event Revenue", new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}, new double[]{5000, 7000, 6000, 9000, 8000, 12000});
-        showDashboardSection();
+        showEventsSection();
     }
 
     @FXML
@@ -785,6 +1022,39 @@ public class AdminDashboardController implements Initializable {
         }
     }
 
+    private void approvePendingEvent(EventModerationRow row) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("Approve event");
+        confirm.setContentText("Approve pending event '" + row.title + "'?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+        try {
+            travelEventService.updateStatus(row.idRaw, TravelEventService.STATUS_APPROVED);
+            setEventsStatus("Event approved: " + row.title);
+            refreshEventsModerationData();
+            refreshOverviewMetrics();
+        } catch (SQLException e) {
+            setEventsStatus("Approval failed: " + e.getMessage());
+        }
+    }
+
+    private void rejectPendingEvent(EventModerationRow row) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("Reject event");
+        confirm.setContentText("Reject pending event '" + row.title + "'?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+        try {
+            travelEventService.updateStatus(row.idRaw, TravelEventService.STATUS_REJECTED);
+            setEventsStatus("Event rejected: " + row.title);
+            refreshEventsModerationData();
+        } catch (SQLException e) {
+            setEventsStatus("Rejection failed: " + e.getMessage());
+        }
+    }
+
     private void setAgenciesStatus(String message) {
         if (message == null || message.isBlank()) {
             agenciesStatusLabel.setManaged(false);
@@ -794,6 +1064,21 @@ public class AdminDashboardController implements Initializable {
             agenciesStatusLabel.setManaged(true);
             agenciesStatusLabel.setVisible(true);
             agenciesStatusLabel.setText(message);
+        }
+    }
+
+    private void setEventsStatus(String message) {
+        if (eventsStatusLabel == null) {
+            return;
+        }
+        if (message == null || message.isBlank()) {
+            eventsStatusLabel.setManaged(false);
+            eventsStatusLabel.setVisible(false);
+            eventsStatusLabel.setText("");
+        } else {
+            eventsStatusLabel.setManaged(true);
+            eventsStatusLabel.setVisible(true);
+            eventsStatusLabel.setText(message);
         }
     }
 
@@ -947,5 +1232,67 @@ public class AdminDashboardController implements Initializable {
         public String getUpdatedAt() { return updatedAt; }
         public String getPosts() { return posts; }
         public String getInteractions() { return interactions; }
+    }
+
+    public static class EventModerationRow {
+        private final long idRaw;
+        private final String id;
+        private final String title;
+        private final String location;
+        private final String eventDate;
+        private final String owner;
+        private final String status;
+
+        private EventModerationRow(long idRaw, String id, String title, String location, String eventDate, String owner, String status) {
+            this.idRaw = idRaw;
+            this.id = id;
+            this.title = title;
+            this.location = location;
+            this.eventDate = eventDate;
+            this.owner = owner;
+            this.status = status;
+        }
+
+        public static EventModerationRow from(TravelEvent event) {
+            String when = event.getEventDate() == null ? "-" : DATE_FMT.format(event.getEventDate());
+            String owner = event.getCreatedByUserId() == null ? "-" : "User #" + event.getCreatedByUserId();
+            String status = event.getStatus() == null || event.getStatus().isBlank() ? "PENDING" : event.getStatus();
+            return new EventModerationRow(
+                    event.getId(),
+                    String.valueOf(event.getId()),
+                    safe(event.getTitle()),
+                    safe(event.getLocation()),
+                    when,
+                    owner,
+                    status
+            );
+        }
+
+        private static String safe(String v) {
+            return v == null || v.isBlank() ? "-" : v;
+        }
+
+        public String getId() { return id; }
+        public String getTitle() { return title; }
+        public String getLocation() { return location; }
+        public String getEventDate() { return eventDate; }
+        public String getOwner() { return owner; }
+        public String getStatus() { return status; }
+    }
+
+    public static class EventLocationRow {
+        private final String location;
+        private final String eventsCount;
+        private final String upcomingCount;
+
+        public EventLocationRow(String location, String eventsCount, String upcomingCount) {
+            this.location = location;
+            this.eventsCount = eventsCount;
+            this.upcomingCount = upcomingCount;
+        }
+
+        public String getLocation() { return location; }
+        public String getEventsCount() { return eventsCount; }
+        public String getUpcomingCount() { return upcomingCount; }
     }
 }

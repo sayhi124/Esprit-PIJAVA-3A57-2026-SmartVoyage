@@ -1,6 +1,8 @@
 package models.gestionposts;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Modèle représentant un post de voyage dans la base de données.
@@ -112,6 +114,32 @@ public class Post {
             return contenu;
         }
         return contenu.substring(0, maxLength) + "...";
+    }
+
+    public void validateForPersistence(boolean createMode) {
+        List<String> errors = new ArrayList<>();
+        String t = titre == null ? "" : titre.trim();
+        String c = contenu == null ? "" : contenu.trim();
+        String l = location == null ? "" : location.trim();
+
+        if (!createMode && id == null) {
+            errors.add("L'identifiant du post est obligatoire.");
+        }
+        if (t.isEmpty() || t.length() < 10 || t.length() > 100) {
+            errors.add("Le titre doit contenir entre 10 et 100 caractères.");
+        }
+        if (c.isEmpty() || c.length() < 50 || c.length() > 5000) {
+            errors.add("Le contenu doit contenir entre 50 et 5000 caractères.");
+        }
+        if (l.isEmpty() || l.length() > 100) {
+            errors.add("La localisation est obligatoire et ne doit pas dépasser 100 caractères.");
+        }
+        if (createMode && userId == null) {
+            errors.add("L'utilisateur créateur est obligatoire.");
+        }
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException(String.join("\n", errors));
+        }
     }
 
     @Override
